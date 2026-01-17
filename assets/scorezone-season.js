@@ -1,71 +1,98 @@
-// scorezone-season.js
+/* scorezone-season.js
+   Shared seasonal behavior for ScoreZone
+   - Auto season detection by date (Europe/Copenhagen assumed via browser locale)
+   - Opt-out: <body data-season="off">
+   - Optional force: <body data-season="winter|spring|summer|autumn|xmas">
+   - Snow only in winter/xmas, non-interactive, lightweight
+*/
 (() => {
   const body = document.body;
-  const root = document.documentElement;
+  if (!body) return;
 
-  // Opt-out: <body data-season="off">
-  if (body && body.dataset && body.dataset.season === "off") return;
-
-  // Manual override (optional): <body data-season="winter"> etc.
-  // If you set any value other than "off", it wins.
-  const manual = body?.dataset?.season;
-  if (manual && manual !== "off") {
-    root.dataset.season = manual;
-    return;
-  }
+  // Opt-out
+  if ((body.dataset.season || "").toLowerCase() === "off") return;
 
   const now = new Date();
-  const m = now.getMonth() + 1; // 1-12
-  const d = now.getDate();      // 1-31
+  const month = now.getMonth() + 1; // 1-12
 
-  function easterSunday(year) {
-    // Meeus/Jones/Butcher algorithm (Gregorian calendar)
-    const a = year % 19;
-    const b = Math.floor(year / 100);
-    const c = year % 100;
-    const d = Math.floor(b / 4);
-    const e = b % 4;
-    const f = Math.floor((b + 8) / 25);
-    const g = Math.floor((b - f + 1) / 3);
-    const h = (19 * a + b - d - g + 15) % 30;
-    const i = Math.floor(c / 4);
-    const k = c % 4;
-    const l = (32 + 2 * e + 2 * i - h - k) % 7;
-    const m = Math.floor((a + 11 * h + 22 * l) / 451);
-    const month = Math.floor((h + l - 7 * m + 114) / 31); // 3=March, 4=April
-    const day = ((h + l - 7 * m + 114) % 31) + 1;
-    return new Date(year, month - 1, day);
+  // If user forced a season in HTML, respect it
+  const forced = (body.dataset.season || "").trim().toLowerCase();
+  let season = forced || "";
+
+  // Auto-detect if not forced
+  if (!season){
+    if (month === 12) season = "xmas";
+    else if (month === 1 || month === 2) season = "winter";
+    else if (month >= 3 && month <= 5) season = "spring";
+    else if (month >= 6 && month <= 8) season = "summer";
+    else season = "autumn";
+    body.dataset.season = season;
   }
 
-  function inRange(date, start, end) {
-    return date >= start && date <= end;
+  // Snow only for winter/xmas
+  const wantsSnow = (season === "winter" || season === "xmas");
+
+  // Respect reduced motion
+  const reduceMotion = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  if (!wantsSnow || reduceMotion) return;
+
+  // Create snow container
+  const snow = document.createElement("div");
+  snow.id = "sz-snow";
+  body.appendChild(snow);
+  body.classList.add("sz-has-snow");
+
+  // Configuration: intentionally subtle
+  const FLAKES = 28;            // light load
+  const MAX_SIZE = 6;           // px
+  const MIN_SIZE = 3;           // px
+  const MIN_DUR = 10;           // seconds
+  const MAX_DUR = 18;           // seconds
+
+  // Create flakes
+  for (let i = 0; i < FLAKES; i++){
+    const flake = document.createElement("div");
+    flake.className = "sz-flake";
+
+    // Randomize per flake
+    const size = rand(MIN_SIZE, MAX_SIZE);
+    const x = rand(0, window.innerWidth);
+    const dx = rand(-30, 30);
+
+    const dur = rand(MIN_DUR, MAX_DUR);
+    const driftDur = rand(3, 6);
+
+    const op = rand(0.45, 0.9);
+
+    // Stagger start so it's already falling
+    const delay = rand(-MAX_DUR, 0);
+
+    flake.style.setProperty("--sz", `${size}px`);
+    flake.style.setProperty("--x", `${x}px`);
+    flake.style.setProperty("--dx", `${dx}px`);
+    flake.style.setProperty("--dur", `${dur}s`);
+    flake.style.setProperty("--driftDur", `${driftDur}s`);
+    flake.style.setProperty("--op", `${op}`);
+
+    flake.style.animationDelay = `${delay}s, ${rand(-6, 0)}s`;
+
+    snow.appendChild(flake);
   }
 
-  // Season rules (simple + predictable)
-  // - Xmas: Dec 1–Dec 31
-  // - Halloween: Oct 20–Oct 31
-  // - Easter: Easter Sunday +/- 10 days (subtle spring theme)
-  // - Winter: Jan–Feb (plus early Dec handled by Xmas)
-  // - Summer: Jun–Aug
-  // Everything else: default
-  const year = now.getFullYear();
-  const easter = easterSunday(year);
-  const easterStart = new Date(easter); easterStart.setDate(easterStart.getDate() - 10);
-  const easterEnd   = new Date(easter); easterEnd.setDate(easterEnd.getDate() + 10);
+  // Keep snow width aligned if the user resizes the window
+  let resizeTimer = null;
+  window.addEventListener("resize", () => {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(() => {
+      // Re-randomize X positions only (fast)
+      const w = window.innerWidth;
+      snow.querySelectorAll(".sz-flake").forEach(flake => {
+        flake.style.setProperty("--x", `${rand(0, w)}px`);
+      });
+    }, 150);
+  });
 
-  let season = "default";
-
-  if (m === 12) {
-    season = "xmas";
-  } else if (m === 10 && d >= 20) {
-    season = "halloween";
-  } else if (inRange(now, easterStart, easterEnd)) {
-    season = "easter";
-  } else if (m === 1 || m === 2) {
-    season = "winter";
-  } else if (m >= 6 && m <= 8) {
-    season = "summer";
+  function rand(min, max){
+    return Math.random() * (max - min) + min;
   }
-
-  root.dataset.season = season;
 })();
