@@ -43,8 +43,8 @@
   body.classList.add("sz-has-snow");
 
   // Configuration: intentionally subtle
-  const FLAKES = 28;            // light load
-  const MAX_SIZE = 6;           // px
+  const FLAKES = 42;            // light load
+  const MAX_SIZE = 9;           // px
   const MIN_SIZE = 3;           // px
   const MIN_DUR = 10;           // seconds
   const MAX_DUR = 18;           // seconds
@@ -62,7 +62,7 @@
     const dur = rand(MIN_DUR, MAX_DUR);
     const driftDur = rand(3, 6);
 
-    const op = rand(0.45, 0.9);
+    const op = rand(0.45, 0.98);
 
     // Stagger start so it's already falling
     const delay = rand(-MAX_DUR, 0);
