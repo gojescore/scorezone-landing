@@ -5,24 +5,182 @@
   <title>ScoreZone</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-      <link rel="stylesheet" href="https://scorezone.dk/assets/scorezone-season.css">
-    <script src="https://scorezone.dk/assets/scorezone-season.js" defer></script>
+  <link rel="stylesheet" href="https://scorezone.dk/assets/scorezone-season.css">
+  <script src="https://scorezone.dk/assets/scorezone-season.js" defer></script>
 
   <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16.png">
   <link rel="icon" type="image/png" sizes="64x64" href="/favicon-64.png">
+
+  <style>
+    :root{
+      --bg: #f6f3ee;
+      --panel: rgba(255,255,255,.90);
+      --ink: #111827;
+      --muted:#6b7280;
+      --line: rgba(17,24,39,.10);
+      --shadow: 0 14px 34px rgba(0,0,0,.10);
+      --shadowSoft: 0 10px 24px rgba(0,0,0,.07);
+      --accent: rgba(37,99,235,.28);
+    }
+
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      background: var(--bg);
+      color: var(--ink);
+    }
+
+    .wrap{
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 28px 18px 42px;
+    }
+
+    header{
+      text-align: center;
+      margin-bottom: 18px;
+    }
+
+    h1{
+      margin: 0;
+      font-size: 34px;
+      font-weight: 950;
+      letter-spacing: .2px;
+    }
+
+    p{
+      margin: 8px 0 0;
+      color: var(--muted);
+      font-weight: 600;
+    }
+
+    .tiles{
+      margin-top: 22px;
+      display: grid;
+      grid-template-columns: repeat(3, minmax(220px, 1fr));
+      gap: 14px;
+    }
+
+    .tile{
+      display:flex;
+      gap:12px;
+      align-items:center;
+      text-decoration:none;
+      padding: 14px 14px;
+      border-radius: 16px;
+      border: 1px solid var(--line);
+      background: var(--panel);
+      box-shadow: var(--shadowSoft);
+      color: inherit;
+      transition: transform .12s ease, box-shadow .12s ease, border-color .12s ease;
+      min-height: 74px;
+    }
+
+    .tile:hover{
+      transform: translateY(-2px);
+      box-shadow: var(--shadow);
+      border-color: var(--accent);
+    }
+
+    .tile:focus-visible{
+      outline: 3px solid var(--accent);
+      outline-offset: 2px;
+    }
+
+    .icon{
+      width: 46px;
+      height: 46px;
+      border-radius: 14px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-size: 22px;
+      background: rgba(37,99,235,.10);
+      flex: 0 0 auto;
+    }
+
+    .text{
+      display:flex;
+      flex-direction:column;
+      gap:2px;
+      min-width: 0;
+    }
+
+    .title{
+      font-weight: 950;
+      letter-spacing: .15px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .sub{
+      font-size: 13px;
+      color: var(--muted);
+      font-weight: 650;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    @media (max-width: 900px){
+      .tiles{ grid-template-columns: 1fr; }
+      .wrap{ padding-top: 22px; }
+      h1{ font-size: 30px; }
+    }
+  </style>
 </head>
 
 <body>
-  <h1>ScoreZone</h1>
-  <p>Educational games & challenges</p>
+  <div class="wrap">
+    <header>
+      <h1>ScoreZone</h1>
+      <p>Educational games &amp; challenges</p>
+    </header>
 
-  <ul>
-    <li><a href="https://xmas.scorezone.dk">🎄 Xmas – Game Master</a></li>
-    <li><a href="https://xmas.scorezone.dk/team.html">👥 Xmas – Team</a></li>
-    <li><a href="/plus-minus/">➕➖ Plus/Minus Hjælper</a></li>
-    <li><a href="/minus/">Minus (2-cifrede tal)</a></li>
-    <li><a href="/plus/">Plus (2-cifrede tal)</a></li>
-  </ul>
+    <main class="tiles" aria-label="Games">
+      <a class="tile" href="https://xmas.scorezone.dk">
+        <div class="icon">🎄</div>
+        <div class="text">
+          <div class="title">Xmas – Game Master</div>
+          <div class="sub">Start and run the game</div>
+        </div>
+      </a>
+
+      <a class="tile" href="https://xmas.scorezone.dk/team.html">
+        <div class="icon">👥</div>
+        <div class="text">
+          <div class="title">Xmas – Team</div>
+          <div class="sub">Join as a team</div>
+        </div>
+      </a>
+
+      <a class="tile" href="/plus-minus/">
+        <div class="icon">➕➖</div>
+        <div class="text">
+          <div class="title">Plus/Minus Hjælper</div>
+          <div class="sub">Practice addition and subtraction</div>
+        </div>
+      </a>
+
+      <a class="tile" href="/minus/">
+        <div class="icon">➖</div>
+        <div class="text">
+          <div class="title">Minus (2-cifrede tal)</div>
+          <div class="sub">Subtraction with two-digit numbers</div>
+        </div>
+      </a>
+
+      <a class="tile" href="/plus/">
+        <div class="icon">➕</div>
+        <div class="text">
+          <div class="title">Plus (2-cifrede tal)</div>
+          <div class="sub">Addition with two-digit numbers</div>
+        </div>
+      </a>
+    </main>
+  </div>
 </body>
 </html>
