@@ -41,21 +41,22 @@ body[data-season="autumn"]{
     #f6f2ea;
 }
 
-/* Winter gets a slightly cooler tint so white snow is visible */
+/* Winter gets a slightly darker cool tint so white snow is visible */
 body[data-season="winter"]{
   --sz-season-bg:
-    radial-gradient(1200px 700px at 10% 10%, rgba(147,197,253,.12), transparent 60%),
-    radial-gradient(900px 600px at 90% 25%, rgba(156,163,175,.10), transparent 55%),
-    #f3f6fb;
+    radial-gradient(1200px 700px at 10% 10%, rgba(147,197,253,.16), transparent 60%),
+    radial-gradient(900px 600px at 90% 25%, rgba(107,114,128,.16), transparent 55%),
+    linear-gradient(180deg, #e6edf7 0%, #d9e3f1 100%);
 }
 
 /* December variant (still winter, slightly warmer festive tint) */
 body[data-season="xmas"]{
   --sz-season-bg:
-    radial-gradient(1200px 700px at 10% 10%, rgba(220,38,38,.10), transparent 60%),
-    radial-gradient(900px 600px at 90% 25%, rgba(147,197,253,.12), transparent 55%),
-    #f3f6fb;
+    radial-gradient(1200px 700px at 10% 10%, rgba(220,38,38,.12), transparent 60%),
+    radial-gradient(900px 600px at 90% 25%, rgba(107,114,128,.14), transparent 55%),
+    linear-gradient(180deg, #e6edf7 0%, #d9e3f1 100%);
 }
+
 
 /* -----------------------------
    Snow overlay (only in winter/xmas)
