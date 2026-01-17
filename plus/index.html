@@ -1,0 +1,1456 @@
+<!DOCTYPE html>
+<html lang="da">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Plus Hjælper – Bank & Veksling</title>
+  <style>
+    :root{
+      --bg:#f6f3ee;
+      --panel:#ffffff;
+      --ink:#1f2937;
+      --muted:#6b7280;
+      --line:#e5e7eb;
+      --accent:#2563eb;
+      --good:#16a34a;
+      --bad:#dc2626;
+
+      /* Keep colors */
+      --coin:#f4b000;
+      --coin2:#f7c948;
+
+      --ten:#60a5fa;
+      --ten2:#93c5fd;
+
+      --bill:#34d399;
+      --bill2:#a7f3d0;
+    }
+
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      background: var(--bg);
+      color: var(--ink);
+    }
+    .wrap{max-width:1200px;margin:0 auto;padding:18px;}
+    .card{
+      background: var(--panel);
+      border:1px solid var(--line);
+      border-radius:14px;
+      padding:16px;
+      box-shadow:0 6px 18px rgba(0,0,0,.06);
+    }
+    .topbar{
+      display:flex;
+      gap:12px;
+      align-items:center;
+      justify-content:space-between;
+      margin-bottom:12px;
+      flex-wrap:wrap;
+    }
+    h1{font-size:20px;margin:0}
+    .meta{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      align-items:center;
+      color:var(--muted);
+      font-size:14px;
+    }
+    .badge{
+      display:inline-flex;
+      gap:8px;
+      align-items:center;
+      padding:6px 10px;
+      border:1px solid var(--line);
+      border-radius:999px;
+      background:#fafafa;
+    }
+
+    .stars{display:inline-flex;gap:2px;font-size:16px;line-height:1;}
+    .stars .off{opacity:.22}
+
+    button{
+      border:0;
+      border-radius:12px;
+      padding:10px 14px;
+      font-size:16px;
+      font-weight:800;
+      cursor:pointer;
+      background:var(--accent);
+      color:white;
+    }
+    button.secondary{background:#111827;}
+    button:disabled{opacity:.5;cursor:not-allowed;}
+
+    /* Setup */
+    #setup{display:grid;gap:10px;max-width:720px;margin:34px auto;}
+    .row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+    label{font-weight:600}
+    input[type="text"], select{
+      padding:10px 12px;
+      border:1px solid var(--line);
+      border-radius:10px;
+      font-size:16px;
+      outline:none;
+      min-width:220px;
+      background:white;
+    }
+    .help{color:var(--muted);font-size:14px;line-height:1.35;}
+    .hintFound{
+      font-size:12px;
+      color:#0b1224;
+      background:#eef2ff;
+      border:1px solid #c7d2fe;
+      padding:8px 10px;
+      border-radius:12px;
+      display:none;
+    }
+    .hintFound.show{display:block;}
+
+    .panel{
+      border:1px solid var(--line);
+      border-radius:14px;
+      padding:14px;
+      background:#fcfcfc;
+      display:grid;
+      gap:14px;
+    }
+
+    /* Board row */
+    .boardRow{
+      display:grid;
+      grid-template-columns: 44px 1fr 580px;
+      gap:12px;
+      align-items:start;
+    }
+    .op{
+      font-size:28px;
+      font-weight:900;
+      padding-top:34px;
+      text-align:center;
+    }
+
+    /* digits: carry + H + T + O */
+    .digits{
+      display:grid;
+      grid-template-columns: 36px 70px 70px 70px;
+      column-gap:10px;
+      row-gap:10px;
+      align-items:center;
+    }
+    .carryCell{
+      height:24px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-size:14px;
+      font-weight:900;
+      color:#111827;
+      opacity:.9;
+    }
+
+    /* Number boxes */
+    .numCell{
+      height:62px;
+      border:1px solid var(--line);
+      border-radius:12px;
+      background:white;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-size:30px;
+      font-weight:900;
+      position:relative;
+    }
+    .numCell.small{height:54px;font-size:26px;font-weight:850;}
+
+    .line{
+      grid-column: 2 / 5;
+      height:2px;
+      background:#111827;
+      border-radius:999px;
+      margin-top:2px;
+      margin-bottom:2px;
+    }
+
+    /* Result inputs + button close */
+    .resultRow{
+      display:flex;
+      gap:8px;
+      align-items:flex-end;
+      justify-content:flex-start;
+      flex-wrap:wrap;
+      margin-top:8px;
+    }
+    .inputs{
+      display:grid;
+      grid-template-columns: 36px 70px 70px 70px;
+      column-gap:10px;
+      align-items:center;
+    }
+    .digitInput{
+      width:70px;
+      height:56px;
+      font-size:22px;
+      font-weight:800;
+      text-align:center;
+      border:2px solid var(--line);
+      border-radius:12px;
+      outline:none;
+      background:white;
+    }
+    .digitInput:focus{
+      border-color:var(--accent);
+      box-shadow:0 0 0 3px rgba(37,99,235,.14);
+    }
+    #answerBtn{padding:12px 14px;}
+
+    /* Coin side */
+    .coinSide{display:grid;gap:14px;}
+    .coinGroupTitle{
+      font-size:12px;
+      color:var(--muted);
+      margin:0 0 4px 2px;
+      font-weight:800;
+      letter-spacing:.2px;
+    }
+    .coinRow3{
+      display:grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap:12px;
+      align-items:start;
+    }
+
+    /* Coin box wrapper (for top-right button) */
+    .coinBoxWrap{
+      position:relative;
+    }
+
+    /* Small box button */
+    .boxBtn{
+      position:absolute;
+      top:6px;
+      right:6px;
+      width:26px;
+      height:22px;
+      border-radius:8px;
+      border:1px solid var(--line);
+      background:#fff;
+      color:#111827;
+      font-weight:1000;
+      font-size:12px;
+      line-height:1;
+      cursor:pointer;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:0;
+      z-index:2;
+    }
+    .boxBtn:disabled{
+      opacity:.35;
+      cursor:not-allowed;
+    }
+    .boxCount{
+  position:absolute;
+  top:2px;
+  left:2px;
+  min-width:22px;
+  height:20px;
+  padding:0 6px;
+  border-radius:20px;
+  border:1px solid var(--line);
+  background:#fff;
+  color:#111827;
+  font-weight:1000;
+  font-size:12px;
+  line-height:20px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  z-index:2;
+  background-color: #09fa11;
+}
+
+
+    /* Fixed height (matches number boxes), horizontal scroll */
+    .coinBox{
+      height:62px;
+      border:1px dashed #d1d5db;
+      border-radius:12px;
+      background:#fff;
+      padding:10px;
+      display:flex;
+      flex-wrap:nowrap;
+      gap:0;                 /* overlap controls spacing */
+      align-items:center;
+      justify-content:flex-start;
+      overflow-x:auto;
+      overflow-y:hidden;
+      scrollbar-width: thin;
+    }
+
+    /* Overlap rule: each next item overlaps ~50% of its own width */
+    .coinBox > * + *{
+      margin-left: calc(var(--w) * -0.5);
+    }
+
+    /* Colored coins + rectangular bills */
+    .coin{
+      --w:34px;
+      width:34px;
+      height:34px;
+      border-radius:999px;
+      border:2px solid rgba(0,0,0,.12);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-weight:900;
+      user-select:none;
+      cursor:pointer;
+      flex: 0 0 auto;
+      font-size:14px;
+      line-height:1;
+      color:#111827;
+      background: radial-gradient(circle at 30% 25%, var(--coin2), var(--coin));
+    }
+    .coin.ten{
+      --w:38px;
+      width:38px;
+      height:38px;
+      background: radial-gradient(circle at 30% 25%, var(--ten2), var(--ten));
+      color:#0b1224;
+    }
+    .bill{
+      --w:58px;
+      width:58px;
+      height:34px;
+      border-radius:10px;
+      border:2px solid rgba(0,0,0,.12);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-weight:950;
+      user-select:none;
+      cursor:pointer;
+      flex: 0 0 auto;
+      font-size:14px;
+      line-height:1;
+      color:#064e3b;
+      background: linear-gradient(135deg, var(--bill2), var(--bill));
+    }
+.disabled{
+  opacity: 1;                 /* no transparency */
+  cursor: not-allowed;
+  filter: grayscale(.65);     /* keeps color-ish but muted */
+  box-shadow: inset 0 0 0 2px rgba(17,24,39,.22);
+}
+
+
+    /* Bank */
+    .bankPanel{
+      border:1px solid var(--line);
+      border-radius:14px;
+      background:#0b1224;
+      color:#fff;
+      padding:14px;
+      display:grid;
+      gap:10px;
+      position:relative;
+    }
+    .bankPanel h2{margin:0;font-size:16px;}
+    .bankHint{font-size:13px;opacity:.9;line-height:1.3;}
+    .bankRow{
+      display:flex;
+      gap:10px;
+      align-items:center;
+      justify-content:space-between;
+      flex-wrap:wrap;
+    }
+    .bankStatus{
+  font-size:16px;
+  font-weight:900;
+  opacity:1;
+}
+
+    .bankSlot{
+      border:1px solid rgba(255,255,255,.22);
+      border-radius:14px;
+      padding:10px;
+      min-height:92px;
+      background:rgba(255,255,255,.06);
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px;
+      align-items:flex-start;
+      justify-content:flex-start;
+    }
+    .tinyNote{font-size:12px;color:rgba(255,255,255,.78);line-height:1.35;}
+
+    /* Bank "return all" button (top-right) */
+    .bankTopBtn{
+      position:absolute;
+      top:12px;
+      right:12px;
+      padding:6px 10px;
+      border-radius:10px;
+      background: rgba(255,255,255,.12);
+      color:#fff;
+      border:1px solid rgba(255,255,255,.22);
+      font-size:12px;
+      font-weight:900;
+      cursor:pointer;
+    }
+    .bankTopBtn:disabled{opacity:.35;cursor:not-allowed;}
+
+    /* Flying element */
+    .flying{
+      position:absolute;
+      z-index:10000;
+      pointer-events:none;
+      will-change:transform;
+    }
+
+    /* Level switch in-game */
+    .lvlSel{
+      padding:6px 8px;
+      border-radius:10px;
+      border:1px solid var(--line);
+      font-weight:800;
+      background:#fff;
+      min-width:64px;
+    }
+    .miniBtn{
+      padding:6px 10px;
+      border-radius:10px;
+      background:var(--accent);
+      font-size:14px;
+      font-weight:900;
+    }
+
+    /* Overlay */
+    .overlay{
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,.55);
+      display:none;
+      align-items:center;
+      justify-content:center;
+      padding: 18px;
+      z-index: 9999;
+    }
+    .overlay.show{display:flex;}
+    .modal{
+      width:min(520px, 100%);
+      background:#fff;
+      border-radius:16px;
+      border:1px solid var(--line);
+      box-shadow:0 18px 60px rgba(0,0,0,.25);
+      padding:16px;
+      display:grid;
+      gap:10px;
+    }
+    .modal h3{margin:0;font-size:18px;}
+    .modal .mtext{color:var(--muted);font-size:14px;line-height:1.35;}
+    .modal .good{color:var(--good);font-weight:900;}
+    .modal .bad{color:var(--bad);font-weight:900;}
+    .modal .btnRow{display:flex;gap:10px;justify-content:flex-end;flex-wrap:wrap;}
+
+    .hidden{display:none !important;}
+
+    @media (max-width: 1120px){
+      .boardRow{grid-template-columns: 44px 1fr;}
+      .coinSide{grid-column: 1 / -1;}
+    }
+  </style>
+</head>
+
+<body>
+  <div class="wrap">
+
+    <!-- SETUP -->
+    <div id="setup" class="card">
+      <h1>Plus Hjælper – Bank & Veksling</h1>
+      <div class="help">
+        Tap mønter fra <strong>begge tal</strong> ind i banken, indtil der er 10. Tryk <strong>Veksel</strong>.
+        
+      </div>
+
+      <div class="row">
+        <label for="studentName">Navn</label>
+        <input id="studentName" type="text" placeholder="Skriv dit navn" autocomplete="off" />
+      </div>
+
+      <div id="foundHint" class="hintFound" aria-live="polite"></div>
+
+      <div class="row">
+        <label for="level">Start-niveau</label>
+        <select id="level">
+          <option value="1">Niveau 1</option>
+          <option value="2">Niveau 2</option>
+          <option value="3">Niveau 3 (hver 5. gang: tal1 er 3 cifre og ti’ere=0)</option>
+        </select>
+      </div>
+
+      <div class="row">
+        <button id="startBtn">Start</button>
+      </div>
+    </div>
+
+    <!-- APP -->
+    <div id="app" class="hidden">
+      <div class="topbar">
+        <h1>Plus Hjælper – Bank & Veksling</h1>
+
+        <div class="meta">
+          <span class="badge"><strong id="who">—</strong></span>
+
+          <span class="badge">
+            Niveau:
+            <select id="levelInGame" class="lvlSel" aria-label="Skift niveau">
+              <option value="1">1</option>
+              <option value="2">2</option>
+              <option value="3">3</option>
+            </select>
+            <button id="applyLevelBtn" class="miniBtn" type="button">Skift</button>
+          </span>
+
+          <span class="badge">Streak: <strong id="streak">0</strong></span>
+          <span class="badge">Stjerner: <span class="stars" id="stars"></span></span>
+
+          <button class="secondary" id="newStudentBtn" type="button">Ny elev</button>
+        </div>
+      </div>
+
+      <div class="panel">
+
+        <div class="boardRow">
+          <div class="op">+</div>
+
+          <!-- Numbers + result -->
+          <div>
+            <div class="digits">
+              <div class="carryCell"></div>
+              <div class="carryCell" id="carryH"></div>
+              <div class="carryCell" id="carryT"></div>
+              <div class="carryCell"></div>
+
+              <div class="carryCell"></div>
+              <div class="numCell" id="aH">0</div>
+              <div class="numCell" id="aT">0</div>
+              <div class="numCell" id="aO">0</div>
+
+              <div class="carryCell"></div>
+              <div class="numCell small" id="bH">0</div>
+              <div class="numCell small" id="bT">0</div>
+              <div class="numCell small" id="bO">0</div>
+
+              <div class="line"></div>
+            </div>
+
+            <div class="resultRow">
+              <div class="inputs">
+                <div></div>
+                <input class="digitInput" id="ansH" inputmode="numeric" maxlength="1" aria-label="Hundreder" />
+                <input class="digitInput" id="ansT" inputmode="numeric" maxlength="1" aria-label="Ti'ere" />
+                <input class="digitInput" id="ansO" inputmode="numeric" maxlength="1" aria-label="Enere" />
+              </div>
+
+              <button id="answerBtn" type="button">Svar</button>
+            </div>
+          </div>
+
+          <!-- Coin boxes -->
+          <div class="coinSide">
+
+            <div>
+              <div class="coinGroupTitle">Tal 1 – 100 / 10 / 1</div>
+              <div class="coinRow3">
+
+               <div class="coinBoxWrap">
+  <button class="boxBtn" id="btnA100" type="button" disabled title="(ikke aktiv i denne version)">↦</button>
+  <div class="boxCount" id="countA100">0</div>
+  <div class="coinBox" id="aBoxH"></div>
+</div>
+
+<div class="coinBoxWrap">
+  <button class="boxBtn" id="btnA10" type="button" title="Send alle til bank">↦</button>
+  <div class="boxCount" id="countA10">0</div>
+  <div class="coinBox" id="aBoxT"></div>
+</div>
+
+<div class="coinBoxWrap">
+  <button class="boxBtn" id="btnA1" type="button" title="Send alle til bank">↦</button>
+  <div class="boxCount" id="countA1">0</div>
+  <div class="coinBox" id="aBoxO"></div>
+</div>
+
+
+              </div>
+            </div>
+
+            <div>
+              <div class="coinGroupTitle">Tal 2 – 100 / 10 / 1</div>
+              <div class="coinRow3">
+
+               <div class="coinBoxWrap">
+  <button class="boxBtn" id="btnB100" type="button" disabled title="(ikke aktiv i denne version)">↦</button>
+  <div class="boxCount" id="countB100">0</div>
+  <div class="coinBox" id="bBoxH"></div>
+</div>
+
+<div class="coinBoxWrap">
+  <button class="boxBtn" id="btnB10" type="button" title="Send alle til bank">↦</button>
+  <div class="boxCount" id="countB10">0</div>
+  <div class="coinBox" id="bBoxT"></div>
+</div>
+
+<div class="coinBoxWrap">
+  <button class="boxBtn" id="btnB1" type="button" title="Send alle til bank">↦</button>
+  <div class="boxCount" id="countB1">0</div>
+  <div class="coinBox" id="bBoxO"></div>
+</div>
+
+
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- BANK under all other boxes -->
+        <div class="bankPanel">
+          <button class="bankTopBtn" id="returnAllBtn" type="button" disabled>Returnér alle</button>
+
+          <h2>Bank</h2>
+          <div class="bankHint" id="bankHint">—</div>
+
+          <div class="bankSlot" id="bankSlot" aria-label="Bank slot"></div>
+
+          <div class="bankRow">
+            <button id="exchangeBtn" type="button" disabled>Veksel</button>
+            <div class="bankStatus" id="bankStatus">Banken er tom.</div>
+          </div>
+
+          <div class="tinyNote">
+            Tryk på en mønt i banken for at lægge den tilbage til det tal, den kom fra (med animation).
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+
+  <!-- RESULT OVERLAY -->
+  <div class="overlay" id="overlay" aria-hidden="true">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+      <h3 id="modalTitle">—</h3>
+      <div class="mtext" id="modalText">—</div>
+      <div class="mtext" id="modalSub">—</div>
+      <div class="btnRow">
+        <button class="secondary" id="modalBtn" type="button">Næste</button>
+      </div>
+    </div>
+  </div>
+
+<script>
+(() => {
+  const $ = (id) => document.getElementById(id);
+
+  /* ---------- Per-student storage ---------- */
+  const STORAGE_KEY = "plusHelper_users_v1";
+
+  function loadUsers(){
+    try{
+      const raw = localStorage.getItem(STORAGE_KEY);
+      return raw ? JSON.parse(raw) : {};
+    }catch{
+      return {};
+    }
+  }
+  function saveUsers(users){
+    try{
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(users));
+    }catch{}
+  }
+  function freshProgress(){
+    return {
+      1: { streak: 0, stars: 0 },
+      2: { streak: 0, stars: 0 },
+      3: { streak: 0, stars: 0 },
+    };
+  }
+
+  const setup = $("setup");
+  const app = $("app");
+  const studentNameEl = $("studentName");
+  const foundHintEl = $("foundHint");
+  const levelEl = $("level");
+  const startBtn = $("startBtn");
+
+  const whoEl = $("who");
+  const streakEl = $("streak");
+  const starsEl = $("stars");
+  const newStudentBtn = $("newStudentBtn");
+
+  const levelInGameEl = $("levelInGame");
+  const applyLevelBtn = $("applyLevelBtn");
+
+  const aHEl = $("aH"), aTEl = $("aT"), aOEl = $("aO");
+  const bHEl = $("bH"), bTEl = $("bT"), bOEl = $("bO");
+
+  const carryHEl = $("carryH");
+  const carryTEl = $("carryT");
+
+  const ansHEl = $("ansH"), ansTEl = $("ansT"), ansOEl = $("ansO");
+  const answerBtn = $("answerBtn");
+
+  const aBoxHEl = $("aBoxH"), aBoxTEl = $("aBoxT"), aBoxOEl = $("aBoxO");
+  const bBoxHEl = $("bBoxH"), bBoxTEl = $("bBoxT"), bBoxOEl = $("bBoxO");
+
+  const btnA10 = $("btnA10"), btnA1 = $("btnA1");
+  const btnB10 = $("btnB10"), btnB1 = $("btnB1");
+
+  const returnAllBtn = $("returnAllBtn");
+  const exchangeBtn = $("exchangeBtn");
+  const bankHintEl = $("bankHint");
+  const bankSlotEl = $("bankSlot");
+  const bankStatusEl = $("bankStatus");
+
+  const overlayEl = $("overlay");
+  const modalTitleEl = $("modalTitle");
+  const modalTextEl = $("modalText");
+  const modalSubEl = $("modalSub");
+  const modalBtn = $("modalBtn");
+
+  const countA100 = $("countA100");
+  const countA10  = $("countA10");
+  const countA1   = $("countA1");
+  const countB100 = $("countB100");
+  const countB10  = $("countB10");
+  const countB1   = $("countB1");
+
+
+  const state = {
+    studentName: "",
+    level: 1,
+
+    users: loadUsers(),
+    userData: null,
+
+    problemCount: 0,
+    a: 0,
+    b: 0,
+    answer: 0,
+
+    coinsA: { h:0, t:0, o:0 },
+    coinsB: { h:0, t:0, o:0 },
+
+    stage: "ones", // "ones" | "tens"
+    isExchanging: false,
+
+    // each item: { denom: "o"|"t", owner: "A"|"B" }
+    bankItems: [],
+
+    carryMarks: { t:0, h:0 },
+
+    overlayOpen: false
+  };
+
+  function randInt(min, max){ return Math.floor(Math.random()*(max-min+1))+min; }
+  function digits3(n){
+    const h = Math.floor(n/100);
+    const t = Math.floor((n%100)/10);
+    const o = n%10;
+    return {h,t,o};
+  }
+  function clampDigitInput(el){
+    el.value = el.value.replace(/[^0-9]/g, "");
+    if (el.value.length > 1) el.value = el.value.slice(0,1);
+  }
+
+  function getProg(){
+    if (!state.userData) return { streak: 0, stars: 0 };
+    return state.userData.progress[state.level];
+  }
+
+  function renderStars(){
+    const max = 5;
+    const { stars } = getProg();
+    let html = "";
+    for (let i=0;i<max;i++){
+      html += `<span class="${i < stars ? "" : "off"}">★</span>`;
+    }
+    starsEl.innerHTML = html;
+  }
+
+  function updateHeader(){
+    whoEl.textContent = state.studentName || "—";
+    levelInGameEl.value = String(state.level);
+    streakEl.textContent = String(getProg().streak);
+    renderStars();
+  }
+
+  function onesCarryNeeded(){
+    const A = digits3(state.a);
+    const B = digits3(state.b);
+    return (A.o + B.o) >= 10;
+  }
+
+  function makeProblemOperands(){
+    const forced = (state.level === 3 && (state.problemCount + 1) % 5 === 0);
+    let a;
+    if (forced){
+      const h = randInt(1,4);
+      const t = 0;
+      const o = randInt(0,9);
+      a = h*100 + t*10 + o;
+      if (a < 100) a = 100;
+    } else {
+      a = randInt(16, 499);
+    }
+    const b = randInt(16, 499);
+    return {a,b};
+  }
+
+  function setCoinsFromNumber(n){
+    const d = digits3(n);
+    return { h:d.h, t:d.t, o:d.o };
+  }
+
+  function renderNumbers(){
+    const A = digits3(state.a);
+    const B = digits3(state.b);
+
+    aHEl.textContent = A.h;
+    aTEl.textContent = A.t;
+    aOEl.textContent = A.o;
+
+    bHEl.textContent = B.h;
+    bTEl.textContent = B.t;
+    bOEl.textContent = B.o;
+
+    carryTEl.textContent = state.carryMarks.t ? "1" : "";
+    carryHEl.textContent = state.carryMarks.h ? "1" : "";
+  }
+
+  function makeCoinNode(kind){
+    if (kind === "h"){
+      const el = document.createElement("div");
+      el.className = "bill";
+      el.textContent = "100";
+      return el;
+    }
+    const el = document.createElement("div");
+    el.className = "coin " + (kind === "t" ? "ten" : "");
+    el.textContent = kind === "t" ? "10" : "1";
+    return el;
+  }
+
+  function bankCount(){ return state.bankItems.length; }
+
+function canTapDenom(denom){
+  return (state.stage === "ones" && denom === "o") ||
+         (state.stage === "tens" && denom === "t");
+}
+
+
+function updateTopRightButtons(){
+  if (state.isExchanging || state.overlayOpen){
+    btnA1.disabled = true;
+    btnB1.disabled = true;
+    btnA10.disabled = true;
+    btnB10.disabled = true;
+    returnAllBtn.disabled = true;
+    return;
+  }
+
+  const onesActive = canTapDenom("o");
+  const tensActive = canTapDenom("t");
+
+  btnA1.disabled  = !onesActive || state.coinsA.o === 0;
+  btnB1.disabled  = !onesActive || state.coinsB.o === 0;
+
+  btnA10.disabled = !tensActive || state.coinsA.t === 0;
+  btnB10.disabled = !tensActive || state.coinsB.t === 0;
+
+  returnAllBtn.disabled = (bankCount() === 0);
+}
+
+
+  function updateExchangeBtn(){
+    exchangeBtn.disabled = state.isExchanging || bankCount() < 10;
+  }
+
+  function updateBankHint(){
+    if (state.stage === "ones"){
+      bankHintEl.innerHTML = `<strong>Trin:</strong> Tap <strong>1’ere</strong> i banken (fra begge tal). Når der er 10 → Veksel.`;
+    } else {
+      bankHintEl.innerHTML = `<strong>Trin:</strong> Tap <strong>10’ere</strong> i banken (fra begge tal). Når der er 10 → Veksel.`;
+    }
+  }
+
+  function updateBankStatus(){
+    const denomLabel = (state.stage === "ones") ? "1" : "10";
+    bankStatusEl.textContent = (bankCount() === 0)
+      ? "Banken er tom."
+      : `I banken: ${bankCount()} × ${denomLabel}`;
+  }
+
+  function resetBank(){
+    state.bankItems = [];
+    bankSlotEl.innerHTML = "";
+    updateBankStatus();
+    updateExchangeBtn();
+    updateTopRightButtons();
+  }
+
+  function clearBoxes(){
+    aBoxHEl.innerHTML = ""; aBoxTEl.innerHTML = ""; aBoxOEl.innerHTML = "";
+    bBoxHEl.innerHTML = ""; bBoxTEl.innerHTML = ""; bBoxOEl.innerHTML = "";
+  }
+
+  function renderBoxCounts(){
+  countA100.textContent = state.coinsA.h;
+  countA10.textContent  = state.coinsA.t;
+  countA1.textContent   = state.coinsA.o;
+
+  countB100.textContent = state.coinsB.h;
+  countB10.textContent  = state.coinsB.t;
+  countB1.textContent   = state.coinsB.o;
+}
+
+  function renderCoins(){
+    clearBoxes();
+    renderBoxCounts();
+
+
+    // A
+    for (let i=0;i<state.coinsA.h;i++){
+      const n = makeCoinNode("h");
+      n.classList.add("disabled");
+      aBoxHEl.appendChild(n);
+    }
+    for (let i=0;i<state.coinsA.t;i++){
+      const n = makeCoinNode("t");
+      n.addEventListener("click", () => onTapFromBox("A","t", n));
+      if (!canTapDenom("t")) n.classList.add("disabled");
+      aBoxTEl.appendChild(n);
+    }
+    for (let i=0;i<state.coinsA.o;i++){
+      const n = makeCoinNode("o");
+      n.addEventListener("click", () => onTapFromBox("A","o", n));
+      if (!canTapDenom("o")) n.classList.add("disabled");
+      aBoxOEl.appendChild(n);
+    }
+
+    // B
+    for (let i=0;i<state.coinsB.h;i++){
+      const n = makeCoinNode("h");
+      n.classList.add("disabled");
+      bBoxHEl.appendChild(n);
+    }
+    for (let i=0;i<state.coinsB.t;i++){
+      const n = makeCoinNode("t");
+      n.addEventListener("click", () => onTapFromBox("B","t", n));
+      if (!canTapDenom("t")) n.classList.add("disabled");
+      bBoxTEl.appendChild(n);
+    }
+    for (let i=0;i<state.coinsB.o;i++){
+      const n = makeCoinNode("o");
+      n.addEventListener("click", () => onTapFromBox("B","o", n));
+      if (!canTapDenom("o")) n.classList.add("disabled");
+      bBoxOEl.appendChild(n);
+    }
+
+    updateTopRightButtons();
+  }
+
+  function ownerCounts(owner){ return owner === "A" ? state.coinsA : state.coinsB; }
+
+  function removeOneFrom(owner, denom){
+    const target = ownerCounts(owner);
+    if (denom === "o" && target.o > 0){ target.o--; return true; }
+    if (denom === "t" && target.t > 0){ target.t--; return true; }
+    return false;
+  }
+  function addOneTo(owner, denom){
+    const target = ownerCounts(owner);
+    if (denom === "o") target.o++;
+    if (denom === "t") target.t++;
+  }
+
+  function boxEl(owner, denom){
+    if (owner === "A" && denom === "o") return aBoxOEl;
+    if (owner === "A" && denom === "t") return aBoxTEl;
+    if (owner === "B" && denom === "o") return bBoxOEl;
+    if (owner === "B" && denom === "t") return bBoxTEl;
+    return null;
+  }
+
+  function getRectPage(el){
+    const r = el.getBoundingClientRect();
+    return { x: r.left + window.scrollX, y: r.top + window.scrollY, w: r.width, h: r.height };
+  }
+
+  /* durationMs supports fast variants */
+  function createFlyingNode(start, end, denom, durationMs = 650){
+    const d = makeCoinNode(denom);
+    d.classList.add("flying");
+    d.style.left = start.x + "px";
+    d.style.top  = start.y + "px";
+    document.body.appendChild(d);
+
+    const dx = end.x - start.x;
+    const dy = end.y - start.y;
+
+    const anim = d.animate(
+      [{ transform:"translate(0,0)", opacity:1 },
+       { transform:`translate(${dx}px,${dy}px)`, opacity:1 }],
+      { duration: durationMs, easing:"ease-in-out", fill:"forwards" }
+    );
+
+    const hard = setTimeout(() => d.remove(), Math.max(900, durationMs + 400));
+    return anim.finished
+      .catch(() => {})
+      .finally(() => { clearTimeout(hard); d.remove(); });
+  }
+
+  function bankAddVisual(item){
+    const node = makeCoinNode(item.denom);
+    node.title = `Tryk for at lægge tilbage (${item.owner === "A" ? "Tal 1" : "Tal 2"})`;
+    node.addEventListener("click", () => returnFromBank(item, node));
+    bankSlotEl.appendChild(node);
+  }
+
+  function bankContainsOnlyCorrectDenom(){
+    const needed = state.stage === "ones" ? "o" : "t";
+    return state.bankItems.every(it => it.denom === needed);
+  }
+
+  async function onTapFromBox(owner, denom, node){
+    if (!canTapDenom(denom)) return;
+    if (!removeOneFrom(owner, denom)) return;
+
+    const start = getRectPage(node);
+    const bankRect = getRectPage(bankSlotEl);
+    const end = {
+      x: bankRect.x + 18 + (bankCount() % 10) * 42,
+      y: bankRect.y + 18
+    };
+
+    renderCoins();
+
+    const item = { denom, owner };
+    state.bankItems.push(item);
+
+    await createFlyingNode(start, end, denom, 360);
+
+    bankAddVisual(item);
+    updateBankStatus();
+    updateExchangeBtn();
+    updateTopRightButtons();
+  }
+
+  async function returnFromBank(item, nodeInBank){
+    if (state.isExchanging || state.overlayOpen) return;
+    if (!canTapDenom(item.denom)) return;
+
+    const idx = state.bankItems.indexOf(item);
+    if (idx === -1) return;
+
+    const start = getRectPage(nodeInBank);
+
+    state.bankItems.splice(idx, 1);
+    nodeInBank.remove();
+
+    addOneTo(item.owner, item.denom);
+    renderCoins();
+
+    const targetBox = boxEl(item.owner, item.denom);
+    const targetRect = getRectPage(targetBox);
+    const end = { x: targetRect.x + 22, y: targetRect.y + 22 };
+
+    /* very fast return */
+    await createFlyingNode(start, end, item.denom, 140);
+
+    renderCoins();
+    updateBankStatus();
+    updateExchangeBtn();
+    updateTopRightButtons();
+  }
+
+  async function addAllFromBox(owner, denom){
+    if (!canTapDenom(denom)) return;
+
+    const src = ownerCounts(owner);
+    const count = denom === "o" ? src.o : src.t;
+    if (count <= 0) return;
+
+    state.isExchanging = true;
+    updateExchangeBtn();
+    updateTopRightButtons();
+
+    const box = boxEl(owner, denom);
+    const boxRect = getRectPage(box);
+    const bankRect = getRectPage(bankSlotEl);
+
+    if (denom === "o") src.o = 0;
+    else src.t = 0;
+    renderCoins();
+
+    for (let i=0;i<count;i++){
+      const item = { denom, owner };
+      state.bankItems.push(item);
+
+      const start = { x: boxRect.x + 24, y: boxRect.y + 24 };
+      const end = { x: bankRect.x + 18 + ((bankCount()-1) % 10) * 42, y: bankRect.y + 18 };
+
+      /* faster bulk */
+      await createFlyingNode(start, end, denom, 190);
+
+      bankAddVisual(item);
+      await new Promise(res => setTimeout(res, 18));
+    }
+
+    state.isExchanging = false;
+    updateBankStatus();
+    updateExchangeBtn();
+    updateTopRightButtons();
+  }
+
+  async function returnAllBank(){
+    if (state.isExchanging || state.overlayOpen) return;
+    if (bankCount() === 0) return;
+
+    const denomAllowed = state.stage === "ones" ? "o" : "t";
+    const items = state.bankItems.filter(it => it.denom === denomAllowed);
+    if (items.length === 0) return;
+
+    state.isExchanging = true;
+    updateExchangeBtn();
+    updateTopRightButtons();
+
+    const bankRect = getRectPage(bankSlotEl);
+
+    state.bankItems = state.bankItems.filter(it => it.denom !== denomAllowed);
+
+    bankSlotEl.innerHTML = "";
+    for (const it of state.bankItems) bankAddVisual(it);
+
+    for (let i=0;i<items.length;i++){
+      const it = items[i];
+
+      addOneTo(it.owner, it.denom);
+      renderCoins();
+
+      const targetBox = boxEl(it.owner, it.denom);
+      const targetRect = getRectPage(targetBox);
+
+      const start = { x: bankRect.x + 24, y: bankRect.y + 24 };
+      const end = { x: targetRect.x + 22, y: targetRect.y + 22 };
+
+      await createFlyingNode(start, end, it.denom, 120);
+      await new Promise(res => setTimeout(res, 12));
+    }
+
+    state.isExchanging = false;
+    renderCoins();
+    updateBankStatus();
+    updateExchangeBtn();
+    updateTopRightButtons();
+  }
+
+  function exchangeTargetDenom(){
+    return state.stage === "ones" ? "t" : "h";
+  }
+
+  function exchangeIntoTal1(){
+    if (state.stage === "ones"){
+      state.coinsA.t += 1;
+      state.carryMarks.t = 1;
+    } else {
+      state.coinsA.h += 1;
+      state.carryMarks.h = 1;
+    }
+  }
+
+  async function exchange(){
+    if (exchangeBtn.disabled) return;
+    if (state.isExchanging || state.overlayOpen) return;
+    if (bankCount() < 10) return;
+    if (!bankContainsOnlyCorrectDenom()) return;
+
+    state.isExchanging = true;
+    updateExchangeBtn();
+    updateTopRightButtons();
+
+    state.bankItems.splice(0, 10);
+
+    for (let i=0;i<10;i++){
+      const first = bankSlotEl.firstElementChild;
+      if (first) first.remove();
+    }
+
+    const toDenom = exchangeTargetDenom();
+    bankStatusEl.textContent = `Veksler… 10×${state.stage === "ones" ? "1" : "10"} → 1×${toDenom === "t" ? "10" : "100"}`;
+
+    const newNode = makeCoinNode(toDenom);
+    newNode.classList.add("disabled");
+    bankSlotEl.appendChild(newNode);
+
+    await new Promise(res => setTimeout(res, 2000));
+
+    const start = getRectPage(newNode);
+    const targetBox = (toDenom === "t") ? aBoxTEl : aBoxHEl;
+    const targetRect = getRectPage(targetBox);
+    const end = { x: targetRect.x + 26, y: targetRect.y + 24 };
+
+    newNode.remove();
+    await createFlyingNode(start, end, toDenom, 280);
+
+    exchangeIntoTal1();
+
+    if (state.stage === "ones") state.stage = "tens";
+
+    bankSlotEl.innerHTML = "";
+    for (const it of state.bankItems) bankAddVisual(it);
+
+    updateBankHint();
+    renderNumbers();
+    renderCoins();
+
+    state.isExchanging = false;
+    updateBankStatus();
+    updateExchangeBtn();
+    updateTopRightButtons();
+  }
+
+  // Answer / overlay (streak + stars per student + per level)
+  function parseGivenAnswer(){
+    const h = ansHEl.value === "" ? 0 : Number(ansHEl.value);
+    const t = ansTEl.value === "" ? 0 : Number(ansTEl.value);
+    const o = ansOEl.value === "" ? 0 : Number(ansOEl.value);
+    return h*100 + t*10 + o;
+  }
+
+  const praise = ["Godt klaret", "Flot arbejde", "Super", "Stærkt", "Rigtig godt"];
+  function praiseLine(name){
+    return `${praise[randInt(0, praise.length-1)]}, ${name}!`;
+  }
+
+  function showOverlay(ok, correct){
+    const name = state.studentName || "Elev";
+    if (ok){
+      modalTitleEl.innerHTML = `<span class="good">${praiseLine(name)}</span>`;
+      modalTextEl.textContent = `${state.a} + ${state.b} = ${correct}`;
+      modalSubEl.textContent = "Næste opgave klar.";
+    } else {
+      modalTitleEl.innerHTML = `<span class="bad">Ikke helt, ${name}.</span>`;
+      modalTextEl.textContent = `Rigtigt svar: ${correct}`;
+      modalSubEl.textContent = "Prøv igen på næste opgave.";
+    }
+    state.overlayOpen = true;
+    overlayEl.classList.add("show");
+    overlayEl.setAttribute("aria-hidden","false");
+    queueMicrotask(() => modalBtn.focus());
+  }
+
+  function hideOverlay(){
+    overlayEl.classList.remove("show");
+    overlayEl.setAttribute("aria-hidden","true");
+    state.overlayOpen = false;
+  }
+
+  function grade(){
+    if (state.overlayOpen) return;
+
+    const given = parseGivenAnswer();
+    const correct = state.answer;
+    const ok = given === correct;
+
+    const prog = getProg();
+    if (ok){
+      prog.streak += 1;
+      if (prog.streak % 5 === 0 && prog.stars < 5) prog.stars += 1;
+    } else {
+      prog.streak = 0;
+    }
+
+    saveUsers(state.users);
+    updateHeader();
+    showOverlay(ok, correct);
+  }
+
+  function makeProblem(){
+    document.querySelectorAll(".flying").forEach(el => el.remove());
+
+    state.problemCount += 1;
+
+    const {a,b} = makeProblemOperands();
+    state.a = a;
+    state.b = b;
+    state.answer = a + b;
+
+    state.coinsA = setCoinsFromNumber(a);
+    state.coinsB = setCoinsFromNumber(b);
+
+    state.isExchanging = false;
+    state.carryMarks = { t:0, h:0 };
+
+    ansHEl.value = "";
+    ansTEl.value = "";
+    ansOEl.value = "";
+
+    resetBank();
+    renderNumbers();
+
+    state.stage = onesCarryNeeded() ? "ones" : "tens";
+    updateBankHint();
+
+    renderCoins();
+    updateHeader();
+
+    queueMicrotask(() => ansOEl.focus());
+  }
+
+  // Input behavior: rightmost -> move focus LEFT
+  ansOEl.addEventListener("input", () => {
+    if (state.overlayOpen) return;
+    clampDigitInput(ansOEl);
+    if (ansOEl.value.length === 1) ansTEl.focus();
+  });
+  ansTEl.addEventListener("input", () => {
+    if (state.overlayOpen) return;
+    clampDigitInput(ansTEl);
+    if (ansTEl.value.length === 1) ansHEl.focus();
+  });
+  ansHEl.addEventListener("input", () => {
+    if (state.overlayOpen) return;
+    clampDigitInput(ansHEl);
+  });
+
+  // Enter to submit (when overlay closed)
+  function trySubmitWithEnter(e){
+    if (state.overlayOpen) return;
+    if (e.key !== "Enter") return;
+    e.preventDefault();
+    grade();
+  }
+  ansHEl.addEventListener("keydown", trySubmitWithEnter);
+  ansTEl.addEventListener("keydown", trySubmitWithEnter);
+  ansOEl.addEventListener("keydown", trySubmitWithEnter);
+
+  // Overlay Enter routing
+  document.addEventListener("keydown", (e) => {
+    if (!state.overlayOpen) return;
+    if (e.key === "Enter") {
+      e.preventDefault();
+      modalBtn.click();
+    }
+  }, true);
+
+  modalBtn.addEventListener("click", () => {
+    hideOverlay();
+    makeProblem();
+  });
+
+  exchangeBtn.addEventListener("click", exchange);
+  answerBtn.addEventListener("click", grade);
+
+  // Bulk buttons
+  btnA1.addEventListener("click", () => addAllFromBox("A","o"));
+  btnB1.addEventListener("click", () => addAllFromBox("B","o"));
+  btnA10.addEventListener("click", () => addAllFromBox("A","t"));
+  btnB10.addEventListener("click", () => addAllFromBox("B","t"));
+
+  returnAllBtn.addEventListener("click", returnAllBank);
+
+  // In-game level switching
+  applyLevelBtn.addEventListener("click", () => {
+    if (state.overlayOpen) return;
+    const newLevel = Number(levelInGameEl.value);
+    if (newLevel === state.level) return;
+
+    state.level = newLevel;
+    saveUsers(state.users);
+    updateHeader();
+    makeProblem();
+  });
+  levelInGameEl.addEventListener("change", () => applyLevelBtn.click());
+
+  /* Setup "found" hint: show when name exists */
+  function normalizeName(s){ return (s || "").trim(); }
+
+  function renderFoundHint(){
+    const name = normalizeName(studentNameEl.value);
+    if (!name) { foundHintEl.classList.remove("show"); foundHintEl.textContent = ""; return; }
+
+    const exists = !!state.users[name];
+    if (!exists){
+      foundHintEl.classList.remove("show");
+      foundHintEl.textContent = "";
+      return;
+    }
+
+    const p = state.users[name].progress;
+    const msg =
+      `Tidligere elev fundet: "${name}". ` +
+      `N1: streak ${p[1].streak}, stjerner ${p[1].stars}. ` +
+      `N2: streak ${p[2].streak}, stjerner ${p[2].stars}. ` +
+      `N3: streak ${p[3].streak}, stjerner ${p[3].stars}.`;
+
+    foundHintEl.textContent = msg;
+    foundHintEl.classList.add("show");
+  }
+
+  studentNameEl.addEventListener("input", renderFoundHint);
+  studentNameEl.addEventListener("blur", renderFoundHint);
+
+  // Start/reset
+  function startApp(){
+    const name = normalizeName(studentNameEl.value) || "Elev";
+    state.studentName = name;
+    state.level = Number(levelEl.value);
+
+    if (!state.users[name]){
+      state.users[name] = { progress: freshProgress() };
+      saveUsers(state.users);
+    }
+    state.userData = state.users[name];
+
+    setup.classList.add("hidden");
+    app.classList.remove("hidden");
+
+    updateHeader();
+    makeProblem();
+  }
+
+  startBtn.addEventListener("click", startApp);
+  studentNameEl.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") startApp();
+  });
+
+  newStudentBtn.addEventListener("click", () => {
+    saveUsers(state.users);
+
+    state.studentName = "";
+    state.userData = null;
+
+    app.classList.add("hidden");
+    setup.classList.remove("hidden");
+
+    studentNameEl.value = "";
+    foundHintEl.classList.remove("show");
+    foundHintEl.textContent = "";
+    studentNameEl.focus();
+  });
+
+  renderStars();
+})();
+</script>
+</body>
+</html>
