@@ -4,7 +4,7 @@
    - Opt-out: <body data-season="off">
 */
 
-/* Base: do not touch app UI elements; only paint behind everything */
+/* Base: do not touch app UI elements; only paint behind everything */ 
 :root{
   --sz-season-bg: #f6f3ee; /* default fallback */
 }
