@@ -1,131 +1,115 @@
-/* scorezone-season.css */
+/* scorezone-season.css
+   Shared seasonal background layer for ScoreZone
+   - Safe-by-default: only affects body background (and optional snow layer)
+   - Opt-out: <body data-season="off">
+*/
 
-/* Base: safe defaults */
-html, body { min-height: 100%; }
+/* Base: do not touch app UI elements; only paint behind everything */
+:root{
+  --sz-season-bg: #f6f3ee; /* default fallback */
+}
 
+/* If you ever want to force a season for testing:
+   <body data-season="winter"> etc.
+*/
+
+/* Apply background */
 body{
-  /* We only control background visuals */
-  background-attachment: fixed;
-  background-repeat: no-repeat;
-  background-size: cover;
+  background: var(--sz-season-bg) !important;
+  background-attachment: fixed !important;
 }
 
-/* Optional: if a page opts out in HTML, we do nothing */
-body[data-season="off"]{
-  background-image: none !important;
+/* Season backgrounds (subtle) */
+body[data-season="spring"]{
+  --sz-season-bg:
+    radial-gradient(1200px 700px at 10% 10%, rgba(34,197,94,.10), transparent 60%),
+    radial-gradient(900px 600px at 90% 25%, rgba(56,189,248,.10), transparent 55%),
+    #f6f3ee;
 }
 
-/* ---------- Themes (subtle) ---------- */
-
-/* Default (neutral warm) */
-html[data-season="default"] body{
-  background-image:
-    radial-gradient(1200px 600px at 15% 10%, rgba(255,255,255,.7), rgba(255,255,255,0)),
-    linear-gradient(180deg, rgba(246,243,238,1), rgba(240,236,229,1));
+body[data-season="summer"]{
+  --sz-season-bg:
+    radial-gradient(1200px 700px at 10% 10%, rgba(250,204,21,.12), transparent 60%),
+    radial-gradient(900px 600px at 90% 25%, rgba(34,211,238,.10), transparent 55%),
+    #f7f4ea;
 }
 
-/* Winter (cool, subtle) + snow background */
-html[data-season="winter"] body{
-  background-image:
-    /* Snow layer (3 densities) */
-    radial-gradient(circle, rgba(255,255,255,.70) 0 1px, rgba(255,255,255,0) 2px),
-    radial-gradient(circle, rgba(255,255,255,.55) 0 1.2px, rgba(255,255,255,0) 2.4px),
-    radial-gradient(circle, rgba(255,255,255,.40) 0 1.6px, rgba(255,255,255,0) 3px),
-
-    /* Soft winter light */
-    radial-gradient(1100px 520px at 18% 12%, rgba(255,255,255,.65), rgba(255,255,255,0)),
-    linear-gradient(180deg, rgba(236,244,255,1), rgba(227,235,248,1));
-
-  /* Spread the snow dots */
-  background-size:
-    240px 240px,
-    320px 320px,
-    420px 420px,
-    cover,
-    cover;
-
-  background-position:
-    0 0,
-    0 0,
-    0 0,
-    center,
-    center;
-
-  animation: sz-snow-drift 18s linear infinite;
+body[data-season="autumn"]{
+  --sz-season-bg:
+    radial-gradient(1200px 700px at 10% 10%, rgba(245,158,11,.14), transparent 60%),
+    radial-gradient(900px 600px at 90% 25%, rgba(239,68,68,.10), transparent 55%),
+    #f6f2ea;
 }
 
-/* Xmas (slightly warmer winter) + snow background */
-html[data-season="xmas"] body{
-  background-image:
-    radial-gradient(circle, rgba(255,255,255,.72) 0 1px, rgba(255,255,255,0) 2px),
-    radial-gradient(circle, rgba(255,255,255,.55) 0 1.2px, rgba(255,255,255,0) 2.4px),
-    radial-gradient(circle, rgba(255,255,255,.42) 0 1.6px, rgba(255,255,255,0) 3px),
-
-    radial-gradient(1100px 520px at 18% 12%, rgba(255,255,255,.62), rgba(255,255,255,0)),
-    linear-gradient(180deg, rgba(255,242,242,1), rgba(235,246,255,1));
-
-  background-size:
-    240px 240px,
-    320px 320px,
-    420px 420px,
-    cover,
-    cover;
-
-  background-position:
-    0 0,
-    0 0,
-    0 0,
-    center,
-    center;
-
-  animation: sz-snow-drift 18s linear infinite;
+/* Winter gets a slightly cooler tint so white snow is visible */
+body[data-season="winter"]{
+  --sz-season-bg:
+    radial-gradient(1200px 700px at 10% 10%, rgba(147,197,253,.12), transparent 60%),
+    radial-gradient(900px 600px at 90% 25%, rgba(156,163,175,.10), transparent 55%),
+    #f3f6fb;
 }
 
-/* Easter (springy, gentle) */
-html[data-season="easter"] body{
-  background-image:
-    radial-gradient(1200px 600px at 15% 10%, rgba(255,255,255,.7), rgba(255,255,255,0)),
-    linear-gradient(180deg, rgba(242,255,245,1), rgba(244,248,255,1));
+/* December variant (still winter, slightly warmer festive tint) */
+body[data-season="xmas"]{
+  --sz-season-bg:
+    radial-gradient(1200px 700px at 10% 10%, rgba(220,38,38,.10), transparent 60%),
+    radial-gradient(900px 600px at 90% 25%, rgba(147,197,253,.12), transparent 55%),
+    #f3f6fb;
 }
 
-/* Summer (warm, bright) */
-html[data-season="summer"] body{
-  background-image:
-    radial-gradient(1200px 600px at 15% 10%, rgba(255,255,255,.75), rgba(255,255,255,0)),
-    linear-gradient(180deg, rgba(255,250,234,1), rgba(245,255,250,1));
+/* -----------------------------
+   Snow overlay (only in winter/xmas)
+   We inject #sz-snow via JS.
+   It sits behind the app (no clicks) and above body background.
+--------------------------------*/
+#sz-snow{
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0; /* behind app; your app should remain above naturally */
+  overflow: hidden;
 }
 
-/* Halloween (still “safe”: autumn tones, no spooky assets) */
-html[data-season="halloween"] body{
-  background-image:
-    radial-gradient(1200px 600px at 15% 10%, rgba(255,255,255,.65), rgba(255,255,255,0)),
-    linear-gradient(180deg, rgba(255,244,230,1), rgba(242,236,228,1));
+/* Ensure typical app wrappers stay above the snow layer without needing changes.
+   If a page has unusual stacking, you can add:
+   .wrap, .card, #app, #setup { position: relative; z-index: 1; }
+*/
+body.sz-has-snow .wrap,
+body.sz-has-snow .card,
+body.sz-has-snow #app,
+body.sz-has-snow #setup{
+  position: relative;
+  z-index: 1;
 }
 
-/* Snow drift: move the snow layers downward with slight sideways drift */
-@keyframes sz-snow-drift{
-  0%{
-    background-position:
-      0 0,
-      0 0,
-      0 0,
-      center,
-      center;
-  }
-  100%{
-    background-position:
-      -40px 520px,
-      60px 720px,
-      -80px 980px,
-      center,
-      center;
-  }
+/* Individual snowflake */
+.sz-flake{
+  position: absolute;
+  top: -12px;
+  left: 0;
+  width: var(--sz, 6px);
+  height: var(--sz, 6px);
+  border-radius: 999px;
+  background: rgba(255,255,255,.92);
+  box-shadow: 0 0 0 1px rgba(255,255,255,.35);
+  opacity: var(--op, .8);
+
+  transform: translate3d(var(--x, 0px), -20px, 0);
+  animation:
+    sz-fall var(--dur, 10s) linear infinite,
+    sz-drift var(--driftDur, 4s) ease-in-out infinite alternate;
 }
 
-/* Accessibility: if user prefers reduced motion, stop animation */
+@keyframes sz-fall{
+  to { transform: translate3d(var(--x, 0px), calc(100vh + 30px), 0); }
+}
+
+@keyframes sz-drift{
+  from { margin-left: 0px; }
+  to   { margin-left: var(--dx, 25px); }
+}
+
+/* Respect reduced motion */
 @media (prefers-reduced-motion: reduce){
-  html[data-season="winter"] body,
-  html[data-season="xmas"] body{
-    animation: none;
-  }
+  #sz-snow{ display:none !important; }
 }
