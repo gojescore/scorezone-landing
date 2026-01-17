@@ -1,78 +1,131 @@
-/* ScoreZone Seasonal Theme (background-only)
-   - Applied via: <html data-season="...">
-   - Opt-out via: <body data-season="off">
-*/
+/* scorezone-season.css */
 
-/* Base background behavior */
-html body {
-  /* Keep your app layout intact */
-  min-height: 100vh;
+/* Base: safe defaults */
+html, body { min-height: 100%; }
 
-  /* Smooth transitions when season changes (or when you test) */
-  transition: background 400ms ease, background-color 400ms ease;
-}
-
-/* If user opts out, do nothing.
-   (We cannot "unset" your app background reliably, so we just avoid overrides.) */
-body[data-season="off"] {
-  background: initial;
-  background-color: initial;
-}
-
-/* Helper: common background sizing */
-html[data-season] body {
-  background-repeat: no-repeat;
+body{
+  /* We only control background visuals */
   background-attachment: fixed;
+  background-repeat: no-repeat;
   background-size: cover;
-  background-position: center top;
 }
 
-/* DEFAULT: neutral soft paper */
-html[data-season="default"] body {
-  /* light, warm-neutral background that works with white panels */
-  background:
-    radial-gradient(1200px 600px at 20% 0%, rgba(37,99,235,0.08), transparent 55%),
-    radial-gradient(900px 500px at 80% 10%, rgba(17,24,39,0.06), transparent 55%),
-    linear-gradient(180deg, #f6f3ee 0%, #f4f2ee 100%) !important;
+/* Optional: if a page opts out in HTML, we do nothing */
+body[data-season="off"]{
+  background-image: none !important;
 }
 
-/* WINTER: cool, calm */
-html[data-season="winter"] body {
-  background:
-    radial-gradient(900px 500px at 20% 0%, rgba(147,197,253,0.20), transparent 55%),
-    radial-gradient(1100px 650px at 90% 10%, rgba(96,165,250,0.14), transparent 58%),
-    linear-gradient(180deg, #f3f7ff 0%, #eef2ff 55%, #f6f3ee 100%) !important;
+/* ---------- Themes (subtle) ---------- */
+
+/* Default (neutral warm) */
+html[data-season="default"] body{
+  background-image:
+    radial-gradient(1200px 600px at 15% 10%, rgba(255,255,255,.7), rgba(255,255,255,0)),
+    linear-gradient(180deg, rgba(246,243,238,1), rgba(240,236,229,1));
 }
 
-/* XMAS: warmer winter, still subtle */
-html[data-season="xmas"] body {
-  background:
-    radial-gradient(900px 520px at 25% 0%, rgba(220,38,38,0.12), transparent 55%),
-    radial-gradient(1100px 680px at 90% 10%, rgba(22,163,74,0.10), transparent 58%),
-    linear-gradient(180deg, #fff7f7 0%, #f3f7ff 55%, #f6f3ee 100%) !important;
+/* Winter (cool, subtle) + snow background */
+html[data-season="winter"] body{
+  background-image:
+    /* Snow layer (3 densities) */
+    radial-gradient(circle, rgba(255,255,255,.70) 0 1px, rgba(255,255,255,0) 2px),
+    radial-gradient(circle, rgba(255,255,255,.55) 0 1.2px, rgba(255,255,255,0) 2.4px),
+    radial-gradient(circle, rgba(255,255,255,.40) 0 1.6px, rgba(255,255,255,0) 3px),
+
+    /* Soft winter light */
+    radial-gradient(1100px 520px at 18% 12%, rgba(255,255,255,.65), rgba(255,255,255,0)),
+    linear-gradient(180deg, rgba(236,244,255,1), rgba(227,235,248,1));
+
+  /* Spread the snow dots */
+  background-size:
+    240px 240px,
+    320px 320px,
+    420px 420px,
+    cover,
+    cover;
+
+  background-position:
+    0 0,
+    0 0,
+    0 0,
+    center,
+    center;
+
+  animation: sz-snow-drift 18s linear infinite;
 }
 
-/* EASTER: spring soft */
-html[data-season="easter"] body {
-  background:
-    radial-gradient(900px 520px at 20% 0%, rgba(56,189,248,0.14), transparent 55%),
-    radial-gradient(900px 520px at 80% 12%, rgba(34,197,94,0.12), transparent 55%),
-    radial-gradient(800px 460px at 50% 0%, rgba(244,180,0,0.10), transparent 58%),
-    linear-gradient(180deg, #fbfffb 0%, #f7fffe 55%, #f6f3ee 100%) !important;
+/* Xmas (slightly warmer winter) + snow background */
+html[data-season="xmas"] body{
+  background-image:
+    radial-gradient(circle, rgba(255,255,255,.72) 0 1px, rgba(255,255,255,0) 2px),
+    radial-gradient(circle, rgba(255,255,255,.55) 0 1.2px, rgba(255,255,255,0) 2.4px),
+    radial-gradient(circle, rgba(255,255,255,.42) 0 1.6px, rgba(255,255,255,0) 3px),
+
+    radial-gradient(1100px 520px at 18% 12%, rgba(255,255,255,.62), rgba(255,255,255,0)),
+    linear-gradient(180deg, rgba(255,242,242,1), rgba(235,246,255,1));
+
+  background-size:
+    240px 240px,
+    320px 320px,
+    420px 420px,
+    cover,
+    cover;
+
+  background-position:
+    0 0,
+    0 0,
+    0 0,
+    center,
+    center;
+
+  animation: sz-snow-drift 18s linear infinite;
 }
 
-/* SUMMER: warm, bright */
-html[data-season="summer"] body {
-  background:
-    radial-gradient(1000px 560px at 20% 0%, rgba(244,180,0,0.14), transparent 55%),
-    radial-gradient(900px 520px at 80% 12%, rgba(96,165,250,0.12), transparent 55%),
-    linear-gradient(180deg, #fffaf0 0%, #f6fbff 55%, #f6f3ee 100%) !important;
+/* Easter (springy, gentle) */
+html[data-season="easter"] body{
+  background-image:
+    radial-gradient(1200px 600px at 15% 10%, rgba(255,255,255,.7), rgba(255,255,255,0)),
+    linear-gradient(180deg, rgba(242,255,245,1), rgba(244,248,255,1));
 }
 
-/* HALLOWEEN: very gentle autumn (no spooky visuals) */
-html[data-season="halloween"] body {
-  background:
-    radial-gradient(900px 540px at 20% 0%, rgba(245,158,11,0.14), transparent 55%),
-    radial-gradient(1100px 680px at 90% 10%, rgba(17,24,39,0.16), transparent 58%),
-    linear-gradient(180deg, #fff7ed 0%, #f6f3ee 60%, #f4efe6 100%) !important;
+/* Summer (warm, bright) */
+html[data-season="summer"] body{
+  background-image:
+    radial-gradient(1200px 600px at 15% 10%, rgba(255,255,255,.75), rgba(255,255,255,0)),
+    linear-gradient(180deg, rgba(255,250,234,1), rgba(245,255,250,1));
+}
+
+/* Halloween (still “safe”: autumn tones, no spooky assets) */
+html[data-season="halloween"] body{
+  background-image:
+    radial-gradient(1200px 600px at 15% 10%, rgba(255,255,255,.65), rgba(255,255,255,0)),
+    linear-gradient(180deg, rgba(255,244,230,1), rgba(242,236,228,1));
+}
+
+/* Snow drift: move the snow layers downward with slight sideways drift */
+@keyframes sz-snow-drift{
+  0%{
+    background-position:
+      0 0,
+      0 0,
+      0 0,
+      center,
+      center;
+  }
+  100%{
+    background-position:
+      -40px 520px,
+      60px 720px,
+      -80px 980px,
+      center,
+      center;
+  }
+}
+
+/* Accessibility: if user prefers reduced motion, stop animation */
+@media (prefers-reduced-motion: reduce){
+  html[data-season="winter"] body,
+  html[data-season="xmas"] body{
+    animation: none;
+  }
 }
