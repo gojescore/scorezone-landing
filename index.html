@@ -293,9 +293,8 @@
       </div>
     </section>
 
-    <!-- GAME TILES (single grid) -->
+    <!-- GAME TILES -->
     <main class="tiles" aria-label="Educational games">
-      <!-- Math hub tile -->
       <a class="tile" href="/math/">
         <div class="icon">🧮</div>
         <div class="text">
@@ -325,12 +324,7 @@
 
   <script>
     // --- LOCKED language system (single source of truth) ---
-    // Guarantees:
-    // 1) Selected language persists (localStorage).
-    // 2) Landing URL is always kept in sync (?lang=xx) without reloading (history.replaceState).
-    // 3) Clicking SAME-ORIGIN links automatically appends ?lang=xx (so /math/ opens correct language).
-    // 4) If a link already has ?lang=, we respect it (do not override).
-    // 5) External links (xmas.scorezone.dk) are not rewritten.
+    // Fix: no fragile e.button check (can be undefined on click events)
 
     const LANG_KEY = "scorezone_lang";
 
@@ -343,7 +337,6 @@
 
     const SUPPORTED = languages.map(l => l.code);
 
-    // Landing page translations
     const I18N = {
       da: {
         "lang.label": "Sprog",
@@ -413,13 +406,12 @@
     }
 
     function browserLang(){
-      const raw = (navigator.language || "da").toLowerCase(); // e.g. en-us
+      const raw = (navigator.language || "da").toLowerCase();
       const base = raw.split("-")[0];
       return isSupported(base) ? base : "da";
     }
 
     function currentLang(){
-      // Priority: URL ?lang= > saved > browser
       const urlLang = readLangFromUrl();
       if(urlLang){ setSavedLang(urlLang); return urlLang; }
 
@@ -431,7 +423,6 @@
       return b;
     }
 
-    // LOCK-IN: keep landing URL synced with chosen language (no reload)
     function setLangInUrl(lang){
       const url = new URL(window.location.href);
       url.searchParams.set("lang", lang);
@@ -471,7 +462,7 @@
 
         btn.addEventListener("click", () => {
           setSavedLang(lang.code);
-          setLangInUrl(lang.code);     // <- KEY FIX: makes /math/ open correct language
+          setLangInUrl(lang.code);
           updateSelectedUI(lang.code);
           applyLanguage(lang.code);
         });
@@ -507,34 +498,33 @@
       return url.toString();
     }
 
-    // LOCK-IN: auto-pass lang ONLY on same-origin navigation.
-    // This applies to tile clicks (including /math/) and any same-site links you add later.
+    // Auto-pass lang on same-origin navigation (robust)
     document.addEventListener("click", (e) => {
       const a = e.target.closest("a");
       if(!a) return;
 
-      // allow normal new-tab / modified clicks
-      if(e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return;
+      // Respect modifier keys (new tab etc.)
+      if(e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
 
       const href = a.getAttribute("href");
       if(!href || href.startsWith("#") || href.startsWith("mailto:") || href.startsWith("tel:")) return;
 
       const url = new URL(href, window.location.href);
 
-      // Only rewrite same-origin links (do NOT touch xmas.scorezone.dk)
+      // Only rewrite same-origin links (do not touch xmas.scorezone.dk)
       if(url.origin !== window.location.origin) return;
 
-      // Respect explicit lang in link
+      // If link already has lang=, do not override
       if(url.searchParams.get("lang")) return;
 
       e.preventDefault();
-      window.location.href = withLangParam(url.toString(), currentLang());
+      window.location.assign(withLangParam(url.toString(), currentLang()));
     }, true);
 
-    // INIT (locked)
+    // Init
     (function init(){
       const lang = currentLang();
-      setLangInUrl(lang);            // <- keeps URL correct even on first load
+      setLangInUrl(lang);
       renderLanguages();
       applyLanguage(lang);
       updateSelectedUI(lang);
