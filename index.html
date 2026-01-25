@@ -550,6 +550,79 @@
     renderLanguages();
     applyLanguage(getSavedLang());
     updateSelectedUI(getSavedLang());
+
+    (() => {
+  const LANG_KEY = "scorezone_lang";
+  const SUPPORTED = ["da","en","de","es"];
+
+  function browserLang(){
+    const raw = (navigator.language || "da").toLowerCase(); // e.g. "en-us"
+    const base = raw.split("-")[0]; // "en"
+    return SUPPORTED.includes(base) ? base : "da";
+  }
+
+  function readLangFromUrl(){
+    const url = new URL(window.location.href);
+    const lang = url.searchParams.get("lang");
+    return (lang && SUPPORTED.includes(lang)) ? lang : null;
+  }
+
+  function getSavedLang(){
+    const saved = localStorage.getItem(LANG_KEY);
+    return (saved && SUPPORTED.includes(saved)) ? saved : null;
+  }
+
+  function setSavedLang(lang){
+    if (SUPPORTED.includes(lang)) localStorage.setItem(LANG_KEY, lang);
+  }
+
+  function currentLang(){
+    // Priority: URL ?lang= > saved > browser
+    const urlLang = readLangFromUrl();
+    if (urlLang) { setSavedLang(urlLang); return urlLang; }
+
+    const saved = getSavedLang();
+    if (saved) return saved;
+
+    const b = browserLang();
+    setSavedLang(b);
+    return b;
+  }
+
+  function withLangParam(href, lang){
+    const url = new URL(href, window.location.href);
+    url.searchParams.set("lang", lang);
+    return url.toString();
+  }
+
+  // Ensure the landing page itself is marked correctly (helps accessibility)
+  const lang = currentLang();
+  document.documentElement.lang = lang;
+
+  // Auto-pass lang on internal navigation (same-origin links)
+  document.addEventListener("click", (e) => {
+    const a = e.target.closest("a");
+    if (!a) return;
+
+    // allow normal new-tab / modified clicks
+    if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return;
+
+    const href = a.getAttribute("href");
+    if (!href || href.startsWith("#") || href.startsWith("mailto:") || href.startsWith("tel:")) return;
+
+    const url = new URL(href, window.location.href);
+
+    // only rewrite same-origin links
+    if (url.origin !== window.location.origin) return;
+
+    // If link already has lang=, don't override it
+    if (url.searchParams.get("lang")) return;
+
+    e.preventDefault();
+    window.location.href = withLangParam(url.toString(), currentLang());
+  }, true);
+})();
   </script>
+  
 </body>
 </html>
