@@ -3,9 +3,14 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <link rel="stylesheet" href="https://scorezone.dk/assets/scorezone-season.css">
-    <script src="https://scorezone.dk/assets/scorezone-season.js" defer></script>
+  <!-- Helps reduce browser/Google auto-translate prompts -->
+  <meta name="google" content="notranslate" />
+
+  <link rel="stylesheet" href="https://scorezone.dk/assets/scorezone-season.css">
+  <script src="https://scorezone.dk/assets/scorezone-season.js" defer></script>
+
   <title>Plus Hjælper – Bank & Veksling</title>
+
   <style>
     :root{
       --bg:#f6f3ee;
@@ -256,26 +261,25 @@
       cursor:not-allowed;
     }
     .boxCount{
-  position:absolute;
-  top:2px;
-  left:2px;
-  min-width:22px;
-  height:20px;
-  padding:0 6px;
-  border-radius:20px;
-  border:1px solid var(--line);
-  background:#fff;
-  color:#111827;
-  font-weight:1000;
-  font-size:12px;
-  line-height:20px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  z-index:2;
-  background-color: #09fa11;
-}
-
+      position:absolute;
+      top:2px;
+      left:2px;
+      min-width:22px;
+      height:20px;
+      padding:0 6px;
+      border-radius:20px;
+      border:1px solid var(--line);
+      background:#fff;
+      color:#111827;
+      font-weight:1000;
+      font-size:12px;
+      line-height:20px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      z-index:2;
+      background-color: #09fa11;
+    }
 
     /* Fixed height (matches number boxes), horizontal scroll */
     .coinBox{
@@ -343,13 +347,12 @@
       color:#064e3b;
       background: linear-gradient(135deg, var(--bill2), var(--bill));
     }
-.disabled{
-  opacity: 1;                 /* no transparency */
-  cursor: not-allowed;
-  filter: grayscale(.65);     /* keeps color-ish but muted */
-  box-shadow: inset 0 0 0 2px rgba(17,24,39,.22);
-}
-
+    .disabled{
+      opacity: 1;
+      cursor: not-allowed;
+      filter: grayscale(.65);
+      box-shadow: inset 0 0 0 2px rgba(17,24,39,.22);
+    }
 
     /* Bank */
     .bankPanel{
@@ -372,10 +375,10 @@
       flex-wrap:wrap;
     }
     .bankStatus{
-  font-size:16px;
-  font-weight:900;
-  opacity:1;
-}
+      font-size:16px;
+      font-weight:900;
+      opacity:1;
+    }
 
     .bankSlot{
       border:1px solid rgba(255,255,255,.22);
@@ -474,55 +477,60 @@
 
     <!-- SETUP -->
     <div id="setup" class="card">
-      <h1>Plus Hjælper – Bank & Veksling</h1>
-      <div class="help">
+      <h1 data-i18n="plus2.title">Plus Hjælper – Bank & Veksling</h1>
+      <div class="help" data-i18n="plus2.setup.help">
         Tap mønter fra <strong>begge tal</strong> ind i banken, indtil der er 10. Tryk <strong>Veksel</strong>.
-        
       </div>
 
       <div class="row">
-        <label for="studentName">Navn</label>
-        <input id="studentName" type="text" placeholder="Skriv dit navn" autocomplete="off" />
+        <label for="studentName" data-i18n="label.name">Navn</label>
+        <input
+          id="studentName"
+          type="text"
+          autocomplete="off"
+          data-i18n-placeholder="placeholder.name"
+          placeholder="Skriv dit navn"
+        />
       </div>
 
       <div id="foundHint" class="hintFound" aria-live="polite"></div>
 
       <div class="row">
-        <label for="level">Start-niveau</label>
+        <label for="level" data-i18n="label.startLevel">Start-niveau</label>
         <select id="level">
-          <option value="1">Niveau 1</option>
-          <option value="2">Niveau 2</option>
-          <option value="3">Niveau 3 (hver 5. gang: tal1 er 3 cifre og ti’ere=0)</option>
+          <option value="1" data-i18n="plus2.level.1">Niveau 1</option>
+          <option value="2" data-i18n="plus2.level.2">Niveau 2</option>
+          <option value="3" data-i18n="plus2.level.3">Niveau 3 (hver 5. gang: tal1 er 3 cifre og ti’ere=0)</option>
         </select>
       </div>
 
       <div class="row">
-        <button id="startBtn">Start</button>
+        <button id="startBtn" data-i18n="btn.start">Start</button>
       </div>
     </div>
 
     <!-- APP -->
     <div id="app" class="hidden">
       <div class="topbar">
-        <h1>Plus Hjælper – Bank & Veksling</h1>
+        <h1 data-i18n="plus2.title">Plus Hjælper – Bank & Veksling</h1>
 
         <div class="meta">
           <span class="badge"><strong id="who">—</strong></span>
 
           <span class="badge">
-            Niveau:
-            <select id="levelInGame" class="lvlSel" aria-label="Skift niveau">
+            <span data-i18n="label.level">Niveau</span>:
+            <select id="levelInGame" class="lvlSel" data-i18n-aria-label="aria.changeLevel" aria-label="Skift niveau">
               <option value="1">1</option>
               <option value="2">2</option>
               <option value="3">3</option>
             </select>
-            <button id="applyLevelBtn" class="miniBtn" type="button">Skift</button>
+            <button id="applyLevelBtn" class="miniBtn" type="button" data-i18n="btn.switch">Skift</button>
           </span>
 
-          <span class="badge">Streak: <strong id="streak">0</strong></span>
-          <span class="badge">Stjerner: <span class="stars" id="stars"></span></span>
+          <span class="badge"><span data-i18n="label.streak">Streak</span>: <strong id="streak">0</strong></span>
+          <span class="badge"><span data-i18n="label.stars">Stjerner</span>: <span class="stars" id="stars"></span></span>
 
-          <button class="secondary" id="newStudentBtn" type="button">Ny elev</button>
+          <button class="secondary" id="newStudentBtn" type="button" data-i18n="btn.newStudent">Ny elev</button>
         </div>
       </div>
 
@@ -555,12 +563,12 @@
             <div class="resultRow">
               <div class="inputs">
                 <div></div>
-                <input class="digitInput" id="ansH" inputmode="numeric" maxlength="1" aria-label="Hundreder" />
-                <input class="digitInput" id="ansT" inputmode="numeric" maxlength="1" aria-label="Ti'ere" />
-                <input class="digitInput" id="ansO" inputmode="numeric" maxlength="1" aria-label="Enere" />
+                <input class="digitInput" id="ansH" inputmode="numeric" maxlength="1" data-i18n-aria-label="aria.hundreds" aria-label="Hundreder" />
+                <input class="digitInput" id="ansT" inputmode="numeric" maxlength="1" data-i18n-aria-label="aria.tens" aria-label="Ti'ere" />
+                <input class="digitInput" id="ansO" inputmode="numeric" maxlength="1" data-i18n-aria-label="aria.ones" aria-label="Enere" />
               </div>
 
-              <button id="answerBtn" type="button">Svar</button>
+              <button id="answerBtn" type="button" data-i18n="btn.answer">Svar</button>
             </div>
           </div>
 
@@ -568,53 +576,51 @@
           <div class="coinSide">
 
             <div>
-              <div class="coinGroupTitle">Tal 1 – 100 / 10 / 1</div>
+              <div class="coinGroupTitle" data-i18n="plus2.group.a">Tal 1 – 100 / 10 / 1</div>
               <div class="coinRow3">
 
-               <div class="coinBoxWrap">
-  <button class="boxBtn" id="btnA100" type="button" disabled title="(ikke aktiv i denne version)">↦</button>
-  <div class="boxCount" id="countA100">0</div>
-  <div class="coinBox" id="aBoxH"></div>
-</div>
+                <div class="coinBoxWrap">
+                  <button class="boxBtn" id="btnA100" type="button" disabled data-i18n-title="title.notActive" title="(ikke aktiv i denne version)">↦</button>
+                  <div class="boxCount" id="countA100">0</div>
+                  <div class="coinBox" id="aBoxH"></div>
+                </div>
 
-<div class="coinBoxWrap">
-  <button class="boxBtn" id="btnA10" type="button" title="Send alle til bank">↦</button>
-  <div class="boxCount" id="countA10">0</div>
-  <div class="coinBox" id="aBoxT"></div>
-</div>
+                <div class="coinBoxWrap">
+                  <button class="boxBtn" id="btnA10" type="button" data-i18n-title="title.sendAllToBank" title="Send alle til bank">↦</button>
+                  <div class="boxCount" id="countA10">0</div>
+                  <div class="coinBox" id="aBoxT"></div>
+                </div>
 
-<div class="coinBoxWrap">
-  <button class="boxBtn" id="btnA1" type="button" title="Send alle til bank">↦</button>
-  <div class="boxCount" id="countA1">0</div>
-  <div class="coinBox" id="aBoxO"></div>
-</div>
-
+                <div class="coinBoxWrap">
+                  <button class="boxBtn" id="btnA1" type="button" data-i18n-title="title.sendAllToBank" title="Send alle til bank">↦</button>
+                  <div class="boxCount" id="countA1">0</div>
+                  <div class="coinBox" id="aBoxO"></div>
+                </div>
 
               </div>
             </div>
 
             <div>
-              <div class="coinGroupTitle">Tal 2 – 100 / 10 / 1</div>
+              <div class="coinGroupTitle" data-i18n="plus2.group.b">Tal 2 – 100 / 10 / 1</div>
               <div class="coinRow3">
 
-               <div class="coinBoxWrap">
-  <button class="boxBtn" id="btnB100" type="button" disabled title="(ikke aktiv i denne version)">↦</button>
-  <div class="boxCount" id="countB100">0</div>
-  <div class="coinBox" id="bBoxH"></div>
-</div>
+                <div class="coinBoxWrap">
+                  <button class="boxBtn" id="btnB100" type="button" disabled data-i18n-title="title.notActive" title="(ikke aktiv i denne version)">↦</button>
+                  <div class="boxCount" id="countB100">0</div>
+                  <div class="coinBox" id="bBoxH"></div>
+                </div>
 
-<div class="coinBoxWrap">
-  <button class="boxBtn" id="btnB10" type="button" title="Send alle til bank">↦</button>
-  <div class="boxCount" id="countB10">0</div>
-  <div class="coinBox" id="bBoxT"></div>
-</div>
+                <div class="coinBoxWrap">
+                  <button class="boxBtn" id="btnB10" type="button" data-i18n-title="title.sendAllToBank" title="Send alle til bank">↦</button>
+                  <div class="boxCount" id="countB10">0</div>
+                  <div class="coinBox" id="bBoxT"></div>
+                </div>
 
-<div class="coinBoxWrap">
-  <button class="boxBtn" id="btnB1" type="button" title="Send alle til bank">↦</button>
-  <div class="boxCount" id="countB1">0</div>
-  <div class="coinBox" id="bBoxO"></div>
-</div>
-
+                <div class="coinBoxWrap">
+                  <button class="boxBtn" id="btnB1" type="button" data-i18n-title="title.sendAllToBank" title="Send alle til bank">↦</button>
+                  <div class="boxCount" id="countB1">0</div>
+                  <div class="coinBox" id="bBoxO"></div>
+                </div>
 
               </div>
             </div>
@@ -624,19 +630,19 @@
 
         <!-- BANK under all other boxes -->
         <div class="bankPanel">
-          <button class="bankTopBtn" id="returnAllBtn" type="button" disabled>Returnér alle</button>
+          <button class="bankTopBtn" id="returnAllBtn" type="button" disabled data-i18n="btn.returnAll">Returnér alle</button>
 
-          <h2>Bank</h2>
+          <h2 data-i18n="bank.title">Bank</h2>
           <div class="bankHint" id="bankHint">—</div>
 
           <div class="bankSlot" id="bankSlot" aria-label="Bank slot"></div>
 
           <div class="bankRow">
-            <button id="exchangeBtn" type="button" disabled>Veksel</button>
-            <div class="bankStatus" id="bankStatus">Banken er tom.</div>
+            <button id="exchangeBtn" type="button" disabled data-i18n="btn.exchange">Veksel</button>
+            <div class="bankStatus" id="bankStatus" data-i18n="bank.empty">Banken er tom.</div>
           </div>
 
-          <div class="tinyNote">
+          <div class="tinyNote" data-i18n="bank.note">
             Tryk på en mønt i banken for at lægge den tilbage til det tal, den kom fra (med animation).
           </div>
         </div>
@@ -653,14 +659,362 @@
       <div class="mtext" id="modalText">—</div>
       <div class="mtext" id="modalSub">—</div>
       <div class="btnRow">
-        <button class="secondary" id="modalBtn" type="button">Næste</button>
+        <button class="secondary" id="modalBtn" type="button" data-i18n="btn.next">Næste</button>
       </div>
     </div>
   </div>
 
 <script>
+/* -------------------- ScoreZone i18n (Plus2) -------------------- */
+(() => {
+  const LANG_KEY = "scorezone_lang";
+  const SUPPORTED = ["da","en","de","es"];
+
+  const I18N = {
+    da: {
+      "plus2.title": "Plus Hjælper – Bank & Veksling",
+      "plus2.setup.help": `Tap mønter fra <strong>begge tal</strong> ind i banken, indtil der er 10. Tryk <strong>Veksel</strong>.`,
+
+      "label.name": "Navn",
+      "placeholder.name": "Skriv dit navn",
+      "label.startLevel": "Start-niveau",
+      "plus2.level.1": "Niveau 1",
+      "plus2.level.2": "Niveau 2",
+      "plus2.level.3": "Niveau 3 (hver 5. gang: tal1 er 3 cifre og ti’ere=0)",
+
+      "label.level": "Niveau",
+      "label.streak": "Streak",
+      "label.stars": "Stjerner",
+
+      "btn.start": "Start",
+      "btn.switch": "Skift",
+      "btn.newStudent": "Ny elev",
+      "btn.answer": "Svar",
+      "btn.exchange": "Veksel",
+      "btn.returnAll": "Returnér alle",
+      "btn.next": "Næste",
+
+      "plus2.group.a": "Tal 1 – 100 / 10 / 1",
+      "plus2.group.b": "Tal 2 – 100 / 10 / 1",
+
+      "bank.title": "Bank",
+      "bank.empty": "Banken er tom.",
+      "bank.note": "Tryk på en mønt i banken for at lægge den tilbage til det tal, den kom fra (med animation).",
+
+      "bank.hint.ones": "<strong>Trin:</strong> Tap <strong>1’ere</strong> i banken (fra begge tal). Når der er 10 → Veksel.",
+      "bank.hint.tens": "<strong>Trin:</strong> Tap <strong>10’ere</strong> i banken (fra begge tal). Når der er 10 → Veksel.",
+
+      "bank.status.count.ones": "I banken: {n} × 1",
+      "bank.status.count.tens": "I banken: {n} × 10",
+      "bank.status.exchanging": "Veksler… 10×{from} → 1×{to}",
+
+      "title.sendAllToBank": "Send alle til bank",
+      "title.notActive": "(ikke aktiv i denne version)",
+
+      "aria.changeLevel": "Skift niveau",
+      "aria.hundreds": "Hundreder",
+      "aria.tens": "Ti'ere",
+      "aria.ones": "Enere",
+
+      "found.exists": `Tidligere elev fundet: "{name}". N1: streak {s1}, stjerner {st1}. N2: streak {s2}, stjerner {st2}. N3: streak {s3}, stjerner {st3}.`,
+
+      "overlay.ok.sub": "Næste opgave klar.",
+      "overlay.bad.sub": "Prøv igen på næste opgave.",
+
+      "overlay.bad.title": "Ikke helt, {name}.",
+      "overlay.correct": "Rigtigt svar: {correct}",
+      "overlay.eq": "{a} + {b} = {correct}",
+
+      "praise.0": "Godt klaret",
+      "praise.1": "Flot arbejde",
+      "praise.2": "Super",
+      "praise.3": "Stærkt",
+      "praise.4": "Rigtig godt",
+    },
+
+    en: {
+      "plus2.title": "Plus Helper – Bank & Exchange",
+      "plus2.setup.help": `Tap coins from <strong>both numbers</strong> into the bank until there are 10. Press <strong>Exchange</strong>.`,
+
+      "label.name": "Name",
+      "placeholder.name": "Type your name",
+      "label.startLevel": "Start level",
+      "plus2.level.1": "Level 1",
+      "plus2.level.2": "Level 2",
+      "plus2.level.3": "Level 3 (every 5th time: number 1 has 3 digits and tens=0)",
+
+      "label.level": "Level",
+      "label.streak": "Streak",
+      "label.stars": "Stars",
+
+      "btn.start": "Start",
+      "btn.switch": "Switch",
+      "btn.newStudent": "New student",
+      "btn.answer": "Answer",
+      "btn.exchange": "Exchange",
+      "btn.returnAll": "Return all",
+      "btn.next": "Next",
+
+      "plus2.group.a": "Number 1 – 100 / 10 / 1",
+      "plus2.group.b": "Number 2 – 100 / 10 / 1",
+
+      "bank.title": "Bank",
+      "bank.empty": "The bank is empty.",
+      "bank.note": "Click a coin in the bank to return it to the number it came from (with animation).",
+
+      "bank.hint.ones": "<strong>Step:</strong> Tap <strong>1s</strong> into the bank (from both numbers). When there are 10 → Exchange.",
+      "bank.hint.tens": "<strong>Step:</strong> Tap <strong>10s</strong> into the bank (from both numbers). When there are 10 → Exchange.",
+
+      "bank.status.count.ones": "In bank: {n} × 1",
+      "bank.status.count.tens": "In bank: {n} × 10",
+      "bank.status.exchanging": "Exchanging… 10×{from} → 1×{to}",
+
+      "title.sendAllToBank": "Send all to bank",
+      "title.notActive": "(not active in this version)",
+
+      "aria.changeLevel": "Change level",
+      "aria.hundreds": "Hundreds",
+      "aria.tens": "Tens",
+      "aria.ones": "Ones",
+
+      "found.exists": `Previous student found: "{name}". L1: streak {s1}, stars {st1}. L2: streak {s2}, stars {st2}. L3: streak {s3}, stars {st3}.`,
+
+      "overlay.ok.sub": "Ready for the next problem.",
+      "overlay.bad.sub": "Try again on the next problem.",
+
+      "overlay.bad.title": "Not quite, {name}.",
+      "overlay.correct": "Correct answer: {correct}",
+      "overlay.eq": "{a} + {b} = {correct}",
+
+      "praise.0": "Well done",
+      "praise.1": "Great work",
+      "praise.2": "Nice",
+      "praise.3": "Strong",
+      "praise.4": "Excellent",
+    },
+
+    de: {
+      "plus2.title": "Plus-Helfer – Bank & Tausch",
+      "plus2.setup.help": `Tippe Münzen von <strong>beiden Zahlen</strong> in die Bank, bis es 10 sind. Dann <strong>Tauschen</strong>.`,
+
+      "label.name": "Name",
+      "placeholder.name": "Name eingeben",
+      "label.startLevel": "Start-Level",
+      "plus2.level.1": "Level 1",
+      "plus2.level.2": "Level 2",
+      "plus2.level.3": "Level 3 (jedes 5. Mal: Zahl 1 hat 3 Ziffern und Zehner=0)",
+
+      "label.level": "Level",
+      "label.streak": "Serie",
+      "label.stars": "Sterne",
+
+      "btn.start": "Start",
+      "btn.switch": "Wechseln",
+      "btn.newStudent": "Neuer Schüler",
+      "btn.answer": "Antwort",
+      "btn.exchange": "Tauschen",
+      "btn.returnAll": "Alles zurück",
+      "btn.next": "Weiter",
+
+      "plus2.group.a": "Zahl 1 – 100 / 10 / 1",
+      "plus2.group.b": "Zahl 2 – 100 / 10 / 1",
+
+      "bank.title": "Bank",
+      "bank.empty": "Die Bank ist leer.",
+      "bank.note": "Klicke eine Münze in der Bank, um sie zurückzulegen (mit Animation).",
+
+      "bank.hint.ones": "<strong>Schritt:</strong> Tippe <strong>1er</strong> in die Bank (von beiden Zahlen). Bei 10 → Tauschen.",
+      "bank.hint.tens": "<strong>Schritt:</strong> Tippe <strong>10er</strong> in die Bank (von beiden Zahlen). Bei 10 → Tauschen.",
+
+      "bank.status.count.ones": "In Bank: {n} × 1",
+      "bank.status.count.tens": "In Bank: {n} × 10",
+      "bank.status.exchanging": "Tausche… 10×{from} → 1×{to}",
+
+      "title.sendAllToBank": "Alles zur Bank",
+      "title.notActive": "(in dieser Version nicht aktiv)",
+
+      "aria.changeLevel": "Level ändern",
+      "aria.hundreds": "Hunderter",
+      "aria.tens": "Zehner",
+      "aria.ones": "Einer",
+
+      "found.exists": `Vorheriger Schüler gefunden: "{name}". L1: Serie {s1}, Sterne {st1}. L2: Serie {s2}, Sterne {st2}. L3: Serie {s3}, Sterne {st3}.`,
+
+      "overlay.ok.sub": "Bereit für die nächste Aufgabe.",
+      "overlay.bad.sub": "Versuche es bei der nächsten Aufgabe erneut.",
+
+      "overlay.bad.title": "Nicht ganz, {name}.",
+      "overlay.correct": "Richtig: {correct}",
+      "overlay.eq": "{a} + {b} = {correct}",
+
+      "praise.0": "Gut gemacht",
+      "praise.1": "Tolle Arbeit",
+      "praise.2": "Super",
+      "praise.3": "Stark",
+      "praise.4": "Sehr gut",
+    },
+
+    es: {
+      "plus2.title": "Ayuda de Suma – Banco y Cambio",
+      "plus2.setup.help": `Toca monedas de <strong>ambos números</strong> al banco hasta llegar a 10. Pulsa <strong>Cambiar</strong>.`,
+
+      "label.name": "Nombre",
+      "placeholder.name": "Escribe tu nombre",
+      "label.startLevel": "Nivel inicial",
+      "plus2.level.1": "Nivel 1",
+      "plus2.level.2": "Nivel 2",
+      "plus2.level.3": "Nivel 3 (cada 5ª vez: el número 1 tiene 3 cifras y decenas=0)",
+
+      "label.level": "Nivel",
+      "label.streak": "Racha",
+      "label.stars": "Estrellas",
+
+      "btn.start": "Empezar",
+      "btn.switch": "Cambiar",
+      "btn.newStudent": "Nuevo alumno",
+      "btn.answer": "Responder",
+      "btn.exchange": "Cambiar",
+      "btn.returnAll": "Devolver todo",
+      "btn.next": "Siguiente",
+
+      "plus2.group.a": "Número 1 – 100 / 10 / 1",
+      "plus2.group.b": "Número 2 – 100 / 10 / 1",
+
+      "bank.title": "Banco",
+      "bank.empty": "El banco está vacío.",
+      "bank.note": "Haz clic en una moneda del banco para devolverla al número de origen (con animación).",
+
+      "bank.hint.ones": "<strong>Paso:</strong> Toca <strong>1</strong> en el banco (de ambos números). Al llegar a 10 → Cambiar.",
+      "bank.hint.tens": "<strong>Paso:</strong> Toca <strong>10</strong> en el banco (de ambos números). Al llegar a 10 → Cambiar.",
+
+      "bank.status.count.ones": "En banco: {n} × 1",
+      "bank.status.count.tens": "En banco: {n} × 10",
+      "bank.status.exchanging": "Cambiando… 10×{from} → 1×{to}",
+
+      "title.sendAllToBank": "Enviar todo al banco",
+      "title.notActive": "(no activo en esta versión)",
+
+      "aria.changeLevel": "Cambiar nivel",
+      "aria.hundreds": "Centenas",
+      "aria.tens": "Decenas",
+      "aria.ones": "Unidades",
+
+      "found.exists": `Alumno anterior encontrado: "{name}". N1: racha {s1}, estrellas {st1}. N2: racha {s2}, estrellas {st2}. N3: racha {s3}, estrellas {st3}.`,
+
+      "overlay.ok.sub": "Listo para el siguiente ejercicio.",
+      "overlay.bad.sub": "Inténtalo de nuevo en el siguiente ejercicio.",
+
+      "overlay.bad.title": "No del todo, {name}.",
+      "overlay.correct": "Correcto: {correct}",
+      "overlay.eq": "{a} + {b} = {correct}",
+
+      "praise.0": "Bien hecho",
+      "praise.1": "Gran trabajo",
+      "praise.2": "Genial",
+      "praise.3": "Muy bien",
+      "praise.4": "Excelente",
+    }
+  };
+
+  function readLangFromUrl(){
+    const url = new URL(window.location.href);
+    const lang = url.searchParams.get("lang");
+    return (lang && SUPPORTED.includes(lang)) ? lang : null;
+  }
+  function getSavedLang(){
+    const saved = localStorage.getItem(LANG_KEY);
+    return (saved && SUPPORTED.includes(saved)) ? saved : "da";
+  }
+  function setSavedLang(lang){
+    if (SUPPORTED.includes(lang)) localStorage.setItem(LANG_KEY, lang);
+  }
+
+  function fmt(str, vars){
+    if (!vars) return str;
+    return str.replace(/\{(\w+)\}/g, (_, k) => (vars[k] ?? `{${k}}`));
+  }
+
+  function t(key, vars){
+    const lang = getSavedLang();
+    const dict = I18N[lang] || I18N.da;
+    const fallback = I18N.da[key];
+    const raw = (dict[key] ?? fallback ?? key);
+    return fmt(String(raw), vars);
+  }
+
+  function applyLanguage(lang){
+    const dict = I18N[lang] || I18N.da;
+
+    // textContent replacements
+    document.querySelectorAll("[data-i18n]").forEach(el => {
+      const key = el.getAttribute("data-i18n");
+      const val = dict[key] ?? I18N.da[key];
+      if (typeof val !== "string") return;
+      // Allow HTML if it contains markup (we store help/hints with <strong>)
+      if (val.includes("<") && val.includes(">")) el.innerHTML = val;
+      else el.textContent = val;
+    });
+
+    // placeholder
+    document.querySelectorAll("[data-i18n-placeholder]").forEach(el => {
+      const key = el.getAttribute("data-i18n-placeholder");
+      const val = dict[key] ?? I18N.da[key];
+      if (typeof val === "string") el.setAttribute("placeholder", val);
+    });
+
+    // title
+    document.querySelectorAll("[data-i18n-title]").forEach(el => {
+      const key = el.getAttribute("data-i18n-title");
+      const val = dict[key] ?? I18N.da[key];
+      if (typeof val === "string") el.setAttribute("title", val);
+    });
+
+    // aria-label
+    document.querySelectorAll("[data-i18n-aria-label]").forEach(el => {
+      const key = el.getAttribute("data-i18n-aria-label");
+      const val = dict[key] ?? I18N.da[key];
+      if (typeof val === "string") el.setAttribute("aria-label", val);
+    });
+
+    document.documentElement.lang = lang;
+    document.title = dict["plus2.title"] ?? I18N.da["plus2.title"] ?? document.title;
+  }
+
+  // Keep internal navigation links in same language (optional)
+  function withLangParam(rawHref, lang){
+    const url = new URL(rawHref, window.location.href);
+    url.searchParams.set("lang", lang);
+    return url.toString();
+  }
+  document.addEventListener("click", (e) => {
+    const a = e.target.closest("a");
+    if (!a) return;
+    if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+
+    const href = a.getAttribute("href");
+    if (!href) return;
+
+    const url = new URL(href, window.location.href);
+    if (url.origin !== window.location.origin) return;
+
+    e.preventDefault();
+    const lang = getSavedLang();
+    window.location.href = withLangParam(url.toString(), lang);
+  });
+
+  const urlLang = readLangFromUrl();
+  if (urlLang) setSavedLang(urlLang);
+  applyLanguage(getSavedLang());
+
+  // Expose minimal API for the game script
+  window.SZ_I18N = { t, getLang: getSavedLang, setLang: setSavedLang, applyLanguage };
+})();
+</script>
+
+<script>
 (() => {
   const $ = (id) => document.getElementById(id);
+  const t = (key, vars) => window.SZ_I18N ? window.SZ_I18N.t(key, vars) : key;
 
   /* ---------- Per-student storage ---------- */
   const STORAGE_KEY = "plusHelper_users_v1";
@@ -735,7 +1089,6 @@
   const countB10  = $("countB10");
   const countB1   = $("countB1");
 
-
   const state = {
     studentName: "",
     level: 1,
@@ -765,9 +1118,9 @@
   function randInt(min, max){ return Math.floor(Math.random()*(max-min+1))+min; }
   function digits3(n){
     const h = Math.floor(n/100);
-    const t = Math.floor((n%100)/10);
+    const t2 = Math.floor((n%100)/10);
     const o = n%10;
-    return {h,t,o};
+    return {h, t: t2, o};
   }
   function clampDigitInput(el){
     el.value = el.value.replace(/[^0-9]/g, "");
@@ -807,9 +1160,9 @@
     let a;
     if (forced){
       const h = randInt(1,4);
-      const t = 0;
+      const t2 = 0;
       const o = randInt(0,9);
-      a = h*100 + t*10 + o;
+      a = h*100 + t2*10 + o;
       if (a < 100) a = 100;
     } else {
       a = randInt(16, 499);
@@ -854,34 +1207,32 @@
 
   function bankCount(){ return state.bankItems.length; }
 
-function canTapDenom(denom){
-  return (state.stage === "ones" && denom === "o") ||
-         (state.stage === "tens" && denom === "t");
-}
-
-
-function updateTopRightButtons(){
-  if (state.isExchanging || state.overlayOpen){
-    btnA1.disabled = true;
-    btnB1.disabled = true;
-    btnA10.disabled = true;
-    btnB10.disabled = true;
-    returnAllBtn.disabled = true;
-    return;
+  function canTapDenom(denom){
+    return (state.stage === "ones" && denom === "o") ||
+           (state.stage === "tens" && denom === "t");
   }
 
-  const onesActive = canTapDenom("o");
-  const tensActive = canTapDenom("t");
+  function updateTopRightButtons(){
+    if (state.isExchanging || state.overlayOpen){
+      btnA1.disabled = true;
+      btnB1.disabled = true;
+      btnA10.disabled = true;
+      btnB10.disabled = true;
+      returnAllBtn.disabled = true;
+      return;
+    }
 
-  btnA1.disabled  = !onesActive || state.coinsA.o === 0;
-  btnB1.disabled  = !onesActive || state.coinsB.o === 0;
+    const onesActive = canTapDenom("o");
+    const tensActive = canTapDenom("t");
 
-  btnA10.disabled = !tensActive || state.coinsA.t === 0;
-  btnB10.disabled = !tensActive || state.coinsB.t === 0;
+    btnA1.disabled  = !onesActive || state.coinsA.o === 0;
+    btnB1.disabled  = !onesActive || state.coinsB.o === 0;
 
-  returnAllBtn.disabled = (bankCount() === 0);
-}
+    btnA10.disabled = !tensActive || state.coinsA.t === 0;
+    btnB10.disabled = !tensActive || state.coinsB.t === 0;
 
+    returnAllBtn.disabled = (bankCount() === 0);
+  }
 
   function updateExchangeBtn(){
     exchangeBtn.disabled = state.isExchanging || bankCount() < 10;
@@ -889,17 +1240,19 @@ function updateTopRightButtons(){
 
   function updateBankHint(){
     if (state.stage === "ones"){
-      bankHintEl.innerHTML = `<strong>Trin:</strong> Tap <strong>1’ere</strong> i banken (fra begge tal). Når der er 10 → Veksel.`;
+      bankHintEl.innerHTML = t("bank.hint.ones");
     } else {
-      bankHintEl.innerHTML = `<strong>Trin:</strong> Tap <strong>10’ere</strong> i banken (fra begge tal). Når der er 10 → Veksel.`;
+      bankHintEl.innerHTML = t("bank.hint.tens");
     }
   }
 
   function updateBankStatus(){
-    const denomLabel = (state.stage === "ones") ? "1" : "10";
-    bankStatusEl.textContent = (bankCount() === 0)
-      ? "Banken er tom."
-      : `I banken: ${bankCount()} × ${denomLabel}`;
+    if (bankCount() === 0){
+      bankStatusEl.textContent = t("bank.empty");
+      return;
+    }
+    const denomLabel = (state.stage === "ones") ? "ones" : "tens";
+    bankStatusEl.textContent = t(`bank.status.count.${denomLabel}`, { n: bankCount() });
   }
 
   function resetBank(){
@@ -916,19 +1269,18 @@ function updateTopRightButtons(){
   }
 
   function renderBoxCounts(){
-  countA100.textContent = state.coinsA.h;
-  countA10.textContent  = state.coinsA.t;
-  countA1.textContent   = state.coinsA.o;
+    countA100.textContent = state.coinsA.h;
+    countA10.textContent  = state.coinsA.t;
+    countA1.textContent   = state.coinsA.o;
 
-  countB100.textContent = state.coinsB.h;
-  countB10.textContent  = state.coinsB.t;
-  countB1.textContent   = state.coinsB.o;
-}
+    countB100.textContent = state.coinsB.h;
+    countB10.textContent  = state.coinsB.t;
+    countB1.textContent   = state.coinsB.o;
+  }
 
   function renderCoins(){
     clearBoxes();
     renderBoxCounts();
-
 
     // A
     for (let i=0;i<state.coinsA.h;i++){
@@ -1023,7 +1375,11 @@ function updateTopRightButtons(){
 
   function bankAddVisual(item){
     const node = makeCoinNode(item.denom);
-    node.title = `Tryk for at lægge tilbage (${item.owner === "A" ? "Tal 1" : "Tal 2"})`;
+    node.title = (item.owner === "A") ? "Return to number 1" : "Return to number 2";
+    // Localize tooltip:
+    node.title = (item.owner === "A")
+      ? (window.SZ_I18N?.getLang() === "da" ? "Tryk for at lægge tilbage (Tal 1)" : "Click to return (Number 1)")
+      : (window.SZ_I18N?.getLang() === "da" ? "Tryk for at lægge tilbage (Tal 2)" : "Click to return (Number 2)");
     node.addEventListener("click", () => returnFromBank(item, node));
     bankSlotEl.appendChild(node);
   }
@@ -1198,7 +1554,9 @@ function updateTopRightButtons(){
     }
 
     const toDenom = exchangeTargetDenom();
-    bankStatusEl.textContent = `Veksler… 10×${state.stage === "ones" ? "1" : "10"} → 1×${toDenom === "t" ? "10" : "100"}`;
+    const from = (state.stage === "ones") ? "1" : "10";
+    const to = (toDenom === "t") ? "10" : "100";
+    bankStatusEl.textContent = t("bank.status.exchanging", { from, to });
 
     const newNode = makeCoinNode(toDenom);
     newNode.classList.add("disabled");
@@ -1234,26 +1592,26 @@ function updateTopRightButtons(){
   // Answer / overlay (streak + stars per student + per level)
   function parseGivenAnswer(){
     const h = ansHEl.value === "" ? 0 : Number(ansHEl.value);
-    const t = ansTEl.value === "" ? 0 : Number(ansTEl.value);
+    const t2 = ansTEl.value === "" ? 0 : Number(ansTEl.value);
     const o = ansOEl.value === "" ? 0 : Number(ansOEl.value);
-    return h*100 + t*10 + o;
+    return h*100 + t2*10 + o;
   }
 
-  const praise = ["Godt klaret", "Flot arbejde", "Super", "Stærkt", "Rigtig godt"];
   function praiseLine(name){
-    return `${praise[randInt(0, praise.length-1)]}, ${name}!`;
+    const idx = randInt(0, 4);
+    return `${t(`praise.${idx}`)}, ${name}!`;
   }
 
   function showOverlay(ok, correct){
-    const name = state.studentName || "Elev";
+    const name = state.studentName || "Student";
     if (ok){
       modalTitleEl.innerHTML = `<span class="good">${praiseLine(name)}</span>`;
-      modalTextEl.textContent = `${state.a} + ${state.b} = ${correct}`;
-      modalSubEl.textContent = "Næste opgave klar.";
+      modalTextEl.textContent = t("overlay.eq", { a: state.a, b: state.b, correct });
+      modalSubEl.textContent = t("overlay.ok.sub");
     } else {
-      modalTitleEl.innerHTML = `<span class="bad">Ikke helt, ${name}.</span>`;
-      modalTextEl.textContent = `Rigtigt svar: ${correct}`;
-      modalSubEl.textContent = "Prøv igen på næste opgave.";
+      modalTitleEl.innerHTML = `<span class="bad">${t("overlay.bad.title", { name })}</span>`;
+      modalTextEl.textContent = t("overlay.correct", { correct });
+      modalSubEl.textContent = t("overlay.bad.sub");
     }
     state.overlayOpen = true;
     overlayEl.classList.add("show");
@@ -1399,11 +1757,12 @@ function updateTopRightButtons(){
     }
 
     const p = state.users[name].progress;
-    const msg =
-      `Tidligere elev fundet: "${name}". ` +
-      `N1: streak ${p[1].streak}, stjerner ${p[1].stars}. ` +
-      `N2: streak ${p[2].streak}, stjerner ${p[2].stars}. ` +
-      `N3: streak ${p[3].streak}, stjerner ${p[3].stars}.`;
+    const msg = t("found.exists", {
+      name,
+      s1: p[1].streak, st1: p[1].stars,
+      s2: p[2].streak, st2: p[2].stars,
+      s3: p[3].streak, st3: p[3].stars
+    });
 
     foundHintEl.textContent = msg;
     foundHintEl.classList.add("show");
@@ -1414,7 +1773,7 @@ function updateTopRightButtons(){
 
   // Start/reset
   function startApp(){
-    const name = normalizeName(studentNameEl.value) || "Elev";
+    const name = normalizeName(studentNameEl.value) || (window.SZ_I18N?.getLang() === "da" ? "Elev" : "Student");
     state.studentName = name;
     state.level = Number(levelEl.value);
 
@@ -1451,6 +1810,9 @@ function updateTopRightButtons(){
     studentNameEl.focus();
   });
 
+  // Re-apply i18n to ensure the bank empty text is correct on load
+  bankStatusEl.textContent = t("bank.empty");
+  updateBankHint();
   renderStars();
 })();
 </script>
