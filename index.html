@@ -326,7 +326,7 @@
   </div>
 
   <script>
-    // --- Language carousel + i18n + Option A (append ?lang=xx to tile clicks) ---
+    // --- Language carousel + i18n + auto-pass ?lang=xx on same-origin links ---
     const LANG_KEY = "scorezone_lang";
 
     const languages = [
@@ -343,7 +343,6 @@
         "hero.title": "ScoreZone",
         "hero.lead": "Simple og engagerende læringsspil til elever, lærere og klasselokalet.",
 
-        /* ADDED: Math tile translations */
         "tile.math.title": "Matematik",
         "tile.math.sub": "Gå til matematikspil",
 
@@ -368,7 +367,6 @@
         "hero.title": "ScoreZone",
         "hero.lead": "Simple, engaging educational games designed for students, teachers, and classrooms.",
 
-        /* ADDED: Math tile translations */
         "tile.math.title": "Math",
         "tile.math.sub": "Go to math games",
 
@@ -393,7 +391,6 @@
         "hero.title": "ScoreZone",
         "hero.lead": "Einfache, motivierende Lernspiele für Schüler, Lehrkräfte und den Unterricht.",
 
-        /* ADDED: Math tile translations */
         "tile.math.title": "Mathe",
         "tile.math.sub": "Zu den Mathe-Spielen",
 
@@ -418,7 +415,6 @@
         "hero.title": "ScoreZone",
         "hero.lead": "Juegos educativos sencillos y divertidos para estudiantes, docentes y el aula.",
 
-        /* ADDED: Math tile translations */
         "tile.math.title": "Matemáticas",
         "tile.math.sub": "Ir a los juegos de matemáticas",
 
@@ -443,12 +439,6 @@
     const prevBtn = document.getElementById("langPrev");
     const nextBtn = document.getElementById("langNext");
 
-    function getSavedLang(){
-      const saved = localStorage.getItem(LANG_KEY);
-      if (saved && languages.some(l => l.code === saved)) return saved;
-      return "da";
-    }
-
     function setSavedLang(code){
       localStorage.setItem(LANG_KEY, code);
     }
@@ -458,6 +448,18 @@
       const lang = url.searchParams.get("lang");
       if (lang && languages.some(l => l.code === lang)) return lang;
       return null;
+    }
+
+    // Updated: fallback to browser language once, then persist
+    function getSavedLang(){
+      const saved = localStorage.getItem(LANG_KEY);
+      if (saved && languages.some(l => l.code === saved)) return saved;
+
+      const raw = (navigator.language || "da").toLowerCase();
+      const base = raw.split("-")[0];
+      const fallback = languages.some(l => l.code === base) ? base : "da";
+      localStorage.setItem(LANG_KEY, fallback);
+      return fallback;
     }
 
     function applyLanguage(lang){
@@ -523,106 +525,46 @@
       if (e.key === "ArrowRight") scrollRow(1);
     });
 
-    // Option A: append ?lang=xx to tile navigation on click
     function withLangParam(rawHref, lang){
       const url = new URL(rawHref, window.location.href);
       url.searchParams.set("lang", lang);
       return url.toString();
     }
 
+    // Updated: auto-pass lang on ANY same-origin link (not just .tile), without double-handlers
     document.addEventListener("click", (e) => {
-      const tile = e.target.closest("a.tile");
-      if (!tile) return;
+      const a = e.target.closest("a");
+      if (!a) return;
 
-      // keep normal behavior for modifiers (new tab etc.)
-      if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+      // allow normal new-tab / modified clicks
+      if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return;
+
+      const href = a.getAttribute("href");
+      if (!href || href.startsWith("#") || href.startsWith("mailto:") || href.startsWith("tel:")) return;
+
+      const url = new URL(href, window.location.href);
+
+      // only rewrite same-origin links (do NOT touch https://xmas.scorezone.dk)
+      if (url.origin !== window.location.origin) return;
+
+      // If link already has lang=, don't override it
+      if (url.searchParams.get("lang")) return;
 
       e.preventDefault();
       const lang = getSavedLang();
-      const targetUrl = withLangParam(tile.getAttribute("href"), lang);
-      window.location.href = targetUrl;
-    });
+      window.location.href = withLangParam(url.toString(), lang);
+    }, true);
 
-    // init: honor ?lang= in URL (useful for shared links), else localStorage
+    // init: honor ?lang= in URL (useful for shared links), else localStorage (or browser fallback)
     const urlLang = readLangFromUrl();
     if (urlLang) setSavedLang(urlLang);
 
     renderLanguages();
-    applyLanguage(getSavedLang());
-    updateSelectedUI(getSavedLang());
-
-    (() => {
-  const LANG_KEY = "scorezone_lang";
-  const SUPPORTED = ["da","en","de","es"];
-
-  function browserLang(){
-    const raw = (navigator.language || "da").toLowerCase(); // e.g. "en-us"
-    const base = raw.split("-")[0]; // "en"
-    return SUPPORTED.includes(base) ? base : "da";
-  }
-
-  function readLangFromUrl(){
-    const url = new URL(window.location.href);
-    const lang = url.searchParams.get("lang");
-    return (lang && SUPPORTED.includes(lang)) ? lang : null;
-  }
-
-  function getSavedLang(){
-    const saved = localStorage.getItem(LANG_KEY);
-    return (saved && SUPPORTED.includes(saved)) ? saved : null;
-  }
-
-  function setSavedLang(lang){
-    if (SUPPORTED.includes(lang)) localStorage.setItem(LANG_KEY, lang);
-  }
-
-  function currentLang(){
-    // Priority: URL ?lang= > saved > browser
-    const urlLang = readLangFromUrl();
-    if (urlLang) { setSavedLang(urlLang); return urlLang; }
-
-    const saved = getSavedLang();
-    if (saved) return saved;
-
-    const b = browserLang();
-    setSavedLang(b);
-    return b;
-  }
-
-  function withLangParam(href, lang){
-    const url = new URL(href, window.location.href);
-    url.searchParams.set("lang", lang);
-    return url.toString();
-  }
-
-  // Ensure the landing page itself is marked correctly (helps accessibility)
-  const lang = currentLang();
-  document.documentElement.lang = lang;
-
-  // Auto-pass lang on internal navigation (same-origin links)
-  document.addEventListener("click", (e) => {
-    const a = e.target.closest("a");
-    if (!a) return;
-
-    // allow normal new-tab / modified clicks
-    if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return;
-
-    const href = a.getAttribute("href");
-    if (!href || href.startsWith("#") || href.startsWith("mailto:") || href.startsWith("tel:")) return;
-
-    const url = new URL(href, window.location.href);
-
-    // only rewrite same-origin links
-    if (url.origin !== window.location.origin) return;
-
-    // If link already has lang=, don't override it
-    if (url.searchParams.get("lang")) return;
-
-    e.preventDefault();
-    window.location.href = withLangParam(url.toString(), currentLang());
-  }, true);
-})();
+    const lang = getSavedLang();
+    applyLanguage(lang);
+    updateSelectedUI(lang);
+    document.documentElement.lang = lang;
   </script>
-  
+
 </body>
 </html>
