@@ -1,24 +1,24 @@
 <!DOCTYPE html>
-<html lang="da">
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>ScoreZone – Matematik</title>
+  <title>ScoreZone</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
   <!-- Seasonal background system -->
   <link rel="stylesheet" href="https://scorezone.dk/assets/scorezone-season.css">
   <script src="https://scorezone.dk/assets/scorezone-season.js" defer></script>
 
-  <!-- Favicons (kept consistent with landing) -->
+  <!-- Favicons -->
   <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16.png">
   <link rel="icon" type="image/png" sizes="64x64" href="/favicon-64.png">
 
   <style>
     :root{
-      /* Color scheme (match landing) */
+      /* Color scheme */
       --bg:#050E3C;
-      --panel:rgba(0,36,85,.92);
+      --panel:rgba(0,36,85,.92);     /* #002455 */
       --ink:#ffffff;
       --muted:rgba(255,255,255,.78);
       --line:rgba(255,255,255,.14);
@@ -47,7 +47,7 @@
 
     /* ---------- HERO ---------- */
     .hero{
-      padding:24px 22px;
+      padding:28px 24px;
       border-radius:22px;
       background: linear-gradient(180deg,
         rgba(0,36,85,.96),
@@ -58,52 +58,16 @@
       text-align:center;
     }
 
-    .heroTop{
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:12px;
-      flex-wrap:wrap;
-      margin-bottom:6px;
-    }
-
-    .backLink{
-      display:inline-flex;
-      align-items:center;
-      gap:8px;
-      text-decoration:none;
-      color:var(--ink);
-      font-weight:900;
-      padding:8px 12px;
-      border-radius:999px;
-      border:1px solid var(--line);
-      background:rgba(255,255,255,.06);
-      box-shadow:0 10px 22px rgba(0,0,0,.16);
-      transition:transform .12s ease, box-shadow .12s ease, border-color .12s ease;
-      user-select:none;
-    }
-    .backLink:hover{
-      transform:translateY(-1px);
-      box-shadow:var(--shadowSoft);
-      border-color:rgba(255,56,56,.55);
-    }
-    .backLink:focus-visible{
-      outline:3px solid rgba(255,56,56,.55);
-      outline-offset:2px;
-    }
-
     .hero h1{
       margin:0;
-      font-size:34px;
+      font-size:38px;
       font-weight:950;
       letter-spacing:.3px;
-      flex:1 1 auto;
-      min-width:220px;
     }
 
     .heroLead{
-      margin:8px auto 0;
-      max-width:680px;
+      margin:10px auto 0;
+      max-width:560px;
       font-size:16px;
       font-weight:650;
       color:var(--muted);
@@ -291,29 +255,13 @@
       text-overflow:ellipsis;
     }
 
-    /* ---------- FOOT NOTE ---------- */
-    .note{
-      margin-top:14px;
-      padding:12px 14px;
-      border-radius:16px;
-      border:1px solid var(--line);
-      background:rgba(255,255,255,.06);
-      box-shadow:var(--shadowSoft);
-      color:var(--muted);
-      font-weight:650;
-      line-height:1.45;
-      font-size:14px;
-    }
-
     /* ---------- RESPONSIVE ---------- */
     @media (max-width:900px){
       .tiles{grid-template-columns:1fr;}
-      .hero h1{font-size:30px;}
+      .hero h1{font-size:32px;}
       .wrap{padding-top:26px;}
       .arrowBtn{display:none;} /* mobile: swipe */
-      .langLabel{display:none;} /* saves space on mobile */
-      .heroTop{justify-content:center;}
-      .backLink{order:2}
+      .langLabel{display:none;} /* optional: saves space on mobile */
     }
   </style>
 </head>
@@ -323,20 +271,17 @@
 
     <!-- HERO CARD -->
     <section class="hero">
-      <div class="heroTop">
-        <a class="backLink" href="/" aria-label="Tilbage til ScoreZone">← <span data-i18n="back.home">Forside</span></a>
-        <h1 data-i18n="hero.title">Matematik</h1>
-      </div>
-
+      <h1 data-i18n="hero.title">ScoreZone</h1>
       <p class="heroLead" data-i18n="hero.lead">
-        Vælg en øvelse. Dit sprog bliver automatisk sendt videre til spillene.
+        Simple, engaging educational games designed for students,
+        teachers, and classrooms.
       </p>
     </section>
 
     <!-- LANGUAGE SELECTOR -->
     <section class="langBar" aria-label="Language selector">
       <div class="langRowWrap">
-        <div class="langLabel" data-i18n="lang.label">Sprog</div>
+        <div class="langLabel" data-i18n="lang.label">Language</div>
 
         <button class="arrowBtn" id="langPrev" type="button" aria-label="Scroll languages left">‹</button>
 
@@ -348,41 +293,38 @@
       </div>
     </section>
 
-    <!-- MATH TILES -->
-    <main class="tiles" aria-label="Math games">
-      <a class="tile" href="/math/plus2.html">
-        <div class="icon">➕</div>
+    <!-- GAME TILES (single grid) -->
+    <main class="tiles" aria-label="Educational games">
+      <!-- Math hub tile -->
+      <a class="tile" href="/math/">
+        <div class="icon">🧮</div>
         <div class="text">
-          <div class="title" data-i18n="tile.plus2.title">Plus – Bank & Veksling</div>
-          <div class="sub" data-i18n="tile.plus2.sub">Øv addition med bank og veksling</div>
+          <div class="title" data-i18n="tile.math.title">Math</div>
+          <div class="sub" data-i18n="tile.math.sub">Go to math games</div>
         </div>
       </a>
 
-      <a class="tile" href="/math/minus2.html">
-        <div class="icon">➖</div>
+      <a class="tile" href="https://xmas.scorezone.dk">
+        <div class="icon">🎄</div>
         <div class="text">
-          <div class="title" data-i18n="tile.minus2.title">Minus – Bank & Veksling</div>
-          <div class="sub" data-i18n="tile.minus2.sub">Øv subtraktion med lån</div>
+          <div class="title" data-i18n="tile.xmas.master.title">Xmas – Game Master</div>
+          <div class="sub" data-i18n="tile.xmas.master.sub">Start and control the classroom game</div>
         </div>
       </a>
 
-      <a class="tile" href="/math/plus-minus.html">
-        <div class="icon">🧠</div>
+      <a class="tile" href="https://xmas.scorezone.dk/team.html">
+        <div class="icon">👥</div>
         <div class="text">
-          <div class="title" data-i18n="tile.plusminus.title">Plus/Minus Hjælper</div>
-          <div class="sub" data-i18n="tile.plusminus.sub">Små plus/minus-øvelser med tallinje</div>
+          <div class="title" data-i18n="tile.xmas.team.title">Xmas – Team</div>
+          <div class="sub" data-i18n="tile.xmas.team.sub">Join the game as a team</div>
         </div>
       </a>
     </main>
 
-    <div class="note" data-i18n="note.text">
-      Tip: Del gerne et link med <strong>?lang=en</strong> (eller da/de/es). Så starter siden i det rigtige sprog med det samme.
-    </div>
-
   </div>
 
   <script>
-    // --- Math hub: Language carousel + i18n + auto-pass ?lang=xx on internal navigation ---
+    // --- Landing: Language carousel + i18n + stable persistence + auto-pass ?lang=xx to internal links ---
     const LANG_KEY = "scorezone_lang";
 
     const languages = [
@@ -392,78 +334,51 @@
       { code: "es", label: "Español", flag: "🇪🇸" }
     ];
 
-    // Math hub translations (keep concise and safe)
+    // Landing page translations (keep only keys used on landing)
     const I18N = {
       da: {
         "lang.label": "Sprog",
-        "back.home": "Forside",
-        "hero.title": "Matematik",
-        "hero.lead": "Vælg en øvelse. Dit sprog bliver automatisk sendt videre til spillene.",
-
-        "tile.plus2.title": "Plus – Bank & Veksling",
-        "tile.plus2.sub": "Øv addition med bank og veksling",
-
-        "tile.minus2.title": "Minus – Bank & Veksling",
-        "tile.minus2.sub": "Øv subtraktion med lån",
-
-        "tile.plusminus.title": "Plus/Minus Hjælper",
-        "tile.plusminus.sub": "Små plus/minus-øvelser med tallinje",
-
-        "note.text": "Tip: Del gerne et link med ?lang=en (eller da/de/es). Så starter siden i det rigtige sprog med det samme."
+        "hero.title": "ScoreZone",
+        "hero.lead": "Simple og engagerende læringsspil til elever, lærere og klasselokalet.",
+        "tile.math.title": "Matematik",
+        "tile.math.sub": "Gå til matematikspil",
+        "tile.xmas.master.title": "Xmas – Spilleder",
+        "tile.xmas.master.sub": "Start og styr klassespillet",
+        "tile.xmas.team.title": "Xmas – Hold",
+        "tile.xmas.team.sub": "Deltag i spillet som et hold"
       },
-
       en: {
         "lang.label": "Language",
-        "back.home": "Home",
-        "hero.title": "Math",
-        "hero.lead": "Choose an activity. Your language is automatically passed on to the games.",
-
-        "tile.plus2.title": "Plus – Bank & Exchange",
-        "tile.plus2.sub": "Practice addition with banking and exchanging",
-
-        "tile.minus2.title": "Minus – Bank & Borrow",
-        "tile.minus2.sub": "Practice subtraction with borrowing",
-
-        "tile.plusminus.title": "Plus/Minus Helper",
-        "tile.plusminus.sub": "Small addition/subtraction with a number line",
-
-        "note.text": "Tip: Share a link with ?lang=en (or da/de/es) to open directly in the right language."
+        "hero.title": "ScoreZone",
+        "hero.lead": "Simple, engaging educational games designed for students, teachers, and classrooms.",
+        "tile.math.title": "Math",
+        "tile.math.sub": "Go to math games",
+        "tile.xmas.master.title": "Xmas – Game Master",
+        "tile.xmas.master.sub": "Start and control the classroom game",
+        "tile.xmas.team.title": "Xmas – Team",
+        "tile.xmas.team.sub": "Join the game as a team"
       },
-
       de: {
         "lang.label": "Sprache",
-        "back.home": "Start",
-        "hero.title": "Mathe",
-        "hero.lead": "Wähle eine Übung. Deine Sprache wird automatisch an die Spiele übergeben.",
-
-        "tile.plus2.title": "Plus – Bank & Tauschen",
-        "tile.plus2.sub": "Addition mit Bank und Tausch üben",
-
-        "tile.minus2.title": "Minus – Bank & Ausleihen",
-        "tile.minus2.sub": "Subtraktion mit Ausleihen üben",
-
-        "tile.plusminus.title": "Plus/Minus Helfer",
-        "tile.plusminus.sub": "Kleine Plus/Minus-Übungen mit Zahlenlinie",
-
-        "note.text": "Tipp: Teile einen Link mit ?lang=de (oder da/en/es), damit er sofort in der richtigen Sprache startet."
+        "hero.title": "ScoreZone",
+        "hero.lead": "Einfache, motivierende Lernspiele für Schüler, Lehrkräfte und den Unterricht.",
+        "tile.math.title": "Mathe",
+        "tile.math.sub": "Zu den Mathe-Spielen",
+        "tile.xmas.master.title": "Xmas – Spielleiter",
+        "tile.xmas.master.sub": "Starte und steuere das Klassenspiel",
+        "tile.xmas.team.title": "Xmas – Team",
+        "tile.xmas.team.sub": "Als Team dem Spiel beitreten"
       },
-
       es: {
         "lang.label": "Idioma",
-        "back.home": "Inicio",
-        "hero.title": "Matemáticas",
-        "hero.lead": "Elige una actividad. Tu idioma se enviará automáticamente a los juegos.",
-
-        "tile.plus2.title": "Suma – Banco y Cambio",
-        "tile.plus2.sub": "Practica suma con banco y cambio",
-
-        "tile.minus2.title": "Resta – Banco y Préstamo",
-        "tile.minus2.sub": "Practica resta con préstamo",
-
-        "tile.plusminus.title": "Ayudante de Suma/Resta",
-        "tile.plusminus.sub": "Ejercicios pequeños con recta numérica",
-
-        "note.text": "Consejo: Comparte un enlace con ?lang=es (o da/en/de) para abrir directamente en el idioma correcto."
+        "hero.title": "ScoreZone",
+        "hero.lead": "Juegos educativos sencillos y divertidos para estudiantes, docentes y el aula.",
+        "tile.math.title": "Matemáticas",
+        "tile.math.sub": "Ir a los juegos de matemáticas",
+        "tile.xmas.master.title": "Xmas – Moderador",
+        "tile.xmas.master.sub": "Inicia y controla el juego en clase",
+        "tile.xmas.team.title": "Xmas – Equipo",
+        "tile.xmas.team.sub": "Únete al juego como equipo"
       }
     };
 
@@ -471,26 +386,29 @@
     const prevBtn = document.getElementById("langPrev");
     const nextBtn = document.getElementById("langNext");
 
-    function getSavedLang(){
-      const saved = localStorage.getItem(LANG_KEY);
-      if (saved && languages.some(l => l.code === saved)) return saved;
-      return null;
-    }
-    function setSavedLang(code){
-      if (languages.some(l => l.code === code)) localStorage.setItem(LANG_KEY, code);
+    function isSupported(code){
+      return languages.some(l => l.code === code);
     }
 
     function readLangFromUrl(){
       const url = new URL(window.location.href);
       const lang = url.searchParams.get("lang");
-      if (lang && languages.some(l => l.code === lang)) return lang;
-      return null;
+      return (lang && isSupported(lang)) ? lang : null;
     }
 
     function browserLang(){
-      const raw = (navigator.language || "da").toLowerCase(); // e.g. en-us
+      const raw = (navigator.language || "da").toLowerCase();
       const base = raw.split("-")[0];
-      return languages.some(l => l.code === base) ? base : "da";
+      return isSupported(base) ? base : "da";
+    }
+
+    function getSavedLang(){
+      const saved = localStorage.getItem(LANG_KEY);
+      return (saved && isSupported(saved)) ? saved : null;
+    }
+
+    function setSavedLang(code){
+      if(isSupported(code)) localStorage.setItem(LANG_KEY, code);
     }
 
     function currentLang(){
@@ -574,7 +492,8 @@
       return url.toString();
     }
 
-    // Auto-pass lang on SAME-ORIGIN links (including tiles and "back to home")
+    // Auto-pass lang to internal (same-origin) links ONLY.
+    // IMPORTANT: Do NOT touch external links (e.g. xmas.scorezone.dk).
     document.addEventListener("click", (e) => {
       const a = e.target.closest("a");
       if (!a) return;
@@ -597,11 +516,12 @@
       window.location.href = withLangParam(url.toString(), currentLang());
     }, true);
 
-    // Init
+    // Init (single source of truth)
     const lang = currentLang();
     renderLanguages();
     applyLanguage(lang);
     updateSelectedUI(lang);
   </script>
+
 </body>
 </html>
