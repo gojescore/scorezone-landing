@@ -16,7 +16,7 @@
 
   <style>
     :root{
-      /* Your new scheme */
+      /* Color scheme */
       --bg:#050E3C;
       --panel:rgba(0,36,85,.92);     /* #002455 */
       --ink:#ffffff;
@@ -74,10 +74,10 @@
       line-height:1.45;
     }
 
-    /* ---------- LANGUAGE BAR (shorter, label inline) ---------- */
+    /* ---------- LANGUAGE BAR ---------- */
     .langBar{
       margin-top:12px;
-      padding:10px 12px;           /* shorter */
+      padding:10px 12px;
       border-radius:18px;
       border:1px solid var(--line);
       background:var(--panel);
@@ -100,7 +100,7 @@
     }
 
     .arrowBtn{
-      width:34px;                 /* slightly smaller */
+      width:34px;
       height:34px;
       border-radius:12px;
       border:1px solid var(--line);
@@ -116,7 +116,7 @@
     .arrowBtn:hover{
       transform:translateY(-1px);
       box-shadow:0 12px 28px rgba(0,0,0,.24);
-      border-color:rgba(255,56,56,.55); /* #FF3838 */
+      border-color:rgba(255,56,56,.55);
     }
 
     .arrowBtn:active{ transform:translateY(0px); }
@@ -131,7 +131,7 @@
       gap:10px;
       overflow-x:auto;
       scroll-behavior:smooth;
-      padding:2px 2px 4px;        /* shorter */
+      padding:2px 2px 4px;
       flex:1 1 auto;
       scrollbar-width:thin;
     }
@@ -151,7 +151,7 @@
       background:rgba(255,255,255,.06);
       box-shadow:0 10px 22px rgba(0,0,0,.18);
       border-radius:999px;
-      padding:8px 12px;           /* shorter */
+      padding:8px 12px;
       display:flex;
       align-items:center;
       gap:8px;
@@ -170,8 +170,8 @@
     }
 
     .langChip[aria-selected="true"]{
-      background:rgba(220,0,0,.22);     /* #DC0000 */
-      border-color:rgba(255,56,56,.70); /* #FF3838 */
+      background:rgba(220,0,0,.22);
+      border-color:rgba(255,56,56,.70);
       box-shadow:0 18px 40px rgba(220,0,0,.18);
     }
 
@@ -271,8 +271,8 @@
 
     <!-- HERO CARD -->
     <section class="hero">
-      <h1>ScoreZone</h1>
-      <p class="heroLead">
+      <h1 data-i18n="hero.title">ScoreZone</h1>
+      <p class="heroLead" data-i18n="hero.lead">
         Simple, engaging educational games designed for students,
         teachers, and classrooms.
       </p>
@@ -281,7 +281,7 @@
     <!-- LANGUAGE SELECTOR -->
     <section class="langBar" aria-label="Language selector">
       <div class="langRowWrap">
-        <div class="langLabel">Language</div>
+        <div class="langLabel" data-i18n="lang.label">Language</div>
 
         <button class="arrowBtn" id="langPrev" type="button" aria-label="Scroll languages left">‹</button>
 
@@ -298,40 +298,40 @@
       <a class="tile" href="https://xmas.scorezone.dk">
         <div class="icon">🎄</div>
         <div class="text">
-          <div class="title">Xmas – Game Master</div>
-          <div class="sub">Start and control the classroom game</div>
+          <div class="title" data-i18n="tile.xmas.master.title">Xmas – Game Master</div>
+          <div class="sub" data-i18n="tile.xmas.master.sub">Start and control the classroom game</div>
         </div>
       </a>
 
       <a class="tile" href="https://xmas.scorezone.dk/team.html">
         <div class="icon">👥</div>
         <div class="text">
-          <div class="title">Xmas – Team</div>
-          <div class="sub">Join the game as a team</div>
+          <div class="title" data-i18n="tile.xmas.team.title">Xmas – Team</div>
+          <div class="sub" data-i18n="tile.xmas.team.sub">Join the game as a team</div>
         </div>
       </a>
 
       <a class="tile" href="/plus-minus/">
         <div class="icon">➕➖</div>
         <div class="text">
-          <div class="title">Plus/Minus Hjælper</div>
-          <div class="sub">Practice addition and subtraction</div>
+          <div class="title" data-i18n="tile.plusminus.title">Plus/Minus Hjælper</div>
+          <div class="sub" data-i18n="tile.plusminus.sub">Practice addition and subtraction</div>
         </div>
       </a>
 
       <a class="tile" href="/minus/">
         <div class="icon">➖</div>
         <div class="text">
-          <div class="title">Minus (2-cifrede tal)</div>
-          <div class="sub">Two-digit subtraction</div>
+          <div class="title" data-i18n="tile.minus.title">Minus (2-cifrede tal)</div>
+          <div class="sub" data-i18n="tile.minus.sub">Two-digit subtraction</div>
         </div>
       </a>
 
       <a class="tile" href="/plus/">
         <div class="icon">➕</div>
         <div class="text">
-          <div class="title">Plus (2-cifrede tal)</div>
-          <div class="sub">Two-digit addition</div>
+          <div class="title" data-i18n="tile.plus.title">Plus (2-cifrede tal)</div>
+          <div class="sub" data-i18n="tile.plus.sub">Two-digit addition</div>
         </div>
       </a>
     </main>
@@ -339,17 +339,102 @@
   </div>
 
   <script>
-    // --- Language carousel + Option A (append ?lang=xx to tile clicks) ---
+    // --- Language carousel + i18n + Option A (append ?lang=xx to tile clicks) ---
     const LANG_KEY = "scorezone_lang";
 
-    // Updated list: replaced Swedish/Norwegian with Spanish
-    // Also: no DK/code badges in UI; "Dansk" shown as just "Dansk"
     const languages = [
       { code: "da", label: "Dansk",   flag: "🇩🇰" },
       { code: "en", label: "English", flag: "🇬🇧" },
       { code: "de", label: "Deutsch", flag: "🇩🇪" },
       { code: "es", label: "Español", flag: "🇪🇸" }
     ];
+
+    // Landing page translations
+    const I18N = {
+      da: {
+        "lang.label": "Sprog",
+        "hero.title": "ScoreZone",
+        "hero.lead": "Simple og engagerende læringsspil til elever, lærere og klasselokalet.",
+
+        "tile.xmas.master.title": "Xmas – Spilleder",
+        "tile.xmas.master.sub": "Start og styr klassespillet",
+
+        "tile.xmas.team.title": "Xmas – Hold",
+        "tile.xmas.team.sub": "Deltag i spillet som et hold",
+
+        "tile.plusminus.title": "Plus/Minus Hjælper",
+        "tile.plusminus.sub": "Øv plus og minus",
+
+        "tile.minus.title": "Minus (2-cifrede tal)",
+        "tile.minus.sub": "Subtraktion med to cifre",
+
+        "tile.plus.title": "Plus (2-cifrede tal)",
+        "tile.plus.sub": "Addition med to cifre"
+      },
+
+      en: {
+        "lang.label": "Language",
+        "hero.title": "ScoreZone",
+        "hero.lead": "Simple, engaging educational games designed for students, teachers, and classrooms.",
+
+        "tile.xmas.master.title": "Xmas – Game Master",
+        "tile.xmas.master.sub": "Start and control the classroom game",
+
+        "tile.xmas.team.title": "Xmas – Team",
+        "tile.xmas.team.sub": "Join the game as a team",
+
+        "tile.plusminus.title": "Plus/Minus Helper",
+        "tile.plusminus.sub": "Practice addition and subtraction",
+
+        "tile.minus.title": "Minus (two-digit)",
+        "tile.minus.sub": "Two-digit subtraction",
+
+        "tile.plus.title": "Plus (two-digit)",
+        "tile.plus.sub": "Two-digit addition"
+      },
+
+      de: {
+        "lang.label": "Sprache",
+        "hero.title": "ScoreZone",
+        "hero.lead": "Einfache, motivierende Lernspiele für Schüler, Lehrkräfte und den Unterricht.",
+
+        "tile.xmas.master.title": "Xmas – Spielleiter",
+        "tile.xmas.master.sub": "Starte und steuere das Klassenspiel",
+
+        "tile.xmas.team.title": "Xmas – Team",
+        "tile.xmas.team.sub": "Als Team dem Spiel beitreten",
+
+        "tile.plusminus.title": "Plus/Minus Helfer",
+        "tile.plusminus.sub": "Addition und Subtraktion üben",
+
+        "tile.minus.title": "Minus (zweistellig)",
+        "tile.minus.sub": "Zweistellige Subtraktion",
+
+        "tile.plus.title": "Plus (zweistellig)",
+        "tile.plus.sub": "Zweistellige Addition"
+      },
+
+      es: {
+        "lang.label": "Idioma",
+        "hero.title": "ScoreZone",
+        "hero.lead": "Juegos educativos sencillos y divertidos para estudiantes, docentes y el aula.",
+
+        "tile.xmas.master.title": "Xmas – Moderador",
+        "tile.xmas.master.sub": "Inicia y controla el juego en clase",
+
+        "tile.xmas.team.title": "Xmas – Equipo",
+        "tile.xmas.team.sub": "Únete al juego como equipo",
+
+        "tile.plusminus.title": "Ayudante de Suma/Resta",
+        "tile.plusminus.sub": "Practica suma y resta",
+
+        "tile.minus.title": "Resta (dos cifras)",
+        "tile.minus.sub": "Resta de dos cifras",
+
+        "tile.plus.title": "Suma (dos cifras)",
+        "tile.plus.sub": "Suma de dos cifras"
+      }
+    };
 
     const row = document.getElementById("langRow");
     const prevBtn = document.getElementById("langPrev");
@@ -358,11 +443,30 @@
     function getSavedLang(){
       const saved = localStorage.getItem(LANG_KEY);
       if (saved && languages.some(l => l.code === saved)) return saved;
-      return "da"; // default
+      return "da";
     }
 
     function setSavedLang(code){
       localStorage.setItem(LANG_KEY, code);
+    }
+
+    function readLangFromUrl(){
+      const url = new URL(window.location.href);
+      const lang = url.searchParams.get("lang");
+      if (lang && languages.some(l => l.code === lang)) return lang;
+      return null;
+    }
+
+    function applyLanguage(lang){
+      const dict = I18N[lang] || I18N.da;
+
+      document.querySelectorAll("[data-i18n]").forEach(el => {
+        const key = el.getAttribute("data-i18n");
+        const value = dict[key];
+        if (typeof value === "string") el.textContent = value;
+      });
+
+      document.documentElement.lang = lang;
     }
 
     function renderLanguages(){
@@ -379,7 +483,6 @@
         const isSelected = lang.code === selected;
         btn.setAttribute("aria-selected", isSelected ? "true" : "false");
 
-        // No "DK/EN" badges; just the label (and flag)
         btn.innerHTML = `
           <span aria-hidden="true">${lang.flag}</span>
           <span>${lang.label}</span>
@@ -388,6 +491,7 @@
         btn.addEventListener("click", () => {
           setSavedLang(lang.code);
           updateSelectedUI(lang.code);
+          applyLanguage(lang.code);
         });
 
         row.appendChild(btn);
@@ -416,7 +520,7 @@
       if (e.key === "ArrowRight") scrollRow(1);
     });
 
-    // ---- Option A: append ?lang=xx to tile navigation on click ----
+    // Option A: append ?lang=xx to tile navigation on click
     function withLangParam(rawHref, lang){
       const url = new URL(rawHref, window.location.href);
       url.searchParams.set("lang", lang);
@@ -436,8 +540,13 @@
       window.location.href = targetUrl;
     });
 
-    // init
+    // init: honor ?lang= in URL (useful for shared links), else localStorage
+    const urlLang = readLangFromUrl();
+    if (urlLang) setSavedLang(urlLang);
+
     renderLanguages();
+    applyLanguage(getSavedLang());
+    updateSelectedUI(getSavedLang());
   </script>
 </body>
 </html>
