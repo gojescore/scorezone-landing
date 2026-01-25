@@ -5,32 +5,23 @@
   <title>ScoreZone – Matematik</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <!-- Seasonal background system -->
+  <!-- Shared seasonal background -->
   <link rel="stylesheet" href="https://scorezone.dk/assets/scorezone-season.css">
   <script src="https://scorezone.dk/assets/scorezone-season.js" defer></script>
 
-  <!-- Favicons (kept consistent with landing) -->
-  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
-  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16.png">
-  <link rel="icon" type="image/png" sizes="64x64" href="/favicon-64.png">
-
   <style>
     :root{
-      /* Color scheme (match landing) */
       --bg:#050E3C;
       --panel:rgba(0,36,85,.92);
       --ink:#ffffff;
       --muted:rgba(255,255,255,.78);
       --line:rgba(255,255,255,.14);
-
       --accent:#DC0000;
-      --accentSoft:#FF3838;
-
-      --shadowSoft:0 12px 28px rgba(0,0,0,.22);
       --shadow:0 18px 46px rgba(0,0,0,.28);
+      --shadowSoft:0 12px 28px rgba(0,0,0,.22);
     }
 
-    *{box-sizing:border-box}
+    *{ box-sizing:border-box }
 
     body{
       margin:0;
@@ -45,180 +36,31 @@
       padding:32px 18px 48px;
     }
 
-    /* ---------- HERO ---------- */
-    .hero{
-      padding:24px 22px;
+    header{
+      padding:22px;
       border-radius:22px;
-      background: linear-gradient(180deg,
-        rgba(0,36,85,.96),
-        rgba(0,36,85,.86)
-      );
+      background:linear-gradient(180deg, rgba(0,36,85,.96), rgba(0,36,85,.86));
       border:1px solid var(--line);
       box-shadow:var(--shadow);
       text-align:center;
     }
 
-    .heroTop{
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:12px;
-      flex-wrap:wrap;
-      margin-bottom:6px;
-    }
-
-    .backLink{
-      display:inline-flex;
-      align-items:center;
-      gap:8px;
-      text-decoration:none;
-      color:var(--ink);
-      font-weight:900;
-      padding:8px 12px;
-      border-radius:999px;
-      border:1px solid var(--line);
-      background:rgba(255,255,255,.06);
-      box-shadow:0 10px 22px rgba(0,0,0,.16);
-      transition:transform .12s ease, box-shadow .12s ease, border-color .12s ease;
-      user-select:none;
-    }
-    .backLink:hover{
-      transform:translateY(-1px);
-      box-shadow:var(--shadowSoft);
-      border-color:rgba(255,56,56,.55);
-    }
-    .backLink:focus-visible{
-      outline:3px solid rgba(255,56,56,.55);
-      outline-offset:2px;
-    }
-
-    .hero h1{
+    h1{
       margin:0;
       font-size:34px;
       font-weight:950;
       letter-spacing:.3px;
-      flex:1 1 auto;
-      min-width:220px;
     }
 
-    .heroLead{
-      margin:8px auto 0;
-      max-width:680px;
+    .lead{
+      margin-top:8px;
       font-size:16px;
       font-weight:650;
       color:var(--muted);
-      line-height:1.45;
     }
 
-    /* ---------- LANGUAGE BAR ---------- */
-    .langBar{
-      margin-top:12px;
-      padding:10px 12px;
-      border-radius:18px;
-      border:1px solid var(--line);
-      background:var(--panel);
-      box-shadow:var(--shadowSoft);
-    }
-
-    .langRowWrap{
-      display:flex;
-      align-items:center;
-      gap:10px;
-    }
-
-    .langLabel{
-      font-weight:950;
-      letter-spacing:.15px;
-      font-size:14px;
-      color:var(--ink);
-      white-space:nowrap;
-      margin-right:2px;
-    }
-
-    .arrowBtn{
-      width:34px;
-      height:34px;
-      border-radius:12px;
-      border:1px solid var(--line);
-      background:rgba(255,255,255,.06);
-      box-shadow:0 6px 16px rgba(0,0,0,.18);
-      cursor:pointer;
-      font-weight:950;
-      color:var(--ink);
-      flex:0 0 auto;
-      transition:transform .12s ease, box-shadow .12s ease, border-color .12s ease;
-    }
-
-    .arrowBtn:hover{
-      transform:translateY(-1px);
-      box-shadow:0 12px 28px rgba(0,0,0,.24);
-      border-color:rgba(255,56,56,.55);
-    }
-
-    .arrowBtn:active{ transform:translateY(0px); }
-
-    .arrowBtn:focus-visible{
-      outline:3px solid rgba(255,56,56,.55);
-      outline-offset:2px;
-    }
-
-    .langRow{
-      display:flex;
-      gap:10px;
-      overflow-x:auto;
-      scroll-behavior:smooth;
-      padding:2px 2px 4px;
-      flex:1 1 auto;
-      scrollbar-width:thin;
-    }
-
-    .langRow::-webkit-scrollbar{ height:10px; }
-    .langRow::-webkit-scrollbar-thumb{
-      background:rgba(255,255,255,.22);
-      border-radius:999px;
-    }
-    .langRow::-webkit-scrollbar-track{
-      background:rgba(255,255,255,.08);
-      border-radius:999px;
-    }
-
-    .langChip{
-      border:1px solid var(--line);
-      background:rgba(255,255,255,.06);
-      box-shadow:0 10px 22px rgba(0,0,0,.18);
-      border-radius:999px;
-      padding:8px 12px;
-      display:flex;
-      align-items:center;
-      gap:8px;
-      cursor:pointer;
-      white-space:nowrap;
-      font-weight:850;
-      color:var(--ink);
-      transition:transform .12s ease, box-shadow .12s ease, border-color .12s ease, background .12s ease;
-      user-select:none;
-    }
-
-    .langChip:hover{
-      transform:translateY(-1px);
-      box-shadow:0 18px 34px rgba(0,0,0,.24);
-      border-color:rgba(255,56,56,.55);
-    }
-
-    .langChip[aria-selected="true"]{
-      background:rgba(220,0,0,.22);
-      border-color:rgba(255,56,56,.70);
-      box-shadow:0 18px 40px rgba(220,0,0,.18);
-    }
-
-    .langChip:focus-visible{
-      outline:3px solid rgba(255,56,56,.55);
-      outline-offset:2px;
-    }
-
-    /* ---------- TILES ---------- */
     .tiles{
-      margin-top:18px;
+      margin-top:22px;
       display:grid;
       grid-template-columns:repeat(3, minmax(220px,1fr));
       gap:14px;
@@ -228,29 +70,20 @@
       display:flex;
       gap:12px;
       align-items:center;
-      text-decoration:none;
       padding:14px;
       border-radius:16px;
       border:1px solid var(--line);
       background:var(--panel);
       box-shadow:var(--shadowSoft);
+      text-decoration:none;
       color:inherit;
-      min-height:74px;
-      transition:
-        transform .12s ease,
-        box-shadow .12s ease,
-        border-color .12s ease;
+      transition:transform .12s ease, box-shadow .12s ease, border-color .12s ease;
     }
 
     .tile:hover{
       transform:translateY(-2px);
       box-shadow:var(--shadow);
       border-color:rgba(255,56,56,.55);
-    }
-
-    .tile:focus-visible{
-      outline:3px solid rgba(255,56,56,.55);
-      outline-offset:2px;
     }
 
     .icon{
@@ -275,11 +108,9 @@
 
     .title{
       font-weight:950;
-      letter-spacing:.15px;
       white-space:nowrap;
       overflow:hidden;
       text-overflow:ellipsis;
-      color:var(--ink);
     }
 
     .sub{
@@ -291,29 +122,19 @@
       text-overflow:ellipsis;
     }
 
-    /* ---------- FOOT NOTE ---------- */
-    .note{
-      margin-top:14px;
-      padding:12px 14px;
-      border-radius:16px;
-      border:1px solid var(--line);
-      background:rgba(255,255,255,.06);
-      box-shadow:var(--shadowSoft);
-      color:var(--muted);
-      font-weight:650;
-      line-height:1.45;
-      font-size:14px;
+    .back{
+      margin-top:26px;
+      display:inline-block;
+      font-weight:850;
+      color:var(--ink);
+      text-decoration:none;
+      opacity:.9;
     }
 
-    /* ---------- RESPONSIVE ---------- */
+    .back:hover{ opacity:1 }
+
     @media (max-width:900px){
-      .tiles{grid-template-columns:1fr;}
-      .hero h1{font-size:30px;}
-      .wrap{padding-top:26px;}
-      .arrowBtn{display:none;} /* mobile: swipe */
-      .langLabel{display:none;} /* saves space on mobile */
-      .heroTop{justify-content:center;}
-      .backLink{order:2}
+      .tiles{ grid-template-columns:1fr }
     }
   </style>
 </head>
@@ -321,287 +142,155 @@
 <body>
   <div class="wrap">
 
-    <!-- HERO CARD -->
-    <section class="hero">
-      <div class="heroTop">
-        <a class="backLink" href="/" aria-label="Tilbage til ScoreZone">← <span data-i18n="back.home">Forside</span></a>
-        <h1 data-i18n="hero.title">Matematik</h1>
+    <header>
+      <h1 data-i18n="math.title">Matematik</h1>
+      <div class="lead" data-i18n="math.lead">
+        Vælg et spil og gå i gang
       </div>
+    </header>
 
-      <p class="heroLead" data-i18n="hero.lead">
-        Vælg en øvelse. Dit sprog bliver automatisk sendt videre til spillene.
-      </p>
-    </section>
-
-    <!-- LANGUAGE SELECTOR -->
-    <section class="langBar" aria-label="Language selector">
-      <div class="langRowWrap">
-        <div class="langLabel" data-i18n="lang.label">Sprog</div>
-
-        <button class="arrowBtn" id="langPrev" type="button" aria-label="Scroll languages left">‹</button>
-
-        <div class="langRow" id="langRow" role="listbox" aria-label="Languages" tabindex="0">
-          <!-- buttons generated by JS -->
-        </div>
-
-        <button class="arrowBtn" id="langNext" type="button" aria-label="Scroll languages right">›</button>
-      </div>
-    </section>
-
-    <!-- MATH TILES -->
-    <main class="tiles" aria-label="Math games">
-      <a class="tile" href="/math/plus2.html">
-        <div class="icon">➕</div>
-        <div class="text">
-          <div class="title" data-i18n="tile.plus2.title">Plus – Bank & Veksling</div>
-          <div class="sub" data-i18n="tile.plus2.sub">Øv addition med bank og veksling</div>
-        </div>
-      </a>
-
+    <main class="tiles">
       <a class="tile" href="/math/minus2.html">
         <div class="icon">➖</div>
         <div class="text">
-          <div class="title" data-i18n="tile.minus2.title">Minus – Bank & Veksling</div>
-          <div class="sub" data-i18n="tile.minus2.sub">Øv subtraktion med lån</div>
+          <div class="title" data-i18n="tile.minus2.title">Minus 2</div>
+          <div class="sub" data-i18n="tile.minus2.sub">Tocifret subtraktion</div>
+        </div>
+      </a>
+
+      <a class="tile" href="/math/plus2.html">
+        <div class="icon">➕</div>
+        <div class="text">
+          <div class="title" data-i18n="tile.plus2.title">Plus 2</div>
+          <div class="sub" data-i18n="tile.plus2.sub">Tocifret addition</div>
         </div>
       </a>
 
       <a class="tile" href="/math/plus-minus.html">
-        <div class="icon">🧠</div>
+        <div class="icon">➕➖</div>
         <div class="text">
-          <div class="title" data-i18n="tile.plusminus.title">Plus/Minus Hjælper</div>
-          <div class="sub" data-i18n="tile.plusminus.sub">Små plus/minus-øvelser med tallinje</div>
+          <div class="title" data-i18n="tile.pm.title">Plus / Minus</div>
+          <div class="sub" data-i18n="tile.pm.sub">Vælg plus eller minus</div>
         </div>
       </a>
     </main>
 
-    <div class="note" data-i18n="note.text">
-      Tip: Del gerne et link med <strong>?lang=en</strong> (eller da/de/es). Så starter siden i det rigtige sprog med det samme.
-    </div>
+    <a class="back" id="backToMain" href="/" data-i18n="back">
+      ← Tilbage til ScoreZone
+    </a>
 
   </div>
 
-  <script>
-    // --- Math hub: Language carousel + i18n + auto-pass ?lang=xx on internal navigation ---
-    const LANG_KEY = "scorezone_lang";
+<script>
+/* ---------------- LANGUAGE CORE (SAFE) ---------------- */
+const LANG_KEY = "scorezone_lang";
+const SUPPORTED = ["da","en","de","es"];
 
-    const languages = [
-      { code: "da", label: "Dansk",   flag: "🇩🇰" },
-      { code: "en", label: "English", flag: "🇬🇧" },
-      { code: "de", label: "Deutsch", flag: "🇩🇪" },
-      { code: "es", label: "Español", flag: "🇪🇸" }
-    ];
+const I18N = {
+  da:{
+    "math.title":"Matematik",
+    "math.lead":"Vælg et spil og gå i gang",
+    "tile.minus2.title":"Minus 2",
+    "tile.minus2.sub":"Tocifret subtraktion",
+    "tile.plus2.title":"Plus 2",
+    "tile.plus2.sub":"Tocifret addition",
+    "tile.pm.title":"Plus / Minus",
+    "tile.pm.sub":"Vælg plus eller minus",
+    "back":"← Tilbage til ScoreZone"
+  },
+  en:{
+    "math.title":"Math",
+    "math.lead":"Choose a game to get started",
+    "tile.minus2.title":"Minus 2",
+    "tile.minus2.sub":"Two-digit subtraction",
+    "tile.plus2.title":"Plus 2",
+    "tile.plus2.sub":"Two-digit addition",
+    "tile.pm.title":"Plus / Minus",
+    "tile.pm.sub":"Choose addition or subtraction",
+    "back":"← Back to ScoreZone"
+  },
+  de:{
+    "math.title":"Mathe",
+    "math.lead":"Wähle ein Spiel",
+    "tile.minus2.title":"Minus 2",
+    "tile.minus2.sub":"Zweistellige Subtraktion",
+    "tile.plus2.title":"Plus 2",
+    "tile.plus2.sub":"Zweistellige Addition",
+    "tile.pm.title":"Plus / Minus",
+    "tile.pm.sub":"Plus oder Minus wählen",
+    "back":"← Zurück zu ScoreZone"
+  },
+  es:{
+    "math.title":"Matemáticas",
+    "math.lead":"Elige un juego",
+    "tile.minus2.title":"Resta 2",
+    "tile.minus2.sub":"Resta de dos cifras",
+    "tile.plus2.title":"Suma 2",
+    "tile.plus2.sub":"Suma de dos cifras",
+    "tile.pm.title":"Suma / Resta",
+    "tile.pm.sub":"Elegir suma o resta",
+    "back":"← Volver a ScoreZone"
+  }
+};
 
-    // Math hub translations (keep concise and safe)
-    const I18N = {
-      da: {
-        "lang.label": "Sprog",
-        "back.home": "Forside",
-        "hero.title": "Matematik",
-        "hero.lead": "Vælg en øvelse. Dit sprog bliver automatisk sendt videre til spillene.",
+function readLangFromUrl(){
+  const u = new URL(window.location.href);
+  const l = u.searchParams.get("lang");
+  return (l && SUPPORTED.includes(l)) ? l : null;
+}
+function getSavedLang(){
+  const s = localStorage.getItem(LANG_KEY);
+  return (s && SUPPORTED.includes(s)) ? s : null;
+}
+function browserLang(){
+  const b = (navigator.language||"da").toLowerCase().split("-")[0];
+  return SUPPORTED.includes(b) ? b : "da";
+}
+function currentLang(){
+  const urlLang = readLangFromUrl();
+  if(urlLang){ localStorage.setItem(LANG_KEY,urlLang); return urlLang; }
+  const saved = getSavedLang();
+  if(saved) return saved;
+  const b = browserLang();
+  localStorage.setItem(LANG_KEY,b);
+  return b;
+}
+function applyLanguage(lang){
+  const dict = I18N[lang] || I18N.da;
+  document.documentElement.lang = lang;
+  document.querySelectorAll("[data-i18n]").forEach(el=>{
+    const k = el.dataset.i18n;
+    if(dict[k]) el.textContent = dict[k];
+  });
+}
+function withLang(href, lang){
+  const u = new URL(href, window.location.href);
+  u.searchParams.set("lang", lang);
+  return u.toString();
+}
 
-        "tile.plus2.title": "Plus – Bank & Veksling",
-        "tile.plus2.sub": "Øv addition med bank og veksling",
+const lang = currentLang();
+applyLanguage(lang);
 
-        "tile.minus2.title": "Minus – Bank & Veksling",
-        "tile.minus2.sub": "Øv subtraktion med lån",
+// ensure back link keeps lang
+const back = document.getElementById("backToMain");
+if(back){
+  back.href = withLang(back.getAttribute("href"), lang);
+}
 
-        "tile.plusminus.title": "Plus/Minus Hjælper",
-        "tile.plusminus.sub": "Små plus/minus-øvelser med tallinje",
+// auto-pass lang on internal links
+document.addEventListener("click",(e)=>{
+  const a = e.target.closest("a");
+  if(!a) return;
+  if(e.metaKey||e.ctrlKey||e.shiftKey||e.altKey) return;
 
-        "note.text": "Tip: Del gerne et link med ?lang=en (eller da/de/es). Så starter siden i det rigtige sprog med det samme."
-      },
+  const href = a.getAttribute("href");
+  if(!href || href.startsWith("http")) return;
 
-      en: {
-        "lang.label": "Language",
-        "back.home": "Home",
-        "hero.title": "Math",
-        "hero.lead": "Choose an activity. Your language is automatically passed on to the games.",
+  e.preventDefault();
+  window.location.href = withLang(href, lang);
+});
+</script>
 
-        "tile.plus2.title": "Plus – Bank & Exchange",
-        "tile.plus2.sub": "Practice addition with banking and exchanging",
-
-        "tile.minus2.title": "Minus – Bank & Borrow",
-        "tile.minus2.sub": "Practice subtraction with borrowing",
-
-        "tile.plusminus.title": "Plus/Minus Helper",
-        "tile.plusminus.sub": "Small addition/subtraction with a number line",
-
-        "note.text": "Tip: Share a link with ?lang=en (or da/de/es) to open directly in the right language."
-      },
-
-      de: {
-        "lang.label": "Sprache",
-        "back.home": "Start",
-        "hero.title": "Mathe",
-        "hero.lead": "Wähle eine Übung. Deine Sprache wird automatisch an die Spiele übergeben.",
-
-        "tile.plus2.title": "Plus – Bank & Tauschen",
-        "tile.plus2.sub": "Addition mit Bank und Tausch üben",
-
-        "tile.minus2.title": "Minus – Bank & Ausleihen",
-        "tile.minus2.sub": "Subtraktion mit Ausleihen üben",
-
-        "tile.plusminus.title": "Plus/Minus Helfer",
-        "tile.plusminus.sub": "Kleine Plus/Minus-Übungen mit Zahlenlinie",
-
-        "note.text": "Tipp: Teile einen Link mit ?lang=de (oder da/en/es), damit er sofort in der richtigen Sprache startet."
-      },
-
-      es: {
-        "lang.label": "Idioma",
-        "back.home": "Inicio",
-        "hero.title": "Matemáticas",
-        "hero.lead": "Elige una actividad. Tu idioma se enviará automáticamente a los juegos.",
-
-        "tile.plus2.title": "Suma – Banco y Cambio",
-        "tile.plus2.sub": "Practica suma con banco y cambio",
-
-        "tile.minus2.title": "Resta – Banco y Préstamo",
-        "tile.minus2.sub": "Practica resta con préstamo",
-
-        "tile.plusminus.title": "Ayudante de Suma/Resta",
-        "tile.plusminus.sub": "Ejercicios pequeños con recta numérica",
-
-        "note.text": "Consejo: Comparte un enlace con ?lang=es (o da/en/de) para abrir directamente en el idioma correcto."
-      }
-    };
-
-    const row = document.getElementById("langRow");
-    const prevBtn = document.getElementById("langPrev");
-    const nextBtn = document.getElementById("langNext");
-
-    function getSavedLang(){
-      const saved = localStorage.getItem(LANG_KEY);
-      if (saved && languages.some(l => l.code === saved)) return saved;
-      return null;
-    }
-    function setSavedLang(code){
-      if (languages.some(l => l.code === code)) localStorage.setItem(LANG_KEY, code);
-    }
-
-    function readLangFromUrl(){
-      const url = new URL(window.location.href);
-      const lang = url.searchParams.get("lang");
-      if (lang && languages.some(l => l.code === lang)) return lang;
-      return null;
-    }
-
-    function browserLang(){
-      const raw = (navigator.language || "da").toLowerCase(); // e.g. en-us
-      const base = raw.split("-")[0];
-      return languages.some(l => l.code === base) ? base : "da";
-    }
-
-    function currentLang(){
-      // Priority: URL ?lang= > saved > browser
-      const urlLang = readLangFromUrl();
-      if (urlLang) { setSavedLang(urlLang); return urlLang; }
-
-      const saved = getSavedLang();
-      if (saved) return saved;
-
-      const b = browserLang();
-      setSavedLang(b);
-      return b;
-    }
-
-    function applyLanguage(lang){
-      const dict = I18N[lang] || I18N.da;
-
-      document.querySelectorAll("[data-i18n]").forEach(node => {
-        const key = node.getAttribute("data-i18n");
-        const value = dict[key];
-        if (typeof value === "string") node.textContent = value;
-      });
-
-      document.documentElement.lang = lang;
-    }
-
-    function renderLanguages(){
-      row.innerHTML = "";
-      const selected = currentLang();
-
-      for (const lang of languages){
-        const btn = document.createElement("button");
-        btn.type = "button";
-        btn.className = "langChip";
-        btn.setAttribute("role", "option");
-        btn.dataset.lang = lang.code;
-
-        const isSelected = lang.code === selected;
-        btn.setAttribute("aria-selected", isSelected ? "true" : "false");
-
-        btn.innerHTML = `
-          <span aria-hidden="true">${lang.flag}</span>
-          <span>${lang.label}</span>
-        `;
-
-        btn.addEventListener("click", () => {
-          setSavedLang(lang.code);
-          updateSelectedUI(lang.code);
-          applyLanguage(lang.code);
-        });
-
-        row.appendChild(btn);
-      }
-    }
-
-    function updateSelectedUI(code){
-      row.querySelectorAll(".langChip").forEach(chip => {
-        const isSelected = chip.dataset.lang === code;
-        chip.setAttribute("aria-selected", isSelected ? "true" : "false");
-        if (isSelected) chip.scrollIntoView({ behavior: "smooth", inline: "center", block: "nearest" });
-      });
-    }
-
-    function scrollRow(dir){
-      const amount = Math.max(220, Math.floor(row.clientWidth * 0.8));
-      row.scrollBy({ left: dir * amount, behavior: "smooth" });
-    }
-
-    prevBtn.addEventListener("click", () => scrollRow(-1));
-    nextBtn.addEventListener("click", () => scrollRow(1));
-
-    row.addEventListener("keydown", (e) => {
-      if (e.key === "ArrowLeft") scrollRow(-1);
-      if (e.key === "ArrowRight") scrollRow(1);
-    });
-
-    function withLangParam(href, lang){
-      const url = new URL(href, window.location.href);
-      url.searchParams.set("lang", lang);
-      return url.toString();
-    }
-
-    // Auto-pass lang on SAME-ORIGIN links (including tiles and "back to home")
-    document.addEventListener("click", (e) => {
-      const a = e.target.closest("a");
-      if (!a) return;
-
-      // allow normal new-tab / modified clicks
-      if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return;
-
-      const href = a.getAttribute("href");
-      if (!href || href.startsWith("#") || href.startsWith("mailto:") || href.startsWith("tel:")) return;
-
-      const url = new URL(href, window.location.href);
-
-      // only rewrite same-origin links
-      if (url.origin !== window.location.origin) return;
-
-      // If link already has lang=, don't override it
-      if (url.searchParams.get("lang")) return;
-
-      e.preventDefault();
-      window.location.href = withLangParam(url.toString(), currentLang());
-    }, true);
-
-    // Init
-    const lang = currentLang();
-    renderLanguages();
-    applyLanguage(lang);
-    updateSelectedUI(lang);
-  </script>
 </body>
 </html>
