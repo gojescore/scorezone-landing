@@ -1,27 +1,36 @@
 <!DOCTYPE html>
-<html lang="da">
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>ScoreZone – Matematik</title>
+  <title>ScoreZone</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <!-- Shared seasonal background -->
+  <!-- Seasonal background system -->
   <link rel="stylesheet" href="https://scorezone.dk/assets/scorezone-season.css">
   <script src="https://scorezone.dk/assets/scorezone-season.js" defer></script>
 
+  <!-- Favicons -->
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16.png">
+  <link rel="icon" type="image/png" sizes="64x64" href="/favicon-64.png">
+
   <style>
     :root{
+      /* Color scheme */
       --bg:#050E3C;
-      --panel:rgba(0,36,85,.92);
+      --panel:rgba(0,36,85,.92);     /* #002455 */
       --ink:#ffffff;
       --muted:rgba(255,255,255,.78);
       --line:rgba(255,255,255,.14);
+
       --accent:#DC0000;
-      --shadow:0 18px 46px rgba(0,0,0,.28);
+      --accentSoft:#FF3838;
+
       --shadowSoft:0 12px 28px rgba(0,0,0,.22);
+      --shadow:0 18px 46px rgba(0,0,0,.28);
     }
 
-    *{ box-sizing:border-box }
+    *{box-sizing:border-box}
 
     body{
       margin:0;
@@ -36,31 +45,144 @@
       padding:32px 18px 48px;
     }
 
-    header{
-      padding:22px;
+    /* ---------- HERO ---------- */
+    .hero{
+      padding:28px 24px;
       border-radius:22px;
-      background:linear-gradient(180deg, rgba(0,36,85,.96), rgba(0,36,85,.86));
+      background: linear-gradient(180deg,
+        rgba(0,36,85,.96),
+        rgba(0,36,85,.86)
+      );
       border:1px solid var(--line);
       box-shadow:var(--shadow);
       text-align:center;
     }
 
-    h1{
+    .hero h1{
       margin:0;
-      font-size:34px;
+      font-size:38px;
       font-weight:950;
       letter-spacing:.3px;
     }
 
-    .lead{
-      margin-top:8px;
+    .heroLead{
+      margin:10px auto 0;
+      max-width:560px;
       font-size:16px;
       font-weight:650;
       color:var(--muted);
+      line-height:1.45;
     }
 
+    /* ---------- LANGUAGE BAR ---------- */
+    .langBar{
+      margin-top:12px;
+      padding:10px 12px;
+      border-radius:18px;
+      border:1px solid var(--line);
+      background:var(--panel);
+      box-shadow:var(--shadowSoft);
+    }
+
+    .langRowWrap{
+      display:flex;
+      align-items:center;
+      gap:10px;
+    }
+
+    .langLabel{
+      font-weight:950;
+      letter-spacing:.15px;
+      font-size:14px;
+      color:var(--ink);
+      white-space:nowrap;
+      margin-right:2px;
+    }
+
+    .arrowBtn{
+      width:34px;
+      height:34px;
+      border-radius:12px;
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.06);
+      box-shadow:0 6px 16px rgba(0,0,0,.18);
+      cursor:pointer;
+      font-weight:950;
+      color:var(--ink);
+      flex:0 0 auto;
+      transition:transform .12s ease, box-shadow .12s ease, border-color .12s ease;
+    }
+
+    .arrowBtn:hover{
+      transform:translateY(-1px);
+      box-shadow:0 12px 28px rgba(0,0,0,.24);
+      border-color:rgba(255,56,56,.55);
+    }
+
+    .arrowBtn:active{ transform:translateY(0px); }
+
+    .arrowBtn:focus-visible{
+      outline:3px solid rgba(255,56,56,.55);
+      outline-offset:2px;
+    }
+
+    .langRow{
+      display:flex;
+      gap:10px;
+      overflow-x:auto;
+      scroll-behavior:smooth;
+      padding:2px 2px 4px;
+      flex:1 1 auto;
+      scrollbar-width:thin;
+    }
+
+    .langRow::-webkit-scrollbar{ height:10px; }
+    .langRow::-webkit-scrollbar-thumb{
+      background:rgba(255,255,255,.22);
+      border-radius:999px;
+    }
+    .langRow::-webkit-scrollbar-track{
+      background:rgba(255,255,255,.08);
+      border-radius:999px;
+    }
+
+    .langChip{
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.06);
+      box-shadow:0 10px 22px rgba(0,0,0,.18);
+      border-radius:999px;
+      padding:8px 12px;
+      display:flex;
+      align-items:center;
+      gap:8px;
+      cursor:pointer;
+      white-space:nowrap;
+      font-weight:850;
+      color:var(--ink);
+      transition:transform .12s ease, box-shadow .12s ease, border-color .12s ease, background .12s ease;
+      user-select:none;
+    }
+
+    .langChip:hover{
+      transform:translateY(-1px);
+      box-shadow:0 18px 34px rgba(0,0,0,.24);
+      border-color:rgba(255,56,56,.55);
+    }
+
+    .langChip[aria-selected="true"]{
+      background:rgba(220,0,0,.22);
+      border-color:rgba(255,56,56,.70);
+      box-shadow:0 18px 40px rgba(220,0,0,.18);
+    }
+
+    .langChip:focus-visible{
+      outline:3px solid rgba(255,56,56,.55);
+      outline-offset:2px;
+    }
+
+    /* ---------- TILES ---------- */
     .tiles{
-      margin-top:22px;
+      margin-top:18px;
       display:grid;
       grid-template-columns:repeat(3, minmax(220px,1fr));
       gap:14px;
@@ -70,20 +192,29 @@
       display:flex;
       gap:12px;
       align-items:center;
+      text-decoration:none;
       padding:14px;
       border-radius:16px;
       border:1px solid var(--line);
       background:var(--panel);
       box-shadow:var(--shadowSoft);
-      text-decoration:none;
       color:inherit;
-      transition:transform .12s ease, box-shadow .12s ease, border-color .12s ease;
+      min-height:74px;
+      transition:
+        transform .12s ease,
+        box-shadow .12s ease,
+        border-color .12s ease;
     }
 
     .tile:hover{
       transform:translateY(-2px);
       box-shadow:var(--shadow);
       border-color:rgba(255,56,56,.55);
+    }
+
+    .tile:focus-visible{
+      outline:3px solid rgba(255,56,56,.55);
+      outline-offset:2px;
     }
 
     .icon{
@@ -108,9 +239,11 @@
 
     .title{
       font-weight:950;
+      letter-spacing:.15px;
       white-space:nowrap;
       overflow:hidden;
       text-overflow:ellipsis;
+      color:var(--ink);
     }
 
     .sub{
@@ -122,19 +255,13 @@
       text-overflow:ellipsis;
     }
 
-    .back{
-      margin-top:26px;
-      display:inline-block;
-      font-weight:850;
-      color:var(--ink);
-      text-decoration:none;
-      opacity:.9;
-    }
-
-    .back:hover{ opacity:1 }
-
+    /* ---------- RESPONSIVE ---------- */
     @media (max-width:900px){
-      .tiles{ grid-template-columns:1fr }
+      .tiles{grid-template-columns:1fr;}
+      .hero h1{font-size:32px;}
+      .wrap{padding-top:26px;}
+      .arrowBtn{display:none;} /* mobile: swipe */
+      .langLabel{display:none;} /* optional: saves space on mobile */
     }
   </style>
 </head>
@@ -142,155 +269,259 @@
 <body>
   <div class="wrap">
 
-    <header>
-      <h1 data-i18n="math.title">Matematik</h1>
-      <div class="lead" data-i18n="math.lead">
-        Vælg et spil og gå i gang
+    <!-- HERO CARD -->
+    <section class="hero">
+      <h1 data-i18n="hero.title">ScoreZone</h1>
+      <p class="heroLead" data-i18n="hero.lead">
+        Simple, engaging educational games designed for students,
+        teachers, and classrooms.
+      </p>
+    </section>
+
+    <!-- LANGUAGE SELECTOR -->
+    <section class="langBar" aria-label="Language selector">
+      <div class="langRowWrap">
+        <div class="langLabel" data-i18n="lang.label">Language</div>
+
+        <button class="arrowBtn" id="langPrev" type="button" aria-label="Scroll languages left">‹</button>
+
+        <div class="langRow" id="langRow" role="listbox" aria-label="Languages" tabindex="0">
+          <!-- buttons generated by JS -->
+        </div>
+
+        <button class="arrowBtn" id="langNext" type="button" aria-label="Scroll languages right">›</button>
       </div>
-    </header>
+    </section>
 
-    <main class="tiles">
-      <a class="tile" href="/math/minus2.html">
-        <div class="icon">➖</div>
+    <!-- GAME TILES (single grid) -->
+    <main class="tiles" aria-label="Educational games">
+      <!-- Math hub tile -->
+      <a class="tile" href="/math/">
+        <div class="icon">🧮</div>
         <div class="text">
-          <div class="title" data-i18n="tile.minus2.title">Minus 2</div>
-          <div class="sub" data-i18n="tile.minus2.sub">Tocifret subtraktion</div>
+          <div class="title" data-i18n="tile.math.title">Math</div>
+          <div class="sub" data-i18n="tile.math.sub">Go to math games</div>
         </div>
       </a>
 
-      <a class="tile" href="/math/plus2.html">
-        <div class="icon">➕</div>
+      <a class="tile" href="https://xmas.scorezone.dk">
+        <div class="icon">🎄</div>
         <div class="text">
-          <div class="title" data-i18n="tile.plus2.title">Plus 2</div>
-          <div class="sub" data-i18n="tile.plus2.sub">Tocifret addition</div>
+          <div class="title" data-i18n="tile.xmas.master.title">Xmas – Game Master</div>
+          <div class="sub" data-i18n="tile.xmas.master.sub">Start and control the classroom game</div>
         </div>
       </a>
 
-      <a class="tile" href="/math/plus-minus.html">
-        <div class="icon">➕➖</div>
+      <a class="tile" href="https://xmas.scorezone.dk/team.html">
+        <div class="icon">👥</div>
         <div class="text">
-          <div class="title" data-i18n="tile.pm.title">Plus / Minus</div>
-          <div class="sub" data-i18n="tile.pm.sub">Vælg plus eller minus</div>
+          <div class="title" data-i18n="tile.xmas.team.title">Xmas – Team</div>
+          <div class="sub" data-i18n="tile.xmas.team.sub">Join the game as a team</div>
         </div>
       </a>
     </main>
 
-    <a class="back" id="backToMain" href="/" data-i18n="back">
-      ← Tilbage til ScoreZone
-    </a>
-
   </div>
 
-<script>
-/* ---------------- LANGUAGE CORE (SAFE) ---------------- */
-const LANG_KEY = "scorezone_lang";
-const SUPPORTED = ["da","en","de","es"];
+  <script>
+    // --- Landing: Language carousel + i18n + stable persistence + auto-pass ?lang=xx to internal links ---
+    const LANG_KEY = "scorezone_lang";
 
-const I18N = {
-  da:{
-    "math.title":"Matematik",
-    "math.lead":"Vælg et spil og gå i gang",
-    "tile.minus2.title":"Minus 2",
-    "tile.minus2.sub":"Tocifret subtraktion",
-    "tile.plus2.title":"Plus 2",
-    "tile.plus2.sub":"Tocifret addition",
-    "tile.pm.title":"Plus / Minus",
-    "tile.pm.sub":"Vælg plus eller minus",
-    "back":"← Tilbage til ScoreZone"
-  },
-  en:{
-    "math.title":"Math",
-    "math.lead":"Choose a game to get started",
-    "tile.minus2.title":"Minus 2",
-    "tile.minus2.sub":"Two-digit subtraction",
-    "tile.plus2.title":"Plus 2",
-    "tile.plus2.sub":"Two-digit addition",
-    "tile.pm.title":"Plus / Minus",
-    "tile.pm.sub":"Choose addition or subtraction",
-    "back":"← Back to ScoreZone"
-  },
-  de:{
-    "math.title":"Mathe",
-    "math.lead":"Wähle ein Spiel",
-    "tile.minus2.title":"Minus 2",
-    "tile.minus2.sub":"Zweistellige Subtraktion",
-    "tile.plus2.title":"Plus 2",
-    "tile.plus2.sub":"Zweistellige Addition",
-    "tile.pm.title":"Plus / Minus",
-    "tile.pm.sub":"Plus oder Minus wählen",
-    "back":"← Zurück zu ScoreZone"
-  },
-  es:{
-    "math.title":"Matemáticas",
-    "math.lead":"Elige un juego",
-    "tile.minus2.title":"Resta 2",
-    "tile.minus2.sub":"Resta de dos cifras",
-    "tile.plus2.title":"Suma 2",
-    "tile.plus2.sub":"Suma de dos cifras",
-    "tile.pm.title":"Suma / Resta",
-    "tile.pm.sub":"Elegir suma o resta",
-    "back":"← Volver a ScoreZone"
-  }
-};
+    const languages = [
+      { code: "da", label: "Dansk",   flag: "🇩🇰" },
+      { code: "en", label: "English", flag: "🇬🇧" },
+      { code: "de", label: "Deutsch", flag: "🇩🇪" },
+      { code: "es", label: "Español", flag: "🇪🇸" }
+    ];
 
-function readLangFromUrl(){
-  const u = new URL(window.location.href);
-  const l = u.searchParams.get("lang");
-  return (l && SUPPORTED.includes(l)) ? l : null;
-}
-function getSavedLang(){
-  const s = localStorage.getItem(LANG_KEY);
-  return (s && SUPPORTED.includes(s)) ? s : null;
-}
-function browserLang(){
-  const b = (navigator.language||"da").toLowerCase().split("-")[0];
-  return SUPPORTED.includes(b) ? b : "da";
-}
-function currentLang(){
-  const urlLang = readLangFromUrl();
-  if(urlLang){ localStorage.setItem(LANG_KEY,urlLang); return urlLang; }
-  const saved = getSavedLang();
-  if(saved) return saved;
-  const b = browserLang();
-  localStorage.setItem(LANG_KEY,b);
-  return b;
-}
-function applyLanguage(lang){
-  const dict = I18N[lang] || I18N.da;
-  document.documentElement.lang = lang;
-  document.querySelectorAll("[data-i18n]").forEach(el=>{
-    const k = el.dataset.i18n;
-    if(dict[k]) el.textContent = dict[k];
-  });
-}
-function withLang(href, lang){
-  const u = new URL(href, window.location.href);
-  u.searchParams.set("lang", lang);
-  return u.toString();
-}
+    // Landing page translations (keep only keys used on landing)
+    const I18N = {
+      da: {
+        "lang.label": "Sprog",
+        "hero.title": "ScoreZone",
+        "hero.lead": "Simple og engagerende læringsspil til elever, lærere og klasselokalet.",
+        "tile.math.title": "Matematik",
+        "tile.math.sub": "Gå til matematikspil",
+        "tile.xmas.master.title": "Xmas – Spilleder",
+        "tile.xmas.master.sub": "Start og styr klassespillet",
+        "tile.xmas.team.title": "Xmas – Hold",
+        "tile.xmas.team.sub": "Deltag i spillet som et hold"
+      },
+      en: {
+        "lang.label": "Language",
+        "hero.title": "ScoreZone",
+        "hero.lead": "Simple, engaging educational games designed for students, teachers, and classrooms.",
+        "tile.math.title": "Math",
+        "tile.math.sub": "Go to math games",
+        "tile.xmas.master.title": "Xmas – Game Master",
+        "tile.xmas.master.sub": "Start and control the classroom game",
+        "tile.xmas.team.title": "Xmas – Team",
+        "tile.xmas.team.sub": "Join the game as a team"
+      },
+      de: {
+        "lang.label": "Sprache",
+        "hero.title": "ScoreZone",
+        "hero.lead": "Einfache, motivierende Lernspiele für Schüler, Lehrkräfte und den Unterricht.",
+        "tile.math.title": "Mathe",
+        "tile.math.sub": "Zu den Mathe-Spielen",
+        "tile.xmas.master.title": "Xmas – Spielleiter",
+        "tile.xmas.master.sub": "Starte und steuere das Klassenspiel",
+        "tile.xmas.team.title": "Xmas – Team",
+        "tile.xmas.team.sub": "Als Team dem Spiel beitreten"
+      },
+      es: {
+        "lang.label": "Idioma",
+        "hero.title": "ScoreZone",
+        "hero.lead": "Juegos educativos sencillos y divertidos para estudiantes, docentes y el aula.",
+        "tile.math.title": "Matemáticas",
+        "tile.math.sub": "Ir a los juegos de matemáticas",
+        "tile.xmas.master.title": "Xmas – Moderador",
+        "tile.xmas.master.sub": "Inicia y controla el juego en clase",
+        "tile.xmas.team.title": "Xmas – Equipo",
+        "tile.xmas.team.sub": "Únete al juego como equipo"
+      }
+    };
 
-const lang = currentLang();
-applyLanguage(lang);
+    const row = document.getElementById("langRow");
+    const prevBtn = document.getElementById("langPrev");
+    const nextBtn = document.getElementById("langNext");
 
-// ensure back link keeps lang
-const back = document.getElementById("backToMain");
-if(back){
-  back.href = withLang(back.getAttribute("href"), lang);
-}
+    function isSupported(code){
+      return languages.some(l => l.code === code);
+    }
 
-// auto-pass lang on internal links
-document.addEventListener("click",(e)=>{
-  const a = e.target.closest("a");
-  if(!a) return;
-  if(e.metaKey||e.ctrlKey||e.shiftKey||e.altKey) return;
+    function readLangFromUrl(){
+      const url = new URL(window.location.href);
+      const lang = url.searchParams.get("lang");
+      return (lang && isSupported(lang)) ? lang : null;
+    }
 
-  const href = a.getAttribute("href");
-  if(!href || href.startsWith("http")) return;
+    function browserLang(){
+      const raw = (navigator.language || "da").toLowerCase();
+      const base = raw.split("-")[0];
+      return isSupported(base) ? base : "da";
+    }
 
-  e.preventDefault();
-  window.location.href = withLang(href, lang);
-});
-</script>
+    function getSavedLang(){
+      const saved = localStorage.getItem(LANG_KEY);
+      return (saved && isSupported(saved)) ? saved : null;
+    }
+
+    function setSavedLang(code){
+      if(isSupported(code)) localStorage.setItem(LANG_KEY, code);
+    }
+
+    function currentLang(){
+      // Priority: URL ?lang= > saved > browser
+      const urlLang = readLangFromUrl();
+      if (urlLang) { setSavedLang(urlLang); return urlLang; }
+
+      const saved = getSavedLang();
+      if (saved) return saved;
+
+      const b = browserLang();
+      setSavedLang(b);
+      return b;
+    }
+
+    function applyLanguage(lang){
+      const dict = I18N[lang] || I18N.da;
+
+      document.querySelectorAll("[data-i18n]").forEach(node => {
+        const key = node.getAttribute("data-i18n");
+        const value = dict[key];
+        if (typeof value === "string") node.textContent = value;
+      });
+
+      document.documentElement.lang = lang;
+    }
+
+    function renderLanguages(){
+      row.innerHTML = "";
+      const selected = currentLang();
+
+      for (const lang of languages){
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "langChip";
+        btn.setAttribute("role", "option");
+        btn.dataset.lang = lang.code;
+
+        const isSelected = lang.code === selected;
+        btn.setAttribute("aria-selected", isSelected ? "true" : "false");
+
+        btn.innerHTML = `
+          <span aria-hidden="true">${lang.flag}</span>
+          <span>${lang.label}</span>
+        `;
+
+        btn.addEventListener("click", () => {
+          setSavedLang(lang.code);
+          updateSelectedUI(lang.code);
+          applyLanguage(lang.code);
+        });
+
+        row.appendChild(btn);
+      }
+    }
+
+    function updateSelectedUI(code){
+      row.querySelectorAll(".langChip").forEach(chip => {
+        const isSelected = chip.dataset.lang === code;
+        chip.setAttribute("aria-selected", isSelected ? "true" : "false");
+        if (isSelected) chip.scrollIntoView({ behavior: "smooth", inline: "center", block: "nearest" });
+      });
+    }
+
+    function scrollRow(dir){
+      const amount = Math.max(220, Math.floor(row.clientWidth * 0.8));
+      row.scrollBy({ left: dir * amount, behavior: "smooth" });
+    }
+
+    prevBtn.addEventListener("click", () => scrollRow(-1));
+    nextBtn.addEventListener("click", () => scrollRow(1));
+
+    row.addEventListener("keydown", (e) => {
+      if (e.key === "ArrowLeft") scrollRow(-1);
+      if (e.key === "ArrowRight") scrollRow(1);
+    });
+
+    function withLangParam(href, lang){
+      const url = new URL(href, window.location.href);
+      url.searchParams.set("lang", lang);
+      return url.toString();
+    }
+
+    // Auto-pass lang to internal (same-origin) links ONLY.
+    // IMPORTANT: Do NOT touch external links (e.g. xmas.scorezone.dk).
+    document.addEventListener("click", (e) => {
+      const a = e.target.closest("a");
+      if (!a) return;
+
+      // allow normal new-tab / modified clicks
+      if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return;
+
+      const href = a.getAttribute("href");
+      if (!href || href.startsWith("#") || href.startsWith("mailto:") || href.startsWith("tel:")) return;
+
+      const url = new URL(href, window.location.href);
+
+      // only rewrite same-origin links
+      if (url.origin !== window.location.origin) return;
+
+      // If link already has lang=, don't override it
+      if (url.searchParams.get("lang")) return;
+
+      e.preventDefault();
+      window.location.href = withLangParam(url.toString(), currentLang());
+    }, true);
+
+    // Init (single source of truth)
+    const lang = currentLang();
+    renderLanguages();
+    applyLanguage(lang);
+    updateSelectedUI(lang);
+  </script>
 
 </body>
 </html>
