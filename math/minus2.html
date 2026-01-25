@@ -1082,5 +1082,102 @@
   renderStars();
 })();
 </script>
+  <script>
+  // --- ScoreZone i18n (shared behavior) ---
+  const LANG_KEY = "scorezone_lang";
+  const SUPPORTED = ["da","en","de","es"];
+
+  // 1) Pick language: URL > localStorage > default da
+  function readLangFromUrl(){
+    const url = new URL(window.location.href);
+    const lang = url.searchParams.get("lang");
+    return (lang && SUPPORTED.includes(lang)) ? lang : null;
+  }
+  function getSavedLang(){
+    const saved = localStorage.getItem(LANG_KEY);
+    return (saved && SUPPORTED.includes(saved)) ? saved : "da";
+  }
+  function setSavedLang(lang){
+    if (SUPPORTED.includes(lang)) localStorage.setItem(LANG_KEY, lang);
+  }
+
+  // 2) Translations (add keys as you add data-i18n)
+  const I18N = {
+    da: {
+      "minus2.title": "Minus 2",
+      "minus2.lead": "Subtraktion med to cifre",
+      "btn.start": "Start",
+      "btn.next": "Næste",
+      "btn.back": "← Tilbage"
+    },
+    en: {
+      "minus2.title": "Minus 2",
+      "minus2.lead": "Two-digit subtraction",
+      "btn.start": "Start",
+      "btn.next": "Next",
+      "btn.back": "← Back"
+    },
+    de: {
+      "minus2.title": "Minus 2",
+      "minus2.lead": "Zweistellige Subtraktion",
+      "btn.start": "Start",
+      "btn.next": "Weiter",
+      "btn.back": "← Zurück"
+    },
+    es: {
+      "minus2.title": "Resta 2",
+      "minus2.lead": "Resta de dos cifras",
+      "btn.start": "Empezar",
+      "btn.next": "Siguiente",
+      "btn.back": "← Volver"
+    }
+  };
+
+  // 3) Apply translations
+  function applyLanguage(lang){
+    const dict = I18N[lang] || I18N.da;
+
+    document.querySelectorAll("[data-i18n]").forEach(el => {
+      const key = el.getAttribute("data-i18n");
+      const value = dict[key];
+      if (typeof value === "string") el.textContent = value;
+    });
+
+    document.documentElement.lang = lang;
+  }
+
+  // 4) Ensure internal navigation keeps lang (optional but recommended)
+  function withLangParam(rawHref, lang){
+    const url = new URL(rawHref, window.location.href);
+    url.searchParams.set("lang", lang);
+    return url.toString();
+  }
+
+  document.addEventListener("click", (e) => {
+    const a = e.target.closest("a");
+    if (!a) return;
+
+    // keep normal behavior for new tab etc.
+    if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+
+    // only rewrite SAME-ORIGIN links (ScoreZone internal)
+    const href = a.getAttribute("href");
+    if (!href) return;
+
+    const url = new URL(href, window.location.href);
+    if (url.origin !== window.location.origin) return;
+
+    e.preventDefault();
+    const lang = getSavedLang();
+    window.location.href = withLangParam(url.toString(), lang);
+  });
+
+  // init
+  const urlLang = readLangFromUrl();
+  if (urlLang) setSavedLang(urlLang);
+
+  applyLanguage(getSavedLang());
+</script>
+
 </body>
 </html>
