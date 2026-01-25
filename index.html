@@ -326,7 +326,7 @@
   </div>
 
   <script>
-    // --- Language carousel + i18n + auto-pass ?lang=xx on same-origin links ---
+    // --- Language carousel + i18n + auto-pass ?lang=xx from landing → /math/ (same-origin only) ---
     const LANG_KEY = "scorezone_lang";
 
     const languages = [
@@ -439,27 +439,43 @@
     const prevBtn = document.getElementById("langPrev");
     const nextBtn = document.getElementById("langNext");
 
+    function isSupported(code){
+      return languages.some(l => l.code === code);
+    }
+
+    function browserLang(){
+      const raw = (navigator.language || "da").toLowerCase(); // e.g. "en-us"
+      const base = raw.split("-")[0]; // "en"
+      return isSupported(base) ? base : "da";
+    }
+
     function setSavedLang(code){
-      localStorage.setItem(LANG_KEY, code);
+      if (isSupported(code)) localStorage.setItem(LANG_KEY, code);
+    }
+
+    function getSavedLang(){
+      const saved = localStorage.getItem(LANG_KEY);
+      if (saved && isSupported(saved)) return saved;
+      return null;
     }
 
     function readLangFromUrl(){
       const url = new URL(window.location.href);
       const lang = url.searchParams.get("lang");
-      if (lang && languages.some(l => l.code === lang)) return lang;
-      return null;
+      return (lang && isSupported(lang)) ? lang : null;
     }
 
-    // Updated: fallback to browser language once, then persist
-    function getSavedLang(){
-      const saved = localStorage.getItem(LANG_KEY);
-      if (saved && languages.some(l => l.code === saved)) return saved;
+    function currentLang(){
+      // Priority: URL ?lang= > saved > browser (and persist)
+      const urlLang = readLangFromUrl();
+      if (urlLang){ setSavedLang(urlLang); return urlLang; }
 
-      const raw = (navigator.language || "da").toLowerCase();
-      const base = raw.split("-")[0];
-      const fallback = languages.some(l => l.code === base) ? base : "da";
-      localStorage.setItem(LANG_KEY, fallback);
-      return fallback;
+      const saved = getSavedLang();
+      if (saved) return saved;
+
+      const b = browserLang();
+      setSavedLang(b);
+      return b;
     }
 
     function applyLanguage(lang){
@@ -476,7 +492,7 @@
 
     function renderLanguages(){
       row.innerHTML = "";
-      const selected = getSavedLang();
+      const selected = currentLang();
 
       for (const lang of languages){
         const btn = document.createElement("button");
@@ -531,7 +547,8 @@
       return url.toString();
     }
 
-    // Updated: auto-pass lang on ANY same-origin link (not just .tile), without double-handlers
+    // Auto-pass lang for SAME-ORIGIN navigation (landing → /math/)
+    // Does NOT touch xmas.scorezone.dk (different origin).
     document.addEventListener("click", (e) => {
       const a = e.target.closest("a");
       if (!a) return;
@@ -544,26 +561,21 @@
 
       const url = new URL(href, window.location.href);
 
-      // only rewrite same-origin links (do NOT touch https://xmas.scorezone.dk)
+      // only rewrite same-origin links
       if (url.origin !== window.location.origin) return;
 
-      // If link already has lang=, don't override it
+      // if already has lang=, don't override
       if (url.searchParams.get("lang")) return;
 
       e.preventDefault();
-      const lang = getSavedLang();
-      window.location.href = withLangParam(url.toString(), lang);
+      window.location.href = withLangParam(url.toString(), currentLang());
     }, true);
 
-    // init: honor ?lang= in URL (useful for shared links), else localStorage (or browser fallback)
-    const urlLang = readLangFromUrl();
-    if (urlLang) setSavedLang(urlLang);
-
+    // Init (and keep your “honor ?lang=” behavior)
+    const lang = currentLang();
     renderLanguages();
-    const lang = getSavedLang();
     applyLanguage(lang);
     updateSelectedUI(lang);
-    document.documentElement.lang = lang;
   </script>
 
 </body>
