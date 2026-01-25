@@ -553,6 +553,26 @@
   </div>
 
 <script>
+  <script>
+(() => {
+  const LANG_KEY = "scorezone_lang";
+  const SUPPORTED = ["da","en","de","es"];
+
+  const url = new URL(window.location.href);
+  const lang = url.searchParams.get("lang");
+
+  if (lang && SUPPORTED.includes(lang)) {
+    localStorage.setItem(LANG_KEY, lang);
+    document.documentElement.lang = lang;
+  } else {
+    const saved = localStorage.getItem(LANG_KEY);
+    if (saved && SUPPORTED.includes(saved)) {
+      document.documentElement.lang = saved;
+    }
+  }
+})();
+</script>
+
 (() => {
   const $ = (id) => document.getElementById(id);
 
