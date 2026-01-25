@@ -3,9 +3,13 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-      <link rel="stylesheet" href="https://scorezone.dk/assets/scorezone-season.css">
-    <script src="https://scorezone.dk/assets/scorezone-season.js" defer></script>
-  <title>Scorezone – Plus/Minus Hjælper</title>
+  <meta name="google" content="notranslate" />
+
+  <link rel="stylesheet" href="https://scorezone.dk/assets/scorezone-season.css">
+  <script src="https://scorezone.dk/assets/scorezone-season.js" defer></script>
+
+  <title>ScoreZone – Plus/Minus Hjælper</title>
+
   <style>
     :root{
       --bgA:#7c3aed;
@@ -213,7 +217,6 @@
       border-color: rgba(22,163,74,0.22);
     }
 
-    /* NEW: clearer back button */
     .btn.back{
       background: linear-gradient(135deg, rgba(124,58,237,0.30), rgba(6,182,212,0.16), rgba(249,115,22,0.10));
       border-color: rgba(124,58,237,0.30);
@@ -240,6 +243,19 @@
       font-weight: 850;
       font-size: 0.95rem;
     }
+
+    .hintFound{
+      font-size:12px;
+      color:#0b1224;
+      background:#eef2ff;
+      border:1px solid #c7d2fe;
+      padding:8px 10px;
+      border-radius:12px;
+      display:none;
+      margin-top:10px;
+      white-space: pre-wrap;
+    }
+    .hintFound.show{display:block;}
 
     .hidden{ display:none !important; }
 
@@ -608,24 +624,24 @@
   <div class="app">
     <header>
       <div class="title">
-        <strong>Plus/Minus Hjælper</strong>
-        <div>Vælg på startsiden – løs på spilsiden</div>
+        <strong data-i18n="pm.title">Plus/Minus Hjælper</strong>
+        <div data-i18n="pm.subtitle">Vælg på startsiden – løs på spilsiden</div>
       </div>
 
       <div class="headerStars" aria-hidden="false">
-        <div class="stars" id="stars" aria-label="Stjerner (rekord for denne øvelse)">
+        <div class="stars" id="stars" data-i18n-aria-label="pm.stars.aria" aria-label="Stjerner (rekord for denne øvelse)">
           <span class="star" data-i="1">☆</span>
           <span class="star" data-i="2">☆</span>
           <span class="star" data-i="3">☆</span>
           <span class="star" data-i="4">☆</span>
           <span class="star" data-i="5">☆</span>
         </div>
-        <div class="starsHelp" id="starsHelp" title="Rekordstjerner: 1 stjerne for hver 5 i bedste streak">Best</div>
+        <div class="starsHelp" id="starsHelp" data-i18n-title="pm.stars.title" title="Rekordstjerner: 1 stjerne for hver 5 i bedste streak" data-i18n="pm.stars.best">Best</div>
       </div>
 
-      <div class="streakPill" title="Streak for den valgte øvelse">
+      <div class="streakPill" data-i18n-title="pm.streak.title" title="Streak for den valgte øvelse">
         <span class="dot"></span>
-        <span>Streak: <span id="streakHeader">0</span></span>
+        <span><span data-i18n="pm.streak.label">Streak</span>: <span id="streakHeader">0</span></span>
       </div>
     </header>
 
@@ -633,36 +649,38 @@
       <section class="card" id="startScreen">
         <div class="row" style="justify-content:space-between;">
           <div class="row">
-            <label for="studentName">Navn:</label>
-            <input id="studentName" type="text" placeholder="Skriv dit navn" autocomplete="off" />
+            <label for="studentName" data-i18n="pm.name">Navn:</label>
+            <input id="studentName" type="text" data-i18n-placeholder="pm.name.ph" placeholder="Skriv dit navn" autocomplete="off" />
           </div>
           <div class="subtle" id="helloText"></div>
         </div>
 
+        <div id="foundHint" class="hintFound" aria-live="polite"></div>
+
         <hr style="border:none; border-top:1px solid rgba(15,23,42,0.10); margin: 12px 0;"/>
 
         <div class="row">
-          <label>Vælg:</label>
-          <div class="pill-group" role="group" aria-label="Plus eller minus">
-            <button class="pill" id="opPlus" aria-pressed="true">Plus (+)</button>
-            <button class="pill" id="opMinus" aria-pressed="false">Minus (−)</button>
+          <label data-i18n="pm.choose">Vælg:</label>
+          <div class="pill-group" role="group" data-i18n-aria-label="pm.op.group" aria-label="Plus eller minus">
+            <button class="pill" id="opPlus" aria-pressed="true" data-i18n="pm.op.plus">Plus (+)</button>
+            <button class="pill" id="opMinus" aria-pressed="false" data-i18n="pm.op.minus">Minus (−)</button>
           </div>
 
-          <label style="margin-left: 10px;">Level:</label>
-          <div class="pill-group" role="group" aria-label="Level">
-            <button class="pill" id="lvl1" aria-pressed="true">Level 1</button>
-            <button class="pill" id="lvl2" aria-pressed="false">Level 2</button>
-            <button class="pill" id="lvl3" aria-pressed="false">Level 3</button>
+          <label style="margin-left: 10px;" data-i18n="pm.level">Level:</label>
+          <div class="pill-group" role="group" data-i18n-aria-label="pm.level.group" aria-label="Level">
+            <button class="pill" id="lvl1" aria-pressed="true" data-i18n="pm.level.1">Level 1</button>
+            <button class="pill" id="lvl2" aria-pressed="false" data-i18n="pm.level.2">Level 2</button>
+            <button class="pill" id="lvl3" aria-pressed="false" data-i18n="pm.level.3">Level 3</button>
           </div>
 
-          <button class="btn primary" id="goBtn" style="margin-left:auto;">Gå til øvelsen</button>
+          <button class="btn primary" id="goBtn" style="margin-left:auto;" data-i18n="pm.go">Gå til øvelsen</button>
         </div>
 
-        <div class="subtle" style="margin-top:8px;" id="startStreakText">
+        <div class="subtle" style="margin-top:8px;" id="startStreakText" data-i18n="pm.streak.preview">
           Din streak for denne øvelse: 0
         </div>
 
-        <div class="subtle" style="margin-top:6px;">
+        <div class="subtle" style="margin-top:6px;" data-i18n="pm.desc">
           Level 1: små tal (plus sum ≤ 9, minus uden negative) + svar via tallinje. Level 2: plus sum ≤ 9 (drag) / minus (tryk og kryds ud). Level 3: tallinje 0–30 + slider (plus sum ≤ 30).
         </div>
       </section>
@@ -670,12 +688,12 @@
       <section class="card hidden" id="gameScreen">
         <div class="topBar">
           <div class="row">
-            <button class="btn back" id="backBtn">← Tilbage</button>
+            <button class="btn back" id="backBtn" data-i18n="pm.back">← Tilbage</button>
             <div class="subtle" id="modeText"></div>
           </div>
           <div class="streakPill">
             <span class="dot"></span>
-            <span>Streak: <span id="streakGame">0</span></span>
+            <span><span data-i18n="pm.streak.label">Streak</span>: <span id="streakGame">0</span></span>
           </div>
         </div>
 
@@ -684,8 +702,8 @@
             <div class="equationTop">
               <div class="side">
                 <div class="bigNumber" id="n1">?</div>
-                <div class="hint" id="hint1">Træk klodser herned</div>
-                <div class="dropZone" id="zone1" aria-label="Boks 1"></div>
+                <div class="hint" id="hint1" data-i18n="pm.hint.dragDown">Træk klodser herned</div>
+                <div class="dropZone" id="zone1" data-i18n-aria-label="pm.box.1" aria-label="Boks 1"></div>
               </div>
 
               <div class="opSign" id="opSign">+</div>
@@ -693,21 +711,21 @@
 
               <div class="side">
                 <div class="bigNumber" id="n2">?</div>
-                <div class="hint" id="hint2">Træk klodser herned</div>
-                <div class="dropZone" id="zone2" aria-label="Boks 2"></div>
+                <div class="hint" id="hint2" data-i18n="pm.hint.dragDown">Træk klodser herned</div>
+                <div class="dropZone" id="zone2" data-i18n-aria-label="pm.box.2" aria-label="Boks 2"></div>
               </div>
             </div>
 
             <div class="actions">
               <div class="message" id="cubeMsg"></div>
               <div class="row">
-                <button class="btn primary" id="klarBtn">Klar</button>
+                <button class="btn primary" id="klarBtn" data-i18n="pm.ready">Klar</button>
               </div>
             </div>
           </div>
 
           <div class="lineWrap" id="lineWrap">
-            <div class="lineTitle" id="lineTitle">Tallinje</div>
+            <div class="lineTitle" id="lineTitle" data-i18n="pm.numberline">Tallinje</div>
             <div class="line" id="line"></div>
 
             <div class="sliderRow hidden" id="sliderRow">
@@ -722,17 +740,17 @@
 
           <div class="pileWrap" id="pileWrap">
             <div class="pileHeader">
-              <strong id="pileTitle">Klodse-bunke</strong>
-              <span id="pileHint">Træk klodser op i boksene</span>
+              <strong id="pileTitle" data-i18n="pm.pile.title">Klodse-bunke</strong>
+              <span id="pileHint" data-i18n="pm.pile.hint">Træk klodser op i boksene</span>
             </div>
-            <div class="pileArea" id="pileArea" aria-label="Klodse bunke"></div>
+            <div class="pileArea" id="pileArea" data-i18n-aria-label="pm.pile.aria" aria-label="Klodse bunke"></div>
           </div>
 
           <div class="questionCard hidden" id="questionCard">
             <div class="qRow">
               <div class="qText" id="qText">Hvad er 1 + 2?</div>
               <input id="answerInput" type="number" inputmode="numeric" style="width:120px;" />
-              <button class="btn primary" id="svarBtn">Svar</button>
+              <button class="btn primary" id="svarBtn" data-i18n="pm.answer">Svar</button>
             </div>
             <div class="message" id="answerMsg"></div>
             <div class="subtle" id="streakAck"></div>
@@ -744,25 +762,486 @@
 
   <div class="monster" id="monster" aria-hidden="true">
     <div class="face">👾</div>
-    <div class="label">Nom nom!</div>
+    <div class="label" data-i18n="pm.monster">Nom nom!</div>
   </div>
 
 <script>
+/* -------------------- ScoreZone i18n (Plus/Minus) -------------------- */
 (() => {
+  const LANG_KEY = "scorezone_lang";
+  const SUPPORTED = ["da","en","de","es"];
+
+  const I18N = {
+    da: {
+      "pm.title":"Plus/Minus Hjælper",
+      "pm.subtitle":"Vælg på startsiden – løs på spilsiden",
+      "pm.stars.aria":"Stjerner (rekord for denne øvelse)",
+      "pm.stars.title":"Rekordstjerner: 1 stjerne for hver 5 i bedste streak",
+      "pm.stars.best":"Best",
+      "pm.streak.title":"Streak for den valgte øvelse",
+      "pm.streak.label":"Streak",
+
+      "pm.name":"Navn:",
+      "pm.name.ph":"Skriv dit navn",
+      "pm.choose":"Vælg:",
+      "pm.op.group":"Plus eller minus",
+      "pm.op.plus":"Plus (+)",
+      "pm.op.minus":"Minus (−)",
+      "pm.level":"Level:",
+      "pm.level.group":"Level",
+      "pm.level.1":"Level 1",
+      "pm.level.2":"Level 2",
+      "pm.level.3":"Level 3",
+      "pm.go":"Gå til øvelsen",
+      "pm.back":"← Tilbage",
+
+      "pm.streak.preview":"Din streak for denne øvelse: {streak}",
+      "pm.desc":"Level 1: små tal (plus sum ≤ 9, minus uden negative) + svar via tallinje. Level 2: plus sum ≤ 9 (drag) / minus (tryk og kryds ud). Level 3: tallinje 0–30 + slider (plus sum ≤ 30).",
+
+      "pm.hint.dragDown":"Træk klodser herned",
+      "pm.box.1":"Boks 1",
+      "pm.box.2":"Boks 2",
+      "pm.ready":"Klar",
+      "pm.numberline":"Tallinje",
+      "pm.pile.title":"Klodse-bunke",
+      "pm.pile.hint":"Træk klodser op i boksene",
+      "pm.pile.aria":"Klodse bunke",
+      "pm.answer":"Svar",
+      "pm.monster":"Nom nom!",
+
+      "pm.hello":"Hej {name}!",
+      "pm.mode":"{op} • Level {level}",
+      "pm.opText.plus":"Plus (+)",
+      "pm.opText.minus":"Minus (−)",
+
+      "pm.line.0_9":"Tallinje (0–9)",
+      "pm.line.0_20":"Tallinje (0–20)",
+      "pm.line.0_30":"Tallinje (0–30) + slider",
+      "pm.slider":"Slider: {v}",
+
+      "pm.q":"Hvad er {a} {op} {b}?",
+      "pm.cubes.countLine":"Tryk på et tal på tallinjen og tryk Svar.",
+      "pm.minus.needCross":"Først: kryds {need} klodser ud. Du har krydset {have} ud.",
+      "pm.needNumber":"Skriv et tal (eller tryk på tallinjen).",
+      "pm.correct":"Ikke helt. Det rigtige svar er {correct}.",
+      "pm.reset":"Streak nulstilles – du prøver bare igen.",
+      "pm.streakAck":"Streak: {streak} – fortsæt sådan!",
+
+      "pm.tryAgain":"Prøv igen. Se hvilke bokse der er rigtige.",
+      "pm.cubesMatch":"{praise} Klodserne passer!",
+      "pm.minusOk":"{praise} Du tog det rigtige antal væk!",
+      "pm.minusProgress":"Krydset ud: {have} / {need}",
+      "pm.crossHint":"Kryds det rigtige antal ud. Vælg svar på tallinjen og tryk Svar.",
+      "pm.minusFirst":"Tryk på klodser for at krydse dem ud",
+      "pm.minusBox":"Her kan du tælle dem du tog væk",
+      "pm.plusCount":"Tæl klodserne",
+      "pm.level3Hint":"Brug slideren til at finde et tal",
+
+      "pm.found":"Tidligere elev fundet: \"{name}\".\nPlus L1: streak {p1s}, stjerner {p1st}\nPlus L2: streak {p2s}, stjerner {p2st}\nPlus L3: streak {p3s}, stjerner {p3st}\nMinus L1: streak {m1s}, stjerner {m1st}\nMinus L2: streak {m2s}, stjerner {m2st}\nMinus L3: streak {m3s}, stjerner {m3st}",
+
+      "praise.0":"Flot arbejde, {name}!",
+      "praise.1":"Mega sejt, {name}!",
+      "praise.2":"Du er virkelig god, {name}!",
+      "praise.3":"Yes! Det sad lige i skabet, {name}!",
+      "praise.4":"Stærkt gået, {name}!",
+      "pm.correctYes":"{praise} Det er rigtigt!"
+    },
+
+    en: {
+      "pm.title":"Plus/Minus Helper",
+      "pm.subtitle":"Choose on the start screen – solve on the game screen",
+      "pm.stars.aria":"Stars (best for this exercise)",
+      "pm.stars.title":"Best stars: 1 star for every 5 in your best streak",
+      "pm.stars.best":"Best",
+      "pm.streak.title":"Streak for the selected exercise",
+      "pm.streak.label":"Streak",
+
+      "pm.name":"Name:",
+      "pm.name.ph":"Type your name",
+      "pm.choose":"Choose:",
+      "pm.op.group":"Plus or minus",
+      "pm.op.plus":"Plus (+)",
+      "pm.op.minus":"Minus (−)",
+      "pm.level":"Level:",
+      "pm.level.group":"Level",
+      "pm.level.1":"Level 1",
+      "pm.level.2":"Level 2",
+      "pm.level.3":"Level 3",
+      "pm.go":"Go to exercise",
+      "pm.back":"← Back",
+
+      "pm.streak.preview":"Your streak for this exercise: {streak}",
+      "pm.desc":"Level 1: small numbers (plus sum ≤ 9, minus without negatives) + answer via number line. Level 2: plus sum ≤ 9 (drag) / minus (tap and cross out). Level 3: number line 0–30 + slider (plus sum ≤ 30).",
+
+      "pm.hint.dragDown":"Drag cubes down here",
+      "pm.box.1":"Box 1",
+      "pm.box.2":"Box 2",
+      "pm.ready":"Ready",
+      "pm.numberline":"Number line",
+      "pm.pile.title":"Cube pile",
+      "pm.pile.hint":"Drag cubes up into the boxes",
+      "pm.pile.aria":"Cube pile",
+      "pm.answer":"Answer",
+      "pm.monster":"Nom nom!",
+
+      "pm.hello":"Hi {name}!",
+      "pm.mode":"{op} • Level {level}",
+      "pm.opText.plus":"Plus (+)",
+      "pm.opText.minus":"Minus (−)",
+
+      "pm.line.0_9":"Number line (0–9)",
+      "pm.line.0_20":"Number line (0–20)",
+      "pm.line.0_30":"Number line (0–30) + slider",
+      "pm.slider":"Slider: {v}",
+
+      "pm.q":"What is {a} {op} {b}?",
+      "pm.cubes.countLine":"Pick a number on the number line and press Answer.",
+      "pm.minus.needCross":"First: cross out {need} cubes. You crossed out {have}.",
+      "pm.needNumber":"Type a number (or click the number line).",
+      "pm.correct":"Not quite. The correct answer is {correct}.",
+      "pm.reset":"Streak resets — keep going.",
+      "pm.streakAck":"Streak: {streak} — keep it up!",
+
+      "pm.tryAgain":"Try again. Check which boxes are correct.",
+      "pm.cubesMatch":"{praise} The cubes match!",
+      "pm.minusOk":"{praise} You removed the right amount!",
+      "pm.minusProgress":"Crossed out: {have} / {need}",
+      "pm.crossHint":"Cross out the right amount. Choose on the number line and press Answer.",
+      "pm.minusFirst":"Tap cubes to cross them out",
+      "pm.minusBox":"Here you can count what you removed",
+      "pm.plusCount":"Count the cubes",
+      "pm.level3Hint":"Use the slider to find a number",
+
+      "pm.found":"Previous student found: \"{name}\".\nPlus L1: streak {p1s}, stars {p1st}\nPlus L2: streak {p2s}, stars {p2st}\nPlus L3: streak {p3s}, stars {p3st}\nMinus L1: streak {m1s}, stars {m1st}\nMinus L2: streak {m2s}, stars {m2st}\nMinus L3: streak {m3s}, stars {m3st}",
+
+      "praise.0":"Great job, {name}!",
+      "praise.1":"Nice work, {name}!",
+      "praise.2":"You’re really good, {name}!",
+      "praise.3":"Yes! You nailed it, {name}!",
+      "praise.4":"Strong, {name}!",
+      "pm.correctYes":"{praise} That’s correct!"
+    },
+
+    de: {
+      "pm.title":"Plus/Minus-Helfer",
+      "pm.subtitle":"Auf der Startseite wählen – auf der Spielseite lösen",
+      "pm.stars.aria":"Sterne (Bestwert für diese Übung)",
+      "pm.stars.title":"Best-Sterne: 1 Stern je 5 in der besten Serie",
+      "pm.stars.best":"Best",
+      "pm.streak.title":"Serie für die gewählte Übung",
+      "pm.streak.label":"Serie",
+
+      "pm.name":"Name:",
+      "pm.name.ph":"Name eingeben",
+      "pm.choose":"Wähle:",
+      "pm.op.group":"Plus oder Minus",
+      "pm.op.plus":"Plus (+)",
+      "pm.op.minus":"Minus (−)",
+      "pm.level":"Level:",
+      "pm.level.group":"Level",
+      "pm.level.1":"Level 1",
+      "pm.level.2":"Level 2",
+      "pm.level.3":"Level 3",
+      "pm.go":"Zur Übung",
+      "pm.back":"← Zurück",
+
+      "pm.streak.preview":"Deine Serie für diese Übung: {streak}",
+      "pm.desc":"Level 1: kleine Zahlen (Plus Summe ≤ 9, Minus ohne Negative) + Antwort über Zahlenstrahl. Level 2: Plus Summe ≤ 9 (ziehen) / Minus (antippen und durchstreichen). Level 3: Zahlenstrahl 0–30 + Slider (Plus Summe ≤ 30).",
+
+      "pm.hint.dragDown":"Würfel hierher ziehen",
+      "pm.box.1":"Kasten 1",
+      "pm.box.2":"Kasten 2",
+      "pm.ready":"Fertig",
+      "pm.numberline":"Zahlenstrahl",
+      "pm.pile.title":"Würfel-Stapel",
+      "pm.pile.hint":"Würfel in die Kästen ziehen",
+      "pm.pile.aria":"Würfel-Stapel",
+      "pm.answer":"Antwort",
+      "pm.monster":"Nom nom!",
+
+      "pm.hello":"Hallo {name}!",
+      "pm.mode":"{op} • Level {level}",
+      "pm.opText.plus":"Plus (+)",
+      "pm.opText.minus":"Minus (−)",
+
+      "pm.line.0_9":"Zahlenstrahl (0–9)",
+      "pm.line.0_20":"Zahlenstrahl (0–20)",
+      "pm.line.0_30":"Zahlenstrahl (0–30) + Slider",
+      "pm.slider":"Slider: {v}",
+
+      "pm.q":"Was ist {a} {op} {b}?",
+      "pm.cubes.countLine":"Zahl am Zahlenstrahl wählen und Antwort drücken.",
+      "pm.minus.needCross":"Zuerst: {need} Würfel durchstreichen. Du hast {have}.",
+      "pm.needNumber":"Gib eine Zahl ein (oder klicke den Zahlenstrahl).",
+      "pm.correct":"Nicht ganz. Richtig ist {correct}.",
+      "pm.reset":"Serie wird zurückgesetzt — weiter so.",
+      "pm.streakAck":"Serie: {streak} — weiter so!",
+
+      "pm.tryAgain":"Nochmal. Schau welche Kästen richtig sind.",
+      "pm.cubesMatch":"{praise} Die Würfel passen!",
+      "pm.minusOk":"{praise} Du hast die richtige Anzahl entfernt!",
+      "pm.minusProgress":"Durchgestrichen: {have} / {need}",
+      "pm.crossHint":"Richtige Anzahl durchstreichen. Antwort wählen und drücken.",
+      "pm.minusFirst":"Würfel antippen zum Durchstreichen",
+      "pm.minusBox":"Hier kannst du zählen, was du entfernt hast",
+      "pm.plusCount":"Würfel zählen",
+      "pm.level3Hint":"Nutze den Slider, um eine Zahl zu finden",
+
+      "pm.found":"Vorheriger Schüler gefunden: \"{name}\".\nPlus L1: Serie {p1s}, Sterne {p1st}\nPlus L2: Serie {p2s}, Sterne {p2st}\nPlus L3: Serie {p3s}, Sterne {p3st}\nMinus L1: Serie {m1s}, Sterne {m1st}\nMinus L2: Serie {m2s}, Sterne {m2st}\nMinus L3: Serie {m3s}, Sterne {m3st}",
+
+      "praise.0":"Gut gemacht, {name}!",
+      "praise.1":"Tolle Arbeit, {name}!",
+      "praise.2":"Du bist echt gut, {name}!",
+      "praise.3":"Yes! Voll getroffen, {name}!",
+      "praise.4":"Stark, {name}!",
+      "pm.correctYes":"{praise} Das ist richtig!"
+    },
+
+    es: {
+      "pm.title":"Ayuda de Suma/Resta",
+      "pm.subtitle":"Elige en inicio – resuelve en el juego",
+      "pm.stars.aria":"Estrellas (mejor marca de este ejercicio)",
+      "pm.stars.title":"Mejor: 1 estrella por cada 5 en la mejor racha",
+      "pm.stars.best":"Best",
+      "pm.streak.title":"Racha del ejercicio seleccionado",
+      "pm.streak.label":"Racha",
+
+      "pm.name":"Nombre:",
+      "pm.name.ph":"Escribe tu nombre",
+      "pm.choose":"Elige:",
+      "pm.op.group":"Suma o resta",
+      "pm.op.plus":"Suma (+)",
+      "pm.op.minus":"Resta (−)",
+      "pm.level":"Nivel:",
+      "pm.level.group":"Nivel",
+      "pm.level.1":"Nivel 1",
+      "pm.level.2":"Nivel 2",
+      "pm.level.3":"Nivel 3",
+      "pm.go":"Ir al ejercicio",
+      "pm.back":"← Volver",
+
+      "pm.streak.preview":"Tu racha para este ejercicio: {streak}",
+      "pm.desc":"Nivel 1: números pequeños (suma ≤ 9, resta sin negativos) + respuesta con recta numérica. Nivel 2: suma ≤ 9 (arrastrar) / resta (tocar y tachar). Nivel 3: recta 0–30 + deslizador (suma ≤ 30).",
+
+      "pm.hint.dragDown":"Arrastra cubos aquí",
+      "pm.box.1":"Caja 1",
+      "pm.box.2":"Caja 2",
+      "pm.ready":"Listo",
+      "pm.numberline":"Recta numérica",
+      "pm.pile.title":"Montón de cubos",
+      "pm.pile.hint":"Arrastra cubos a las cajas",
+      "pm.pile.aria":"Montón de cubos",
+      "pm.answer":"Responder",
+      "pm.monster":"Nom nom!",
+
+      "pm.hello":"Hola {name}!",
+      "pm.mode":"{op} • Nivel {level}",
+      "pm.opText.plus":"Suma (+)",
+      "pm.opText.minus":"Resta (−)",
+
+      "pm.line.0_9":"Recta (0–9)",
+      "pm.line.0_20":"Recta (0–20)",
+      "pm.line.0_30":"Recta (0–30) + deslizador",
+      "pm.slider":"Slider: {v}",
+
+      "pm.q":"¿Cuánto es {a} {op} {b}?",
+      "pm.cubes.countLine":"Elige un número en la recta y pulsa Responder.",
+      "pm.minus.needCross":"Primero: tacha {need} cubos. Has tachado {have}.",
+      "pm.needNumber":"Escribe un número (o pulsa la recta).",
+      "pm.correct":"No del todo. La respuesta correcta es {correct}.",
+      "pm.reset":"La racha se reinicia — sigue intentando.",
+      "pm.streakAck":"Racha: {streak} — ¡bien!",
+
+      "pm.tryAgain":"Inténtalo de nuevo. Mira qué cajas están correctas.",
+      "pm.cubesMatch":"{praise} ¡Los cubos coinciden!",
+      "pm.minusOk":"{praise} ¡Quitaste la cantidad correcta!",
+      "pm.minusProgress":"Tachado: {have} / {need}",
+      "pm.crossHint":"Tacha la cantidad correcta. Elige en la recta y responde.",
+      "pm.minusFirst":"Toca cubos para tacharlos",
+      "pm.minusBox":"Aquí puedes contar lo que quitaste",
+      "pm.plusCount":"Cuenta los cubos",
+      "pm.level3Hint":"Usa el deslizador para elegir un número",
+
+      "pm.found":"Alumno anterior encontrado: \"{name}\".\nSuma N1: racha {p1s}, estrellas {p1st}\nSuma N2: racha {p2s}, estrellas {p2st}\nSuma N3: racha {p3s}, estrellas {p3st}\nResta N1: racha {m1s}, estrellas {m1st}\nResta N2: racha {m2s}, estrellas {m2st}\nResta N3: racha {m3s}, estrellas {m3st}",
+
+      "praise.0":"¡Bien hecho, {name}!",
+      "praise.1":"¡Buen trabajo, {name}!",
+      "praise.2":"¡Eres muy bueno, {name}!",
+      "praise.3":"¡Sí! ¡Lo lograste, {name}!",
+      "praise.4":"¡Genial, {name}!",
+      "pm.correctYes":"{praise} ¡Correcto!"
+    },
+  };
+
+  function readLangFromUrl(){
+    const url = new URL(window.location.href);
+    const lang = url.searchParams.get("lang");
+    return (lang && SUPPORTED.includes(lang)) ? lang : null;
+  }
+  function getSavedLang(){
+    const saved = localStorage.getItem(LANG_KEY);
+    return (saved && SUPPORTED.includes(saved)) ? saved : "da";
+  }
+  function setSavedLang(lang){
+    if (SUPPORTED.includes(lang)) localStorage.setItem(LANG_KEY, lang);
+  }
+  function fmt(str, vars){
+    if (!vars) return str;
+    return str.replace(/\{(\w+)\}/g, (_, k) => (vars[k] ?? `{${k}}`));
+  }
+  function t(key, vars){
+    const lang = getSavedLang();
+    const dict = I18N[lang] || I18N.da;
+    const fallback = I18N.da[key];
+    const raw = (dict[key] ?? fallback ?? key);
+    return fmt(String(raw), vars);
+  }
+  function applyLanguage(lang){
+    const dict = I18N[lang] || I18N.da;
+
+    document.querySelectorAll("[data-i18n]").forEach(el => {
+      const key = el.getAttribute("data-i18n");
+      const val = dict[key] ?? I18N.da[key];
+      if (typeof val === "string") el.textContent = val;
+    });
+
+    document.querySelectorAll("[data-i18n-placeholder]").forEach(el => {
+      const key = el.getAttribute("data-i18n-placeholder");
+      const val = dict[key] ?? I18N.da[key];
+      if (typeof val === "string") el.setAttribute("placeholder", val);
+    });
+
+    document.querySelectorAll("[data-i18n-title]").forEach(el => {
+      const key = el.getAttribute("data-i18n-title");
+      const val = dict[key] ?? I18N.da[key];
+      if (typeof val === "string") el.setAttribute("title", val);
+    });
+
+    document.querySelectorAll("[data-i18n-aria-label]").forEach(el => {
+      const key = el.getAttribute("data-i18n-aria-label");
+      const val = dict[key] ?? I18N.da[key];
+      if (typeof val === "string") el.setAttribute("aria-label", val);
+    });
+
+    document.documentElement.lang = lang;
+    document.title = dict["pm.title"] ? `ScoreZone – ${dict["pm.title"]}` : document.title;
+  }
+
+  // keep internal navigation links in same language (optional)
+  function withLangParam(rawHref, lang){
+    const url = new URL(rawHref, window.location.href);
+    url.searchParams.set("lang", lang);
+    return url.toString();
+  }
+  document.addEventListener("click", (e) => {
+    const a = e.target.closest("a");
+    if (!a) return;
+    if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+
+    const href = a.getAttribute("href");
+    if (!href) return;
+
+    const url = new URL(href, window.location.href);
+    if (url.origin !== window.location.origin) return;
+
+    e.preventDefault();
+    const lang = getSavedLang();
+    window.location.href = withLangParam(url.toString(), lang);
+  });
+
+  const urlLang = readLangFromUrl();
+  if (urlLang) setSavedLang(urlLang);
+  applyLanguage(getSavedLang());
+
+  window.SZ_I18N = { t, getLang: getSavedLang, setLang: setSavedLang, applyLanguage };
+})();
+</script>
+
+<script>
+(() => {
+  const t = (k, v) => window.SZ_I18N ? window.SZ_I18N.t(k, v) : k;
+
+  /* -------------------- Per-student storage (same idea as Plus2) -------------------- */
+  const USERS_KEY = "plusMinus_users_v1";
+
+  function loadUsers(){
+    try{
+      const raw = localStorage.getItem(USERS_KEY);
+      return raw ? JSON.parse(raw) : {};
+    }catch{
+      return {};
+    }
+  }
+  function saveUsers(users){
+    try{ localStorage.setItem(USERS_KEY, JSON.stringify(users)); }catch{}
+  }
+  function freshProgress(){
+    // progress[op][level] = { streak, bestStars }
+    const mk = () => ({ streak: 0, bestStars: 0 });
+    return {
+      plus: { 1: mk(), 2: mk(), 3: mk() },
+      minus:{ 1: mk(), 2: mk(), 3: mk() },
+    };
+  }
+  function normalizeName(s){ return (s || "").trim(); }
+  function nameKey(n){ return normalizeName(n).toLowerCase(); }
+
+  /* Optional migration from your old keys (per name/op/level) */
+  function oldStreakKey(nm, op, level){
+    const n = (nm || "").trim().toLowerCase();
+    return `scorezone_math_streak::${n}::${op}::lvl${level}`;
+  }
+  function oldBestStarsKey(nm, op, level){
+    const n = (nm || "").trim().toLowerCase();
+    return `scorezone_math_bestStars::${n}::${op}::lvl${level}`;
+  }
+  function migrateIfAny(users, name){
+    const key = nameKey(name);
+    if (!key) return;
+    if (users[key]?.migrated) return;
+
+    if (!users[key]) users[key] = { displayName: normalizeName(name), progress: freshProgress(), migrated: false };
+    if (!users[key].progress) users[key].progress = freshProgress();
+
+    const prog = users[key].progress;
+
+    let moved = false;
+    for (const op of ["plus","minus"]){
+      for (const lvl of [1,2,3]){
+        const sRaw = localStorage.getItem(oldStreakKey(name, op, lvl));
+        const bRaw = localStorage.getItem(oldBestStarsKey(name, op, lvl));
+        const s = sRaw ? Number(sRaw) : 0;
+        const b = bRaw ? Number(bRaw) : 0;
+
+        if (Number.isFinite(s) && s > (prog[op][lvl].streak || 0)){
+          prog[op][lvl].streak = s;
+          moved = true;
+        }
+        if (Number.isFinite(b) && b > (prog[op][lvl].bestStars || 0)){
+          prog[op][lvl].bestStars = Math.max(0, Math.min(5, b));
+          moved = true;
+        }
+      }
+    }
+
+    users[key].migrated = true;
+    if (moved) saveUsers(users);
+  }
+
+  /* -------------------- App state -------------------- */
   const state = {
     name: "",
     op: "plus",
     level: 1,
     n1: 0,
     n2: 0,
-    streak: 0,
     pendingMinusReward: false,
 
     lastProblemKey: "",
     round: 0,
 
-    bestStars: 0,
-    lastBestStarsRendered: 0
+    users: loadUsers(),
+    userKey: "",
   };
 
   const cubeColors = ["#60a5fa", "#34d399", "#fb7185", "#fbbf24", "#a78bfa", "#22d3ee", "#f97316"];
@@ -774,6 +1253,7 @@
     studentName: document.getElementById("studentName"),
     helloText: document.getElementById("helloText"),
     startStreakText: document.getElementById("startStreakText"),
+    foundHint: document.getElementById("foundHint"),
     goBtn: document.getElementById("goBtn"),
 
     opPlus: document.getElementById("opPlus"),
@@ -842,15 +1322,10 @@
     return state.name?.trim() ? state.name.trim() : "ven";
   }
 
-  const praiseLines = [
-    (n) => `Flot arbejde, ${n}!`,
-    (n) => `Mega sejt, ${n}!`,
-    (n) => `Du er virkelig god, ${n}!`,
-    (n) => `Yes! Det sad lige i skabet, ${n}!`,
-    (n) => `Stærkt gået, ${n}!`
-  ];
+  const praiseCount = 5;
   function randomPraise(){
-    return praiseLines[randInt(0, praiseLines.length - 1)](nameOrFallback());
+    const idx = randInt(0, praiseCount - 1);
+    return t(`praise.${idx}`, { name: nameOrFallback() });
   }
 
   function playSuccessSound(){
@@ -875,40 +1350,37 @@
     } catch(e){}
   }
 
-  /* -------------------- Stars as BEST (highscore) -------------------- */
+  /* -------------------- progress helpers -------------------- */
+  function ensureUser(){
+    const nm = normalizeName(state.name);
+    const key = nameKey(nm);
+    state.userKey = key;
+
+    if (!key) return null;
+
+    migrateIfAny(state.users, nm);
+
+    if (!state.users[key]){
+      state.users[key] = { displayName: nm, progress: freshProgress(), migrated: true };
+      saveUsers(state.users);
+    }
+    if (!state.users[key].progress) state.users[key].progress = freshProgress();
+    return state.users[key];
+  }
+
+  function prog(){
+    const u = ensureUser();
+    if (!u) return { streak: 0, bestStars: 0 };
+    return u.progress[state.op][state.level];
+  }
+
   function starsFromStreak(streak){ return Math.min(5, Math.floor(streak / 5)); }
 
-  function bestStarsKey(){
-    const nm = (state.name || "").trim().toLowerCase();
-    return `scorezone_math_bestStars::${nm}::${state.op}::lvl${state.level}`;
-  }
-
-  function loadBestStars(){
-    const nm = (state.name || "").trim();
-    if(!nm){
-      state.bestStars = 0;
-      state.lastBestStarsRendered = 0;
-      return 0;
-    }
-    const raw = localStorage.getItem(bestStarsKey());
-    const v = raw ? Number(raw) : 0;
-    state.bestStars = Number.isFinite(v) ? Math.max(0, Math.min(5, v)) : 0;
-    state.lastBestStarsRendered = state.bestStars;
-    return state.bestStars;
-  }
-
-  function saveBestStars(v){
-    state.bestStars = Math.max(0, Math.min(5, v));
-    const nm = (state.name || "").trim();
-    if(nm){
-      localStorage.setItem(bestStarsKey(), String(state.bestStars));
-    }
-  }
-
   function renderStars({ animate } = { animate:true }){
-    const filledCount = state.bestStars;
-
+    const filledCount = prog().bestStars || 0;
     const stars = [...el.stars.querySelectorAll(".star")];
+
+    const last = Number(el.stars.dataset.lastFilled || "0");
     stars.forEach((s, idx) => {
       const i = idx + 1;
       const shouldFill = i <= filledCount;
@@ -922,8 +1394,8 @@
       s.classList.remove("pop","dance");
     });
 
-    if(animate && filledCount > state.lastBestStarsRendered){
-      for(let i = state.lastBestStarsRendered + 1; i <= filledCount; i++){
+    if(animate && filledCount > last){
+      for(let i = last + 1; i <= filledCount; i++){
         const s = el.stars.querySelector(`.star[data-i="${i}"]`);
         if(!s) continue;
         s.classList.add("pop");
@@ -932,43 +1404,60 @@
       }
     }
 
-    state.lastBestStarsRendered = filledCount;
-    el.starsHelp.textContent = `Best`;
-  }
-
-  /* -------------------- Streak (localStorage) -------------------- */
-  function streakKey(){
-    const nm = (state.name || "").trim().toLowerCase();
-    return `scorezone_math_streak::${nm}::${state.op}::lvl${state.level}`;
-  }
-  function loadStreak(){
-    const nm = (state.name || "").trim();
-    if(!nm){
-      state.streak = 0;
-      return 0;
-    }
-    const raw = localStorage.getItem(streakKey());
-    const v = raw ? Number(raw) : 0;
-    state.streak = Number.isFinite(v) ? v : 0;
-    return state.streak;
-  }
-  function saveStreak(v){
-    state.streak = v;
-    const nm = (state.name || "").trim();
-    if(nm) localStorage.setItem(streakKey(), String(v));
-    renderStreakEverywhere({ animateStars:true });
+    el.stars.dataset.lastFilled = String(filledCount);
+    el.starsHelp.textContent = t("pm.stars.best");
   }
 
   function renderStreakEverywhere({ animateStars } = { animateStars:true }){
-    el.streakHeader.textContent = String(state.streak);
-    el.streakGame.textContent = String(state.streak);
-    el.startStreakText.textContent = `Din streak for denne øvelse: ${state.streak}`;
+    const p = prog();
+    el.streakHeader.textContent = String(p.streak || 0);
+    el.streakGame.textContent = String(p.streak || 0);
+    el.startStreakText.textContent = t("pm.streak.preview", { streak: p.streak || 0 });
 
-    const currentStars = starsFromStreak(state.streak);
-    if(currentStars > state.bestStars){
-      saveBestStars(currentStars);
-    }
     renderStars({ animate: animateStars });
+  }
+
+  function setStreak(newStreak){
+    const u = ensureUser();
+    if (!u) return;
+
+    u.progress[state.op][state.level].streak = newStreak;
+
+    const curStars = starsFromStreak(newStreak);
+    const best = u.progress[state.op][state.level].bestStars || 0;
+    if (curStars > best) u.progress[state.op][state.level].bestStars = curStars;
+
+    saveUsers(state.users);
+    renderStreakEverywhere({ animateStars:true });
+  }
+
+  function renderFoundHint(){
+    const nm = normalizeName(el.studentName.value);
+    if (!nm){
+      el.foundHint.classList.remove("show");
+      el.foundHint.textContent = "";
+      return;
+    }
+    const key = nameKey(nm);
+    const u = state.users[key];
+    if (!u){
+      el.foundHint.classList.remove("show");
+      el.foundHint.textContent = "";
+      return;
+    }
+    const p = u.progress || freshProgress();
+    el.foundHint.textContent = t("pm.found", {
+      name: u.displayName || nm,
+
+      p1s: p.plus?.[1]?.streak ?? 0,  p1st: p.plus?.[1]?.bestStars ?? 0,
+      p2s: p.plus?.[2]?.streak ?? 0,  p2st: p.plus?.[2]?.bestStars ?? 0,
+      p3s: p.plus?.[3]?.streak ?? 0,  p3st: p.plus?.[3]?.bestStars ?? 0,
+
+      m1s: p.minus?.[1]?.streak ?? 0, m1st: p.minus?.[1]?.bestStars ?? 0,
+      m2s: p.minus?.[2]?.streak ?? 0, m2st: p.minus?.[2]?.bestStars ?? 0,
+      m3s: p.minus?.[3]?.streak ?? 0, m3st: p.minus?.[3]?.bestStars ?? 0,
+    });
+    el.foundHint.classList.add("show");
   }
 
   /* -------------------- Tallinje + slider alignment -------------------- */
@@ -977,8 +1466,8 @@
   }
   function setActiveTick(value){
     clearActiveTick();
-    const t = el.line.querySelector(`.tick[data-val="${value}"]`);
-    if(t) t.classList.add("active");
+    const tck = el.line.querySelector(`.tick[data-val="${value}"]`);
+    if(tck) tck.classList.add("active");
   }
   function matchSliderToTallinje(){
     const r = el.line.getBoundingClientRect();
@@ -986,12 +1475,12 @@
   }
   function bindTallinjeClicksIfLevel1(){
     const clickable = (state.level === 1);
-    el.line.querySelectorAll(".tick").forEach(t => {
-      t.classList.toggle("clickable", clickable);
-      t.onclick = null;
+    el.line.querySelectorAll(".tick").forEach(tk => {
+      tk.classList.toggle("clickable", clickable);
+      tk.onclick = null;
       if(clickable){
-        t.onclick = () => {
-          el.answerInput.value = t.dataset.val || "";
+        tk.onclick = () => {
+          el.answerInput.value = tk.dataset.val || "";
           el.answerInput.focus();
         };
       }
@@ -1002,38 +1491,38 @@
     el.sliderRow.classList.add("hidden");
 
     if(state.level === 1){
-      el.lineTitle.textContent = "Tallinje (0–9)";
+      el.lineTitle.textContent = t("pm.line.0_9");
       for(let n=0; n<=9; n++){
-        const t = document.createElement("div");
-        t.className = "tick";
-        t.textContent = String(n);
-        t.dataset.val = String(n);
-        el.line.appendChild(t);
+        const tk = document.createElement("div");
+        tk.className = "tick";
+        tk.textContent = String(n);
+        tk.dataset.val = String(n);
+        el.line.appendChild(tk);
       }
       bindTallinjeClicksIfLevel1();
       return;
     }
 
     if(state.level === 2){
-      el.lineTitle.textContent = "Tallinje (0–20)";
+      el.lineTitle.textContent = t("pm.line.0_20");
       for(let n=0; n<=20; n++){
-        const t = document.createElement("div");
-        t.className = "tick";
-        t.textContent = String(n);
-        t.dataset.val = String(n);
-        el.line.appendChild(t);
+        const tk = document.createElement("div");
+        tk.className = "tick";
+        tk.textContent = String(n);
+        tk.dataset.val = String(n);
+        el.line.appendChild(tk);
       }
       bindTallinjeClicksIfLevel1();
       return;
     }
 
-    el.lineTitle.textContent = "Tallinje (0–30) + slider";
+    el.lineTitle.textContent = t("pm.line.0_30");
     for(let n=0; n<=30; n++){
-      const t = document.createElement("div");
-      t.className = "tick";
-      t.textContent = String(n);
-      t.dataset.val = String(n);
-      el.line.appendChild(t);
+      const tk = document.createElement("div");
+      tk.className = "tick";
+      tk.textContent = String(n);
+      tk.dataset.val = String(n);
+      el.line.appendChild(tk);
     }
 
     el.sliderRow.classList.remove("hidden");
@@ -1046,7 +1535,7 @@
 
   el.lineSlider.addEventListener("input", ()=>{
     const v = Number(el.lineSlider.value);
-    el.sliderPill.textContent = `Slider: ${v}`;
+    el.sliderPill.textContent = t("pm.slider", { v });
     setActiveTick(v);
 
     if(state.level === 3){
@@ -1128,10 +1617,10 @@
   }
   function getDropTarget(x, y){
     const targets = [el.zone1, el.zone2, el.pileArea];
-    for(const t of targets){
-      if(t.closest(".hidden")) continue;
-      const r = t.getBoundingClientRect();
-      if(x >= r.left && x <= r.right && y >= r.top && y <= r.bottom) return t;
+    for(const tg of targets){
+      if(tg.closest(".hidden")) continue;
+      const r = tg.getBoundingClientRect();
+      if(x >= r.left && x <= r.right && y >= r.top && y <= r.bottom) return tg;
     }
     return null;
   }
@@ -1222,7 +1711,7 @@
 
   function showQuestionStage({ replacePile } = { replacePile:true }){
     const opSymbol = (state.op === "plus") ? "+" : "−";
-    el.qText.textContent = `Hvad er ${state.n1} ${opSymbol} ${state.n2}?`;
+    el.qText.textContent = t("pm.q", { a: state.n1, op: opSymbol, b: state.n2 });
     el.questionCard.classList.remove("hidden");
     el.answerInput.focus();
 
@@ -1254,15 +1743,15 @@
     el.n1.classList.remove("primaryPick");
 
     if(state.level === 3){
-      el.hint1.textContent = "Brug slideren til at finde et tal";
-      el.hint2.textContent = "Brug slideren til at finde et tal";
+      el.hint1.textContent = t("pm.level3Hint");
+      el.hint2.textContent = t("pm.level3Hint");
       el.pileWrap.classList.add("hidden");
       el.klarBtn.disabled = true;
       el.klarBtn.classList.add("hidden");
 
       el.n1.classList.add("primaryPick");
       el.lineSlider.value = String(state.n1);
-      el.sliderPill.textContent = `Slider: ${state.n1}`;
+      el.sliderPill.textContent = t("pm.slider", { v: state.n1 });
       setActiveTick(state.n1);
 
       showQuestionStage({ replacePile:false });
@@ -1276,20 +1765,20 @@
       el.klarBtn.classList.add("hidden");
 
       if(state.op === "plus"){
-        el.hint1.textContent = "Tæl klodserne";
-        el.hint2.textContent = "Tæl klodserne";
+        el.hint1.textContent = t("pm.plusCount");
+        el.hint2.textContent = t("pm.plusCount");
         el.pileWrap.classList.add("hidden");
 
         for(let i=0;i<state.n1;i++) el.zone1.appendChild(makeCube({ mode:"static" }));
         for(let i=0;i<state.n2;i++) el.zone2.appendChild(makeCube({ mode:"static" }));
 
-        setMessage(el.cubeMsg, "Tryk på et tal på tallinjen og tryk Svar.", "warn");
+        setMessage(el.cubeMsg, t("pm.cubes.countLine"), "warn");
         showQuestionStage({ replacePile:false });
         return;
       }
 
-      el.hint1.textContent = "Tryk på klodser for at krydse dem ud";
-      el.hint2.textContent = "Her kan du tælle dem du tog væk";
+      el.hint1.textContent = t("pm.minusFirst");
+      el.hint2.textContent = t("pm.minusBox");
       el.pileWrap.classList.add("hidden");
 
       for(let i=0;i<state.n1;i++){
@@ -1297,25 +1786,25 @@
       }
       syncMinusRemovedBox();
 
-      setMessage(el.cubeMsg, "Kryds det rigtige antal ud. Vælg svar på tallinjen og tryk Svar.", "warn");
+      setMessage(el.cubeMsg, t("pm.crossHint"), "warn");
       showQuestionStage({ replacePile:false });
       return;
     }
 
     if(state.level === 2){
       if(state.op === "plus"){
-        el.hint1.textContent = "Træk klodser herned";
-        el.hint2.textContent = "Træk klodser herned";
-        el.pileTitle.textContent = "Klodse-bunke";
-        el.pileHint.textContent = "Træk klodser op i boksene";
+        el.hint1.textContent = t("pm.hint.dragDown");
+        el.hint2.textContent = t("pm.hint.dragDown");
+        el.pileTitle.textContent = t("pm.pile.title");
+        el.pileHint.textContent = t("pm.pile.hint");
 
         const cubeCount = 20;
         for(let i=0;i<cubeCount;i++){
           el.pileArea.appendChild(makeCube({ mode:"drag" }));
         }
       } else {
-        el.hint1.textContent = "Tryk på klodser for at krydse dem ud";
-        el.hint2.textContent = "Her kan du tælle dem du tog væk";
+        el.hint1.textContent = t("pm.minusFirst");
+        el.hint2.textContent = t("pm.minusBox");
         el.pileWrap.classList.add("hidden");
 
         for(let i=0;i<state.n1;i++){
@@ -1346,7 +1835,7 @@
     });
 
     if(state.level === 2){
-      setMessage(el.cubeMsg, `Krydset ud: ${crossed.length} / ${state.n2}`, "warn");
+      setMessage(el.cubeMsg, t("pm.minusProgress", { have: crossed.length, need: state.n2 }), "warn");
     }
   }
 
@@ -1422,12 +1911,12 @@
       el.zone2.classList.toggle("wrong", !ok2);
 
       if(ok1 && ok2){
-        setMessage(el.cubeMsg, randomPraise() + " Klodserne passer!", "good");
+        setMessage(el.cubeMsg, t("pm.cubesMatch", { praise: randomPraise() }), "good");
         el.klarBtn.disabled = true;
         playSuccessSound();
         showQuestionStage({ replacePile:true });
       } else {
-        setMessage(el.cubeMsg, "Prøv igen. Se hvilke bokse der er rigtige.", "warn");
+        setMessage(el.cubeMsg, t("pm.tryAgain"), "warn");
       }
       return;
     }
@@ -1441,13 +1930,13 @@
     el.zone2.classList.toggle("wrong", !ok);
 
     if(ok){
-      setMessage(el.cubeMsg, randomPraise() + " Du tog det rigtige antal væk!", "good");
+      setMessage(el.cubeMsg, t("pm.minusOk", { praise: randomPraise() }), "good");
       el.klarBtn.disabled = true;
       playSuccessSound();
       state.pendingMinusReward = true;
       showQuestionStage({ replacePile:false });
     } else {
-      setMessage(el.cubeMsg, `Prøv igen. Krydset ud: ${crossed} / ${state.n2}`, "warn");
+      setMessage(el.cubeMsg, t("pm.minusProgress", { have: crossed, need: state.n2 }), "warn");
     }
   }
 
@@ -1455,7 +1944,7 @@
     if(state.level === 1 && state.op === "minus"){
       const crossed = el.zone1.querySelectorAll(".cube.crossed").length;
       if(crossed !== state.n2){
-        setMessage(el.answerMsg, `Først: kryds ${state.n2} klodser ud. Du har krydset ${crossed} ud.`, "warn");
+        setMessage(el.answerMsg, t("pm.minus.needCross", { need: state.n2, have: crossed }), "warn");
         return;
       }
     }
@@ -1464,7 +1953,7 @@
     const correct = correctAnswerValue();
 
     if(!Number.isFinite(v)){
-      setMessage(el.answerMsg, "Skriv et tal (eller tryk på tallinjen).", "warn");
+      setMessage(el.answerMsg, t("pm.needNumber"), "warn");
       el.answerInput.focus();
       return;
     }
@@ -1472,20 +1961,20 @@
     const isCorrect = (v === correct);
 
     if(isCorrect){
-      const newStreak = state.streak + 1;
-      saveStreak(newStreak);
+      const newStreak = (prog().streak || 0) + 1;
+      setStreak(newStreak);
 
-      setMessage(el.answerMsg, `${randomPraise()} Det er rigtigt!`, "good");
-      el.streakAck.textContent = `Streak: ${newStreak} – fortsæt sådan!`;
+      setMessage(el.answerMsg, t("pm.correctYes", { praise: randomPraise() }), "good");
+      el.streakAck.textContent = t("pm.streakAck", { streak: newStreak });
       playSuccessSound();
 
       if(state.op === "minus" && (state.level === 1 || state.level === 2)){
         monsterEatRemovedCubes().catch(() => {});
       }
     } else {
-      saveStreak(0);
-      setMessage(el.answerMsg, `Ikke helt. Det rigtige svar er ${correct}.`, "bad");
-      el.streakAck.textContent = "Streak nulstilles – du prøver bare igen.";
+      setStreak(0);
+      setMessage(el.answerMsg, t("pm.correct", { correct }), "bad");
+      el.streakAck.textContent = t("pm.reset");
     }
 
     setTimeout(() => {
@@ -1498,37 +1987,33 @@
     el.gameScreen.classList.add("hidden");
     el.startScreen.classList.remove("hidden");
 
-    loadStreak();
-    loadBestStars();
+    renderFoundHint();
     renderStreakEverywhere({ animateStars:false });
     updateHello();
+    el.studentName.focus();
   }
 
   function goToGameScreen(){
     el.startScreen.classList.add("hidden");
     el.gameScreen.classList.remove("hidden");
 
-    loadStreak();
-    loadBestStars();
     renderStreakEverywhere({ animateStars:false });
-
     updateModeText();
     startRound();
   }
 
   function updateHello(){
-    const nm = (state.name || "").trim();
-    el.helloText.textContent = nm ? `Hej ${nm}!` : "";
+    const nm = normalizeName(state.name);
+    el.helloText.textContent = nm ? t("pm.hello", { name: nm }) : "";
   }
 
   function updateModeText(){
-    const opText = (state.op === "plus") ? "Plus (+)" : "Minus (−)";
-    el.modeText.textContent = `${opText} • Level ${state.level}`;
+    const opText = (state.op === "plus") ? t("pm.opText.plus") : t("pm.opText.minus");
+    el.modeText.textContent = t("pm.mode", { op: opText, level: state.level });
   }
 
   function updateStartStreakPreview(){
-    loadStreak();
-    loadBestStars();
+    ensureUser();
     renderStreakEverywhere({ animateStars:false });
   }
 
@@ -1547,11 +2032,16 @@
     updateStartStreakPreview();
   }
 
+  /* -------------------- events -------------------- */
   el.studentName.addEventListener("input", () => {
-    state.name = (el.studentName.value || "").trim();
+    state.name = normalizeName(el.studentName.value);
+    ensureUser();
     updateHello();
+    renderFoundHint();
     updateStartStreakPreview();
   });
+
+  el.studentName.addEventListener("blur", renderFoundHint);
 
   el.opPlus.addEventListener("click", () => setOp("plus"));
   el.opMinus.addEventListener("click", () => setOp("minus"));
@@ -1561,9 +2051,15 @@
   el.lvl3.addEventListener("click", () => setLevel(3));
 
   el.goBtn.addEventListener("click", () => {
-    state.name = (el.studentName.value || "").trim();
+    state.name = normalizeName(el.studentName.value);
+    ensureUser();
     updateHello();
+    renderFoundHint();
     goToGameScreen();
+  });
+
+  el.studentName.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") el.goBtn.click();
   });
 
   el.backBtn.addEventListener("click", () => goToStartScreen());
@@ -1575,12 +2071,12 @@
     if(e.key === "Enter") submitAnswer();
   });
 
-  // Init
+  /* -------------------- init -------------------- */
   setOp("plus");
   setLevel(1);
   state.name = "";
-  loadStreak();
-  loadBestStars();
+  ensureUser();
+  renderFoundHint();
   renderStreakEverywhere({ animateStars:false });
   updateHello();
 })();
