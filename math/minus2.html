@@ -552,8 +552,8 @@
     </div>
   </div>
 
-<script>
-(() => {
+  <script>
+;(() => {
   const $ = (id) => document.getElementById(id);
 
   /* =====================================================
@@ -881,7 +881,6 @@
     currentLang = SUPPORTED.includes(lang) ? lang : "da";
     document.documentElement.lang = currentLang;
 
-    // <title>
     document.title = t("pageTitle");
 
     // Setup texts
@@ -915,12 +914,11 @@
     setText("bankTitle", t("bankTitle"));
     setHtml("bankStep1", t("bankStep1"));
     exchangeBtn.textContent = t("exchangeBtn");
-    // bankStatus rendered dynamically; ensure baseline:
+
     if (!state.bankExchanged && !state.bankHasTen) bankStatusEl.textContent = t("bankStatusNone");
 
     modalBtn.textContent = t("modalNext");
 
-    // Refresh any problem-dependent UI
     renderProblem();
     renderCoins();
     updateAnswerBtn();
@@ -939,7 +937,6 @@
       setSavedLang(lang);
       applyLanguage(lang);
 
-      // Optional: keep URL updated without reload
       const u = new URL(window.location.href);
       u.searchParams.set("lang", lang);
       history.replaceState({}, "", u.toString());
@@ -953,9 +950,7 @@
     if (el.value.length > 1) el.value = el.value.slice(0,1);
   }
 
-  function getProg(){
-    return state.progress[state.level];
-  }
+  function getProg(){ return state.progress[state.level]; }
 
   function renderStars(){
     const max = 5;
@@ -970,10 +965,7 @@
   function updateHeader(){
     whoEl.textContent = state.studentName || "—";
     levelInGameEl.value = String(state.level);
-
-    const { streak } = getProg();
-    streakEl.textContent = String(streak);
-
+    streakEl.textContent = String(getProg().streak);
     renderStars();
   }
 
@@ -993,9 +985,7 @@
     return `${arr[randInt(0, arr.length-1)]}, ${name}!`;
   }
 
-  // --------- Problem lifecycle ----------
   function makeProblem(){
-    // HARD cleanup of any leftover flying coins
     document.querySelectorAll(".flying-coin").forEach(el => el.remove());
 
     let a, b, key;
@@ -1040,22 +1030,19 @@
 
     state.gradingLocked = false;
 
-    // Reset UI state
     bankSlotEl.innerHTML = "";
     bankStatusEl.textContent = t("bankStatusNone");
     exchangeBtn.disabled = true;
 
-    // Remove strike on new problem
     aTensEl.classList.remove("struck");
 
     ansTensEl.value = "";
     ansOnesEl.value = "";
 
-    // Focus right-most input every time
     queueMicrotask(() => ansOnesEl.focus());
 
     renderProblem();
-    renderCoins();     // coins reset each new problem
+    renderCoins();
     updateAnswerBtn();
   }
 
@@ -1121,7 +1108,6 @@
     }
   }
 
-  // --------- Bank logic ----------
   function canDropTenToBank(){
     if (state.level === 1) return false;
     if (!state.borrowNeeded) return false;
@@ -1143,7 +1129,6 @@
   function placeTenInBank(){
     if (!canDropTenToBank() || state.overlayOpen) return;
 
-    // Strike tens digit when borrowing begins
     aTensEl.classList.add("struck");
 
     state.tensCoins -= 1;
@@ -1170,7 +1155,6 @@
     bankStatusEl.textContent = t("bankStatusExchanging");
     exchangeBtn.disabled = true;
 
-    // Create 10 ones in bank
     bankSlotEl.innerHTML = "";
     const bankOnes = [];
     for (let i=0;i<10;i++){
@@ -1184,7 +1168,6 @@
     await wait(2000);
     await animateBankOnesToOnesPile(bankOnes);
 
-    // Apply result and reset bank
     state.onesCoins += 10;
     state.bankHasTen = false;
 
@@ -1197,7 +1180,6 @@
 
   function wait(ms){ return new Promise(res => setTimeout(res, ms)); }
 
-  // Reliable animation: Web Animations API + hard cleanup
   function createFlyingCoin(start, end){
     const d = document.createElement("div");
     d.className = "coin ones flying-coin";
@@ -1244,7 +1226,7 @@
     const pileRect = getRectPage(onesPileEl);
     const { cols, cell } = readPileLayout();
 
-    const startIndex = state.onesCoins; // BEFORE adding 10
+    const startIndex = state.onesCoins;
 
     const tasks = [];
     for (let i=0;i<bankOnesEls.length;i++){
@@ -1266,7 +1248,6 @@
     await Promise.all(tasks);
   }
 
-  // Drag/drop bank
   bankDropEl.addEventListener("dragover", (e) => {
     e.preventDefault();
     if (canDropTenToBank() && !state.overlayOpen) bankDropEl.classList.add("dragover");
@@ -1281,7 +1262,6 @@
 
   exchangeBtn.addEventListener("click", exchangeInBank);
 
-  // --------- Answer button + Enter support ----------
   function updateAnswerBtn(){
     if (state.gradingLocked || state.overlayOpen) { answerBtn.disabled = true; return; }
 
@@ -1326,7 +1306,6 @@
     state.overlayOpen = true;
     overlayEl.classList.add("show");
     overlayEl.setAttribute("aria-hidden", "false");
-    // Put focus on the modal button so Enter naturally activates it
     queueMicrotask(() => modalBtn.focus());
   }
 
@@ -1336,10 +1315,8 @@
     state.overlayOpen = false;
   }
 
-  // KEY FIX: global key handler to route Enter to modal when overlay is open
   document.addEventListener("keydown", (e) => {
     if (!state.overlayOpen) return;
-
     if (e.key === "Enter") {
       e.preventDefault();
       e.stopPropagation();
@@ -1361,7 +1338,7 @@
       prog.streak += 1;
       if (prog.streak % 5 === 0 && prog.stars < 5) prog.stars += 1;
     } else {
-      prog.streak = 0; // stars remain
+      prog.streak = 0;
     }
 
     updateHeader();
@@ -1373,7 +1350,6 @@
     makeProblem();
   });
 
-  // Also allow Enter to submit while typing (but NOT when overlay is open)
   function trySubmitWithEnter(e){
     if (state.overlayOpen) return;
     if (e.key !== "Enter") return;
@@ -1383,21 +1359,17 @@
   ansOnesEl.addEventListener("keydown", trySubmitWithEnter);
   ansTensEl.addEventListener("keydown", trySubmitWithEnter);
 
-  // --------- In-game level switching (separate streak/stars per level) ----------
   applyLevelBtn.addEventListener("click", () => {
     if (state.overlayOpen) return;
     const newLevel = Number(levelInGameEl.value);
     if (newLevel === state.level) return;
-
     state.level = newLevel;
-
     updateHeader();
     makeProblem();
   });
 
   levelInGameEl.addEventListener("change", () => applyLevelBtn.click());
 
-  // --------- Start/reset ----------
   function startApp(){
     state.studentName = studentNameEl.value.trim() || (currentLang === "en" ? "Student" : "Elev");
     state.level = Number(levelEl.value);
@@ -1415,7 +1387,6 @@
   });
 
   newStudentBtn.addEventListener("click", () => {
-    // Keep per-level progress for this session; only return to setup screen.
     app.classList.add("hidden");
     setup.classList.remove("hidden");
     ansTensEl.value = "";
@@ -1423,12 +1394,11 @@
     studentNameEl.focus();
   });
 
-  // Apply language last (after elements exist), then boot stars render
+  // Boot
   applyLanguage(currentLang);
   if (langSelect) langSelect.value = currentLang;
   renderStars();
 })();
-</script>
-
+  </script>
 </body>
 </html>
