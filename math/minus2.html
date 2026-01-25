@@ -552,903 +552,892 @@
     </div>
   </div>
 
-<script>
   <script>
-(() => {
-  const LANG_KEY = "scorezone_lang";
-  const SUPPORTED = ["da","en","de","es"];
+  (() => {
+    const $ = (id) => document.getElementById(id);
 
-  const url = new URL(window.location.href);
-  const lang = url.searchParams.get("lang");
+    /* =====================================================
+       i18n CORE
+       ===================================================== */
+    const LANG_KEY = "scorezone_lang";
+    const SUPPORTED = ["da","en","de","es"];
 
-  if (lang && SUPPORTED.includes(lang)) {
-    localStorage.setItem(LANG_KEY, lang);
-    document.documentElement.lang = lang;
-  } else {
-    const saved = localStorage.getItem(LANG_KEY);
-    if (saved && SUPPORTED.includes(saved)) {
-      document.documentElement.lang = saved;
+    function readLangFromUrl(){
+      const url = new URL(window.location.href);
+      const lang = url.searchParams.get("lang");
+      return (lang && SUPPORTED.includes(lang)) ? lang : null;
     }
-  }
-})();
-</script>
-
-(() => {
-  const $ = (id) => document.getElementById(id);
-
-  /* =====================================================
-     i18n CORE
-     ===================================================== */
-  const LANG_KEY = "scorezone_lang";
-  const SUPPORTED = ["da","en","de","es"];
-
-  function readLangFromUrl(){
-    const url = new URL(window.location.href);
-    const lang = url.searchParams.get("lang");
-    return (lang && SUPPORTED.includes(lang)) ? lang : null;
-  }
-  function getSavedLang(){
-    const saved = localStorage.getItem(LANG_KEY);
-    return (saved && SUPPORTED.includes(saved)) ? saved : "da";
-  }
-  function setSavedLang(lang){
-    if (SUPPORTED.includes(lang)) localStorage.setItem(LANG_KEY, lang);
-  }
-  function fmt(template, vars){
-    return String(template).replace(/\{(\w+)\}/g, (_, k) => (vars && k in vars) ? String(vars[k]) : `{${k}}`);
-  }
-
-  const I18N = {
-    da: {
-      pageTitle: "Minus Hjælper",
-      setupTitle: "Minus Hjælper",
-      setupLead: "Elever vælger niveau og skriver navn. Herefter løses minus-opgaver (maks 99) med mønter og bank (veksling).",
-      labelName: "Navn",
-      namePlaceholder: "Skriv dit navn",
-      labelStartLevel: "Start-niveau",
-      optLevel1: "Niveau 1 (ingen lån)",
-      optLevel2: "Niveau 2 (lån muligt, tal2 ≥ 23)",
-      optLevel3: "Niveau 3 (lån muligt, tal2 ≥ 23)",
-      startBtn: "Start",
-      setupRules: "Regler: resultat aldrig negativt, tal1 mindst 23, ingen tal over 99, samme opgave må ikke komme 2 gange i træk.",
-
-      appTitle: "Minus Hjælper",
-      lblLevelInline: "Niveau:",
-      applyLevelBtn: "Skift",
-      lblLang: "Sprog:",
-      lblStreak: "Streak:",
-      lblStars: "Stjerner:",
-      newStudentBtn: "Ny elev",
-
-      tipEnter: "Tip: Enter virker også som “Svar”.",
-      answerBtn: "Svar",
-
-      lblTensPile: "Ti'ere (tal 1)",
-      lblOnesPile: "Enere (tal 1)",
-      piecesShort: "{n} stk",
-
-      coinNote: "Tryk på mønter for at krydse ud. Træk en 10'er til banken og tryk \"Veksel\" for at låne.",
-
-      bankTitle: "Bank",
-      bankStep1: "<strong>Trin 1:</strong> Træk én 10'er herind (den bliver i banken).",
-      exchangeBtn: "Veksel",
-      bankStatusNone: "Ingen veksling endnu.",
-      bankRulesBase: "Veksling kan kun ske én gang pr. opgave og kun hvis der er behov for lån (enere).",
-      bankRulesLvl1: "Niveau 1: Ingen lån. Bank er slået fra i denne opgave.",
-      bankRulesNoNeed: "Der er ikke behov for lån i denne opgave.",
-      bankRulesNeed: "Der er behov for lån (enere). Træk en 10'er i banken og tryk Veksel.",
-
-      bankStatusTenPlaced: "10'er sat i banken. Tryk Veksel.",
-      bankStatusExchanging: "Veksler… 10 → 10×1 (i banken)",
-      bankStatusDone: "Veksling færdig: 10 enere flyttet til enere.",
-
-      modalNext: "Næste",
-      modalGoodTitle: "<span class=\"good\">{praise}</span>",
-      modalBadTitle: "<span class=\"bad\">Ikke helt, {name}.</span>",
-      modalEq: "{a} − {b} = {ans}",
-      modalCorrect: "Rigtigt svar: <strong>{ans}</strong>",
-      modalGoodSub: "Du er klar til næste opgave.",
-      modalBadSub: "Prøv igen på næste opgave."
-    },
-
-    en: {
-      pageTitle: "Subtraction Helper",
-      setupTitle: "Subtraction Helper",
-      setupLead: "Students choose a level and enter their name. Then they solve subtraction tasks (max 99) using coins and a bank (exchange).",
-      labelName: "Name",
-      namePlaceholder: "Type your name",
-      labelStartLevel: "Starting level",
-      optLevel1: "Level 1 (no borrowing)",
-      optLevel2: "Level 2 (borrowing allowed, b ≥ 23)",
-      optLevel3: "Level 3 (borrowing allowed, b ≥ 23)",
-      startBtn: "Start",
-      setupRules: "Rules: result never negative, first number at least 23, no numbers above 99, the same task cannot appear twice in a row.",
-
-      appTitle: "Subtraction Helper",
-      lblLevelInline: "Level:",
-      applyLevelBtn: "Apply",
-      lblLang: "Language:",
-      lblStreak: "Streak:",
-      lblStars: "Stars:",
-      newStudentBtn: "New student",
-
-      tipEnter: "Tip: Enter also works as “Answer”.",
-      answerBtn: "Answer",
-
-      lblTensPile: "Tens (number 1)",
-      lblOnesPile: "Ones (number 1)",
-      piecesShort: "{n} pcs",
-
-      coinNote: "Click coins to cross them out. Drag one “10” coin to the bank and press “Exchange” to borrow.",
-
-      bankTitle: "Bank",
-      bankStep1: "<strong>Step 1:</strong> Drag one “10” coin here (it stays in the bank).",
-      exchangeBtn: "Exchange",
-      bankStatusNone: "No exchange yet.",
-      bankRulesBase: "You can exchange only once per problem and only when borrowing is needed (ones).",
-      bankRulesLvl1: "Level 1: No borrowing. The bank is disabled for this problem.",
-      bankRulesNoNeed: "No borrowing is needed for this problem.",
-      bankRulesNeed: "Borrowing is needed (ones). Drag a “10” coin into the bank and press Exchange.",
-
-      bankStatusTenPlaced: "“10” placed in the bank. Press Exchange.",
-      bankStatusExchanging: "Exchanging… 10 → 10×1 (in the bank)",
-      bankStatusDone: "Exchange complete: 10 ones moved to ones.",
-
-      modalNext: "Next",
-      modalGoodTitle: "<span class=\"good\">{praise}</span>",
-      modalBadTitle: "<span class=\"bad\">Not quite, {name}.</span>",
-      modalEq: "{a} − {b} = {ans}",
-      modalCorrect: "Correct answer: <strong>{ans}</strong>",
-      modalGoodSub: "Ready for the next problem.",
-      modalBadSub: "Try again on the next problem."
-    },
-
-    de: {
-      pageTitle: "Minus-Helfer",
-      setupTitle: "Minus-Helfer",
-      setupLead: "Schüler wählen ein Niveau und geben ihren Namen ein. Danach lösen sie Minusaufgaben (max. 99) mit Münzen und Bank (Wechseln).",
-      labelName: "Name",
-      namePlaceholder: "Name eingeben",
-      labelStartLevel: "Startniveau",
-      optLevel1: "Stufe 1 (kein Ausleihen)",
-      optLevel2: "Stufe 2 (Ausleihen möglich, b ≥ 23)",
-      optLevel3: "Stufe 3 (Ausleihen möglich, b ≥ 23)",
-      startBtn: "Start",
-      setupRules: "Regeln: Ergebnis nie negativ, erste Zahl mindestens 23, keine Zahlen über 99, gleiche Aufgabe nicht zweimal hintereinander.",
-
-      appTitle: "Minus-Helfer",
-      lblLevelInline: "Stufe:",
-      applyLevelBtn: "Anwenden",
-      lblLang: "Sprache:",
-      lblStreak: "Serie:",
-      lblStars: "Sterne:",
-      newStudentBtn: "Neuer Schüler",
-
-      tipEnter: "Tipp: Enter funktioniert auch als „Antwort“.",
-      answerBtn: "Antwort",
-
-      lblTensPile: "Zehner (Zahl 1)",
-      lblOnesPile: "Einer (Zahl 1)",
-      piecesShort: "{n} Stk",
-
-      coinNote: "Münzen anklicken zum Durchstreichen. Eine „10“-Münze in die Bank ziehen und „Wechseln“ drücken.",
-
-      bankTitle: "Bank",
-      bankStep1: "<strong>Schritt 1:</strong> Eine „10“-Münze hierher ziehen (sie bleibt in der Bank).",
-      exchangeBtn: "Wechseln",
-      bankStatusNone: "Noch kein Wechsel.",
-      bankRulesBase: "Wechseln nur einmal pro Aufgabe und nur wenn Ausleihen nötig ist (Einer).",
-      bankRulesLvl1: "Stufe 1: Kein Ausleihen. Bank ist deaktiviert.",
-      bankRulesNoNeed: "Kein Ausleihen nötig.",
-      bankRulesNeed: "Ausleihen nötig (Einer). Eine „10“-Münze in die Bank ziehen und Wechseln drücken.",
-
-      bankStatusTenPlaced: "„10“ in die Bank gelegt. Wechseln drücken.",
-      bankStatusExchanging: "Wechseln… 10 → 10×1 (in der Bank)",
-      bankStatusDone: "Wechsel fertig: 10 Einer zu den Einern bewegt.",
-
-      modalNext: "Weiter",
-      modalGoodTitle: "<span class=\"good\">{praise}</span>",
-      modalBadTitle: "<span class=\"bad\">Nicht ganz, {name}.</span>",
-      modalEq: "{a} − {b} = {ans}",
-      modalCorrect: "Richtige Antwort: <strong>{ans}</strong>",
-      modalGoodSub: "Bereit für die nächste Aufgabe.",
-      modalBadSub: "Beim nächsten Mal erneut versuchen."
-    },
-
-    es: {
-      pageTitle: "Ayudante de Restas",
-      setupTitle: "Ayudante de Restas",
-      setupLead: "Los estudiantes eligen un nivel e ingresan su nombre. Luego resuelven restas (máx. 99) con monedas y banco (cambio).",
-      labelName: "Nombre",
-      namePlaceholder: "Escribe tu nombre",
-      labelStartLevel: "Nivel inicial",
-      optLevel1: "Nivel 1 (sin préstamo)",
-      optLevel2: "Nivel 2 (con préstamo, b ≥ 23)",
-      optLevel3: "Nivel 3 (con préstamo, b ≥ 23)",
-      startBtn: "Empezar",
-      setupRules: "Reglas: el resultado nunca es negativo, el primer número al menos 23, sin números mayores de 99, no se repite el mismo ejercicio seguido.",
-
-      appTitle: "Ayudante de Restas",
-      lblLevelInline: "Nivel:",
-      applyLevelBtn: "Aplicar",
-      lblLang: "Idioma:",
-      lblStreak: "Racha:",
-      lblStars: "Estrellas:",
-      newStudentBtn: "Nuevo alumno",
-
-      tipEnter: "Consejo: Enter también funciona como “Responder”.",
-      answerBtn: "Responder",
-
-      lblTensPile: "Decenas (número 1)",
-      lblOnesPile: "Unidades (número 1)",
-      piecesShort: "{n} uds",
-
-      coinNote: "Haz clic en monedas para tacharlas. Arrastra una moneda “10” al banco y pulsa “Cambiar”.",
-
-      bankTitle: "Banco",
-      bankStep1: "<strong>Paso 1:</strong> Arrastra una moneda “10” aquí (se queda en el banco).",
-      exchangeBtn: "Cambiar",
-      bankStatusNone: "Aún no hay cambio.",
-      bankRulesBase: "Solo puedes cambiar una vez por ejercicio y solo si hace falta préstamo (unidades).",
-      bankRulesLvl1: "Nivel 1: Sin préstamo. El banco está desactivado.",
-      bankRulesNoNeed: "No se necesita préstamo en este ejercicio.",
-      bankRulesNeed: "Se necesita préstamo (unidades). Arrastra una “10” al banco y pulsa Cambiar.",
-
-      bankStatusTenPlaced: "“10” puesta en el banco. Pulsa Cambiar.",
-      bankStatusExchanging: "Cambiando… 10 → 10×1 (en el banco)",
-      bankStatusDone: "Cambio completo: 10 unidades movidas a unidades.",
-
-      modalNext: "Siguiente",
-      modalGoodTitle: "<span class=\"good\">{praise}</span>",
-      modalBadTitle: "<span class=\"bad\">No del todo, {name}.</span>",
-      modalEq: "{a} − {b} = {ans}",
-      modalCorrect: "Respuesta correcta: <strong>{ans}</strong>",
-      modalGoodSub: "Listo para el siguiente ejercicio.",
-      modalBadSub: "Inténtalo de nuevo en el siguiente ejercicio."
+    function getSavedLang(){
+      const saved = localStorage.getItem(LANG_KEY);
+      return (saved && SUPPORTED.includes(saved)) ? saved : "da";
     }
-  };
-
-  let currentLang = "da";
-  function t(key, vars){
-    const dict = I18N[currentLang] || I18N.da;
-    const value = dict[key];
-    if (typeof value !== "string") return key;
-    return fmt(value, vars);
-  }
-  function setHtml(id, html){
-    const node = $(id);
-    if (node) node.innerHTML = html;
-  }
-  function setText(id, text){
-    const node = $(id);
-    if (node) node.textContent = text;
-  }
-
-  const setup = $("setup");
-  const app = $("app");
-  const studentNameEl = $("studentName");
-  const levelEl = $("level");
-  const startBtn = $("startBtn");
-
-  const whoEl = $("who");
-  const streakEl = $("streak");
-  const starsEl = $("stars");
-  const newStudentBtn = $("newStudentBtn");
-
-  const levelInGameEl = $("levelInGame");
-  const applyLevelBtn = $("applyLevelBtn");
-
-  const aTensEl = $("aTens");
-  const aOnesEl = $("aOnes");
-  const bTensEl = $("bTens");
-  const bOnesEl = $("bOnes");
-  const borrowOnesMarkEl = $("borrowOnesMark");
-
-  const ansTensEl = $("ansTens");
-  const ansOnesEl = $("ansOnes");
-
-  const tensCountEl = $("tensCount");
-  const onesCountEl = $("onesCount");
-  const tensPileEl = $("tensPile");
-  const onesPileEl = $("onesPile");
-
-  const bankDropEl = $("bankDrop");
-  const bankSlotEl = $("bankSlot");
-  const exchangeBtn = $("exchangeBtn");
-  const bankStatusEl = $("bankStatus");
-  const bankRulesEl = $("bankRules");
-
-  const answerBtn = $("answerBtn");
-
-  const overlayEl = $("overlay");
-  const modalTitleEl = $("modalTitle");
-  const modalTextEl = $("modalText");
-  const modalSubEl = $("modalSub");
-  const modalBtn = $("modalBtn");
-
-  const langSelect = $("langSelect");
-
-  const state = {
-    studentName: "",
-    level: 1,
-
-    // Per-level streak/stars (separate tracking)
-    progress: {
-      1: { streak: 0, stars: 0 },
-      2: { streak: 0, stars: 0 },
-      3: { streak: 0, stars: 0 },
-    },
-
-    a: 0,
-    b: 0,
-    answer: 0,
-    lastKey: null,
-
-    tensCoins: 0,
-    onesCoins: 0,
-
-    borrowNeeded: false,
-    borrowDone: false,
-    bankHasTen: false,
-    bankExchanged: false,
-    borrowedToOnes: false,
-
-    gradingLocked: false,
-    overlayOpen: false
-  };
-
-  function applyLanguage(lang){
-    currentLang = SUPPORTED.includes(lang) ? lang : "da";
-    document.documentElement.lang = currentLang;
-
-    // <title>
-    document.title = t("pageTitle");
-
-    // Setup texts
-    setText("setupTitle", t("setupTitle"));
-    setText("setupLead", t("setupLead"));
-    setText("labelName", t("labelName"));
-    studentNameEl.placeholder = t("namePlaceholder");
-    setText("labelStartLevel", t("labelStartLevel"));
-    setText("optLevel1", t("optLevel1"));
-    setText("optLevel2", t("optLevel2"));
-    setText("optLevel3", t("optLevel3"));
-    startBtn.textContent = t("startBtn");
-    setText("setupRules", t("setupRules"));
-
-    // App texts
-    setText("appTitle", t("appTitle"));
-    setText("lblLevelInline", t("lblLevelInline"));
-    applyLevelBtn.textContent = t("applyLevelBtn");
-    setText("lblLang", t("lblLang"));
-    setText("lblStreak", t("lblStreak"));
-    setText("lblStars", t("lblStars"));
-    newStudentBtn.textContent = t("newStudentBtn");
-
-    setText("tipEnter", t("tipEnter"));
-    answerBtn.textContent = t("answerBtn");
-
-    setText("lblTensPile", t("lblTensPile"));
-    setText("lblOnesPile", t("lblOnesPile"));
-    setText("coinNote", t("coinNote"));
-
-    setText("bankTitle", t("bankTitle"));
-    setHtml("bankStep1", t("bankStep1"));
-    exchangeBtn.textContent = t("exchangeBtn");
-    // bankStatus rendered dynamically; ensure baseline:
-    if (!state.bankExchanged && !state.bankHasTen) bankStatusEl.textContent = t("bankStatusNone");
-
-    modalBtn.textContent = t("modalNext");
-
-    // Refresh any problem-dependent UI
-    renderProblem();
-    renderCoins();
-    updateAnswerBtn();
-  }
-
-  // Initialize language: URL > localStorage > da
-  const urlLang = readLangFromUrl();
-  if (urlLang) setSavedLang(urlLang);
-  currentLang = getSavedLang();
-
-  // Sync selector
-  if (langSelect){
-    langSelect.value = currentLang;
-    langSelect.addEventListener("change", () => {
-      const lang = langSelect.value;
-      setSavedLang(lang);
-      applyLanguage(lang);
-
-      // Optional: keep URL updated without reload
-      const u = new URL(window.location.href);
-      u.searchParams.set("lang", lang);
-      history.replaceState({}, "", u.toString());
-    });
-  }
-
-  function randInt(min, max){ return Math.floor(Math.random()*(max-min+1))+min; }
-  function digits(n){ return {tens: Math.floor(n/10), ones: n%10}; }
-  function clampDigitInput(el){
-    el.value = el.value.replace(/[^0-9]/g, "");
-    if (el.value.length > 1) el.value = el.value.slice(0,1);
-  }
-
-  function getProg(){
-    return state.progress[state.level];
-  }
-
-  function renderStars(){
-    const max = 5;
-    const { stars } = getProg();
-    let html = "";
-    for (let i=0;i<max;i++){
-      html += `<span class="${i < stars ? "" : "off"}">★</span>`;
+    function setSavedLang(lang){
+      if (SUPPORTED.includes(lang)) localStorage.setItem(LANG_KEY, lang);
     }
-    starsEl.innerHTML = html;
-  }
 
-  function updateHeader(){
-    whoEl.textContent = state.studentName || "—";
-    levelInGameEl.value = String(state.level);
+    // SINGLE, STABLE INITIALIZER (URL > localStorage > da)
+    function initLang(){
+      const urlLang = readLangFromUrl();
+      if (urlLang) {
+        setSavedLang(urlLang);
+        return urlLang;
+      }
+      return getSavedLang();
+    }
 
-    const { streak } = getProg();
-    streakEl.textContent = String(streak);
+    function fmt(template, vars){
+      return String(template).replace(/\{(\w+)\}/g, (_, k) => (vars && k in vars) ? String(vars[k]) : `{${k}}`);
+    }
 
-    renderStars();
-  }
+    const I18N = {
+      da: {
+        pageTitle: "Minus Hjælper",
+        setupTitle: "Minus Hjælper",
+        setupLead: "Elever vælger niveau og skriver navn. Herefter løses minus-opgaver (maks 99) med mønter og bank (veksling).",
+        labelName: "Navn",
+        namePlaceholder: "Skriv dit navn",
+        labelStartLevel: "Start-niveau",
+        optLevel1: "Niveau 1 (ingen lån)",
+        optLevel2: "Niveau 2 (lån muligt, tal2 ≥ 23)",
+        optLevel3: "Niveau 3 (lån muligt, tal2 ≥ 23)",
+        startBtn: "Start",
+        setupRules: "Regler: resultat aldrig negativt, tal1 mindst 23, ingen tal over 99, samme opgave må ikke komme 2 gange i træk.",
 
-  function needsBorrow(a, b){
-    const da = digits(a), db = digits(b);
-    return da.ones < db.ones;
-  }
+        appTitle: "Minus Hjælper",
+        lblLevelInline: "Niveau:",
+        applyLevelBtn: "Skift",
+        lblLang: "Sprog:",
+        lblStreak: "Streak:",
+        lblStars: "Stjerner:",
+        newStudentBtn: "Ny elev",
 
-  const praise = {
-    da: ["Godt klaret", "Flot arbejde", "Super", "Stærkt", "Rigtig godt"],
-    en: ["Great job", "Well done", "Awesome", "Strong work", "Excellent"],
-    de: ["Gut gemacht", "Super", "Stark", "Sehr gut", "Klasse"],
-    es: ["Muy bien", "Buen trabajo", "Genial", "Excelente", "Perfecto"]
-  };
-  function praiseLine(name){
-    const arr = praise[currentLang] || praise.da;
-    return `${arr[randInt(0, arr.length-1)]}, ${name}!`;
-  }
+        tipEnter: "Tip: Enter virker også som “Svar”.",
+        answerBtn: "Svar",
 
-  // --------- Problem lifecycle ----------
-  function makeProblem(){
-    // HARD cleanup of any leftover flying coins
-    document.querySelectorAll(".flying-coin").forEach(el => el.remove());
+        lblTensPile: "Ti'ere (tal 1)",
+        lblOnesPile: "Enere (tal 1)",
+        piecesShort: "{n} stk",
 
-    let a, b, key;
-    let attempts = 0;
-    while (true){
-      attempts++;
-      if (attempts > 5000){ a = 50; b = 23; break; }
+        coinNote: "Tryk på mønter for at krydse ud. Træk en 10'er til banken og tryk \"Veksel\" for at låne.",
 
-      a = randInt(23, 99);
+        bankTitle: "Bank",
+        bankStep1: "<strong>Trin 1:</strong> Træk én 10'er herind (den bliver i banken).",
+        exchangeBtn: "Veksel",
+        bankStatusNone: "Ingen veksling endnu.",
+        bankRulesBase: "Veksling kan kun ske én gang pr. opgave og kun hvis der er behov for lån (enere).",
+        bankRulesLvl1: "Niveau 1: Ingen lån. Bank er slået fra i denne opgave.",
+        bankRulesNoNeed: "Der er ikke behov for lån i denne opgave.",
+        bankRulesNeed: "Der er behov for lån (enere). Træk en 10'er i banken og tryk Veksel.",
 
-      if (state.level === 1){
-        const da = digits(a);
-        const bt = randInt(0, da.tens);
-        const bo = randInt(0, da.ones);
-        b = bt*10 + bo;
-        if (b === 0) continue;
+        bankStatusTenPlaced: "10'er sat i banken. Tryk Veksel.",
+        bankStatusExchanging: "Veksler… 10 → 10×1 (i banken)",
+        bankStatusDone: "Veksling færdig: 10 enere flyttet til enere.",
+
+        modalNext: "Næste",
+        modalGoodTitle: "<span class=\"good\">{praise}</span>",
+        modalBadTitle: "<span class=\"bad\">Ikke helt, {name}.</span>",
+        modalEq: "{a} − {b} = {ans}",
+        modalCorrect: "Rigtigt svar: <strong>{ans}</strong>",
+        modalGoodSub: "Du er klar til næste opgave.",
+        modalBadSub: "Prøv igen på næste opgave."
+      },
+
+      en: {
+        pageTitle: "Subtraction Helper",
+        setupTitle: "Subtraction Helper",
+        setupLead: "Students choose a level and enter their name. Then they solve subtraction tasks (max 99) using coins and a bank (exchange).",
+        labelName: "Name",
+        namePlaceholder: "Type your name",
+        labelStartLevel: "Starting level",
+        optLevel1: "Level 1 (no borrowing)",
+        optLevel2: "Level 2 (borrowing allowed, b ≥ 23)",
+        optLevel3: "Level 3 (borrowing allowed, b ≥ 23)",
+        startBtn: "Start",
+        setupRules: "Rules: result never negative, first number at least 23, no numbers above 99, the same task cannot appear twice in a row.",
+
+        appTitle: "Subtraction Helper",
+        lblLevelInline: "Level:",
+        applyLevelBtn: "Apply",
+        lblLang: "Language:",
+        lblStreak: "Streak:",
+        lblStars: "Stars:",
+        newStudentBtn: "New student",
+
+        tipEnter: "Tip: Enter also works as “Answer”.",
+        answerBtn: "Answer",
+
+        lblTensPile: "Tens (number 1)",
+        lblOnesPile: "Ones (number 1)",
+        piecesShort: "{n} pcs",
+
+        coinNote: "Click coins to cross them out. Drag one “10” coin to the bank and press “Exchange” to borrow.",
+
+        bankTitle: "Bank",
+        bankStep1: "<strong>Step 1:</strong> Drag one “10” coin here (it stays in the bank).",
+        exchangeBtn: "Exchange",
+        bankStatusNone: "No exchange yet.",
+        bankRulesBase: "You can exchange only once per problem and only when borrowing is needed (ones).",
+        bankRulesLvl1: "Level 1: No borrowing. The bank is disabled for this problem.",
+        bankRulesNoNeed: "No borrowing is needed for this problem.",
+        bankRulesNeed: "Borrowing is needed (ones). Drag a “10” coin into the bank and press Exchange.",
+
+        bankStatusTenPlaced: "“10” placed in the bank. Press Exchange.",
+        bankStatusExchanging: "Exchanging… 10 → 10×1 (in the bank)",
+        bankStatusDone: "Exchange complete: 10 ones moved to ones.",
+
+        modalNext: "Next",
+        modalGoodTitle: "<span class=\"good\">{praise}</span>",
+        modalBadTitle: "<span class=\"bad\">Not quite, {name}.</span>",
+        modalEq: "{a} − {b} = {ans}",
+        modalCorrect: "Correct answer: <strong>{ans}</strong>",
+        modalGoodSub: "Ready for the next problem.",
+        modalBadSub: "Try again on the next problem."
+      },
+
+      de: {
+        pageTitle: "Minus-Helfer",
+        setupTitle: "Minus-Helfer",
+        setupLead: "Schüler wählen ein Niveau und geben ihren Namen ein. Danach lösen sie Minusaufgaben (max. 99) mit Münzen und Bank (Wechseln).",
+        labelName: "Name",
+        namePlaceholder: "Name eingeben",
+        labelStartLevel: "Startniveau",
+        optLevel1: "Stufe 1 (kein Ausleihen)",
+        optLevel2: "Stufe 2 (Ausleihen möglich, b ≥ 23)",
+        optLevel3: "Stufe 3 (Ausleihen möglich, b ≥ 23)",
+        startBtn: "Start",
+        setupRules: "Regeln: Ergebnis nie negativ, erste Zahl mindestens 23, keine Zahlen über 99, gleiche Aufgabe nicht zweimal hintereinander.",
+
+        appTitle: "Minus-Helfer",
+        lblLevelInline: "Stufe:",
+        applyLevelBtn: "Anwenden",
+        lblLang: "Sprache:",
+        lblStreak: "Serie:",
+        lblStars: "Sterne:",
+        newStudentBtn: "Neuer Schüler",
+
+        tipEnter: "Tipp: Enter funktioniert auch als „Antwort“.",
+        answerBtn: "Antwort",
+
+        lblTensPile: "Zehner (Zahl 1)",
+        lblOnesPile: "Einer (Zahl 1)",
+        piecesShort: "{n} Stk",
+
+        coinNote: "Münzen anklicken zum Durchstreichen. Eine „10“-Münze in die Bank ziehen und „Wechseln“ drücken.",
+
+        bankTitle: "Bank",
+        bankStep1: "<strong>Schritt 1:</strong> Eine „10“-Münze hierher ziehen (sie bleibt in der Bank).",
+        exchangeBtn: "Wechseln",
+        bankStatusNone: "Noch kein Wechsel.",
+        bankRulesBase: "Wechseln nur einmal pro Aufgabe und nur wenn Ausleihen nötig ist (Einer).",
+        bankRulesLvl1: "Stufe 1: Kein Ausleihen. Bank ist deaktiviert.",
+        bankRulesNoNeed: "Kein Ausleihen nötig.",
+        bankRulesNeed: "Ausleihen nötig (Einer). Eine „10“-Münze in die Bank ziehen und Wechseln drücken.",
+
+        bankStatusTenPlaced: "„10“ in die Bank gelegt. Wechseln drücken.",
+        bankStatusExchanging: "Wechseln… 10 → 10×1 (in der Bank)",
+        bankStatusDone: "Wechsel fertig: 10 Einer zu den Einern bewegt.",
+
+        modalNext: "Weiter",
+        modalGoodTitle: "<span class=\"good\">{praise}</span>",
+        modalBadTitle: "<span class=\"bad\">Nicht ganz, {name}.</span>",
+        modalEq: "{a} − {b} = {ans}",
+        modalCorrect: "Richtige Antwort: <strong>{ans}</strong>",
+        modalGoodSub: "Bereit für die nächste Aufgabe.",
+        modalBadSub: "Beim nächsten Mal erneut versuchen."
+      },
+
+      es: {
+        pageTitle: "Ayudante de Restas",
+        setupTitle: "Ayudante de Restas",
+        setupLead: "Los estudiantes eligen un nivel e ingresan su nombre. Luego resuelven restas (máx. 99) con monedas y banco (cambio).",
+        labelName: "Nombre",
+        namePlaceholder: "Escribe tu nombre",
+        labelStartLevel: "Nivel inicial",
+        optLevel1: "Nivel 1 (sin préstamo)",
+        optLevel2: "Nivel 2 (con préstamo, b ≥ 23)",
+        optLevel3: "Nivel 3 (con préstamo, b ≥ 23)",
+        startBtn: "Empezar",
+        setupRules: "Reglas: el resultado nunca es negativo, el primer número al menos 23, sin números mayores de 99, no se repite el mismo ejercicio seguido.",
+
+        appTitle: "Ayudante de Restas",
+        lblLevelInline: "Nivel:",
+        applyLevelBtn: "Aplicar",
+        lblLang: "Idioma:",
+        lblStreak: "Racha:",
+        lblStars: "Estrellas:",
+        newStudentBtn: "Nuevo alumno",
+
+        tipEnter: "Consejo: Enter también funciona como “Responder”.",
+        answerBtn: "Responder",
+
+        lblTensPile: "Decenas (número 1)",
+        lblOnesPile: "Unidades (número 1)",
+        piecesShort: "{n} uds",
+
+        coinNote: "Haz clic en monedas para tacharlas. Arrastra una moneda “10” al banco y pulsa “Cambiar”.",
+
+        bankTitle: "Banco",
+        bankStep1: "<strong>Paso 1:</strong> Arrastra una moneda “10” aquí (se queda en el banco).",
+        exchangeBtn: "Cambiar",
+        bankStatusNone: "Aún no hay cambio.",
+        bankRulesBase: "Solo puedes cambiar una vez por ejercicio y solo si hace falta préstamo (unidades).",
+        bankRulesLvl1: "Nivel 1: Sin préstamo. El banco está desactivado.",
+        bankRulesNoNeed: "No se necesita préstamo en este ejercicio.",
+        bankRulesNeed: "Se necesita préstamo (unidades). Arrastra una “10” al banco y pulsa Cambiar.",
+
+        bankStatusTenPlaced: "“10” puesta en el banco. Pulsa Cambiar.",
+        bankStatusExchanging: "Cambiando… 10 → 10×1 (en el banco)",
+        bankStatusDone: "Cambio completo: 10 unidades movidas a unidades.",
+
+        modalNext: "Siguiente",
+        modalGoodTitle: "<span class=\"good\">{praise}</span>",
+        modalBadTitle: "<span class=\"bad\">No del todo, {name}.</span>",
+        modalEq: "{a} − {b} = {ans}",
+        modalCorrect: "Respuesta correcta: <strong>{ans}</strong>",
+        modalGoodSub: "Listo para el siguiente ejercicio.",
+        modalBadSub: "Inténtalo de nuevo en el siguiente ejercicio."
+      }
+    };
+
+    let currentLang = "da";
+    function t(key, vars){
+      const dict = I18N[currentLang] || I18N.da;
+      const value = dict[key];
+      if (typeof value !== "string") return key;
+      return fmt(value, vars);
+    }
+    function setHtml(id, html){
+      const node = $(id);
+      if (node) node.innerHTML = html;
+    }
+    function setText(id, text){
+      const node = $(id);
+      if (node) node.textContent = text;
+    }
+
+    const setup = $("setup");
+    const app = $("app");
+    const studentNameEl = $("studentName");
+    const levelEl = $("level");
+    const startBtn = $("startBtn");
+
+    const whoEl = $("who");
+    const streakEl = $("streak");
+    const starsEl = $("stars");
+    const newStudentBtn = $("newStudentBtn");
+
+    const levelInGameEl = $("levelInGame");
+    const applyLevelBtn = $("applyLevelBtn");
+
+    const aTensEl = $("aTens");
+    const aOnesEl = $("aOnes");
+    const bTensEl = $("bTens");
+    const bOnesEl = $("bOnes");
+    const borrowOnesMarkEl = $("borrowOnesMark");
+
+    const ansTensEl = $("ansTens");
+    const ansOnesEl = $("ansOnes");
+
+    const tensCountEl = $("tensCount");
+    const onesCountEl = $("onesCount");
+    const tensPileEl = $("tensPile");
+    const onesPileEl = $("onesPile");
+
+    const bankDropEl = $("bankDrop");
+    const bankSlotEl = $("bankSlot");
+    const exchangeBtn = $("exchangeBtn");
+    const bankStatusEl = $("bankStatus");
+    const bankRulesEl = $("bankRules");
+
+    const answerBtn = $("answerBtn");
+
+    const overlayEl = $("overlay");
+    const modalTitleEl = $("modalTitle");
+    const modalTextEl = $("modalText");
+    const modalSubEl = $("modalSub");
+    const modalBtn = $("modalBtn");
+
+    const langSelect = $("langSelect");
+
+    const state = {
+      studentName: "",
+      level: 1,
+
+      // Per-level streak/stars (separate tracking)
+      progress: {
+        1: { streak: 0, stars: 0 },
+        2: { streak: 0, stars: 0 },
+        3: { streak: 0, stars: 0 },
+      },
+
+      a: 0,
+      b: 0,
+      answer: 0,
+      lastKey: null,
+
+      tensCoins: 0,
+      onesCoins: 0,
+
+      borrowNeeded: false,
+      borrowDone: false,
+      bankHasTen: false,
+      bankExchanged: false,
+      borrowedToOnes: false,
+
+      gradingLocked: false,
+      overlayOpen: false
+    };
+
+    function applyLanguage(lang){
+      currentLang = SUPPORTED.includes(lang) ? lang : "da";
+      document.documentElement.lang = currentLang;
+
+      // <title>
+      document.title = t("pageTitle");
+
+      // Setup texts
+      setText("setupTitle", t("setupTitle"));
+      setText("setupLead", t("setupLead"));
+      setText("labelName", t("labelName"));
+      studentNameEl.placeholder = t("namePlaceholder");
+      setText("labelStartLevel", t("labelStartLevel"));
+      setText("optLevel1", t("optLevel1"));
+      setText("optLevel2", t("optLevel2"));
+      setText("optLevel3", t("optLevel3"));
+      startBtn.textContent = t("startBtn");
+      setText("setupRules", t("setupRules"));
+
+      // App texts
+      setText("appTitle", t("appTitle"));
+      setText("lblLevelInline", t("lblLevelInline"));
+      applyLevelBtn.textContent = t("applyLevelBtn");
+      setText("lblLang", t("lblLang"));
+      setText("lblStreak", t("lblStreak"));
+      setText("lblStars", t("lblStars"));
+      newStudentBtn.textContent = t("newStudentBtn");
+
+      setText("tipEnter", t("tipEnter"));
+      answerBtn.textContent = t("answerBtn");
+
+      setText("lblTensPile", t("lblTensPile"));
+      setText("lblOnesPile", t("lblOnesPile"));
+      setText("coinNote", t("coinNote"));
+
+      setText("bankTitle", t("bankTitle"));
+      setHtml("bankStep1", t("bankStep1"));
+      exchangeBtn.textContent = t("exchangeBtn");
+      // bankStatus rendered dynamically; ensure baseline:
+      if (!state.bankExchanged && !state.bankHasTen) bankStatusEl.textContent = t("bankStatusNone");
+
+      modalBtn.textContent = t("modalNext");
+
+      // Refresh any problem-dependent UI
+      renderProblem();
+      renderCoins();
+      updateAnswerBtn();
+    }
+
+    // Initialize language (single source of truth)
+    currentLang = initLang();
+
+    // Sync selector
+    if (langSelect){
+      langSelect.value = currentLang;
+      langSelect.addEventListener("change", () => {
+        const lang = langSelect.value;
+        setSavedLang(lang);
+        applyLanguage(lang);
+
+        // Keep URL updated without reload (optional, but helps consistency when sharing URL)
+        const u = new URL(window.location.href);
+        u.searchParams.set("lang", lang);
+        history.replaceState({}, "", u.toString());
+      });
+    }
+
+    function randInt(min, max){ return Math.floor(Math.random()*(max-min+1))+min; }
+    function digits(n){ return {tens: Math.floor(n/10), ones: n%10}; }
+    function clampDigitInput(el){
+      el.value = el.value.replace(/[^0-9]/g, "");
+      if (el.value.length > 1) el.value = el.value.slice(0,1);
+    }
+
+    function getProg(){
+      return state.progress[state.level];
+    }
+
+    function renderStars(){
+      const max = 5;
+      const { stars } = getProg();
+      let html = "";
+      for (let i=0;i<max;i++){
+        html += `<span class="${i < stars ? "" : "off"}">★</span>`;
+      }
+      starsEl.innerHTML = html;
+    }
+
+    function updateHeader(){
+      whoEl.textContent = state.studentName || "—";
+      levelInGameEl.value = String(state.level);
+
+      const { streak } = getProg();
+      streakEl.textContent = String(streak);
+
+      renderStars();
+    }
+
+    function needsBorrow(a, b){
+      const da = digits(a), db = digits(b);
+      return da.ones < db.ones;
+    }
+
+    const praise = {
+      da: ["Godt klaret", "Flot arbejde", "Super", "Stærkt", "Rigtig godt"],
+      en: ["Great job", "Well done", "Awesome", "Strong work", "Excellent"],
+      de: ["Gut gemacht", "Super", "Stark", "Sehr gut", "Klasse"],
+      es: ["Muy bien", "Buen trabajo", "Genial", "Excelente", "Perfecto"]
+    };
+    function praiseLine(name){
+      const arr = praise[currentLang] || praise.da;
+      return `${arr[randInt(0, arr.length-1)]}, ${name}!`;
+    }
+
+    // --------- Problem lifecycle ----------
+    function makeProblem(){
+      // HARD cleanup of any leftover flying coins
+      document.querySelectorAll(".flying-coin").forEach(el => el.remove());
+
+      let a, b, key;
+      let attempts = 0;
+      while (true){
+        attempts++;
+        if (attempts > 5000){ a = 50; b = 23; break; }
+
+        a = randInt(23, 99);
+
+        if (state.level === 1){
+          const da = digits(a);
+          const bt = randInt(0, da.tens);
+          const bo = randInt(0, da.ones);
+          b = bt*10 + bo;
+          if (b === 0) continue;
+          key = `${a}-${b}`;
+          if (key === state.lastKey) continue;
+          break;
+        }
+
+        b = randInt(23, a);
         key = `${a}-${b}`;
         if (key === state.lastKey) continue;
         break;
       }
 
-      b = randInt(23, a);
-      key = `${a}-${b}`;
-      if (key === state.lastKey) continue;
-      break;
+      state.a = a;
+      state.b = b;
+      state.answer = a - b;
+      state.lastKey = `${a}-${b}`;
+
+      const da = digits(a);
+      state.tensCoins = da.tens;
+      state.onesCoins = da.ones;
+
+      state.borrowNeeded = needsBorrow(a, b);
+      state.borrowDone = false;
+      state.bankHasTen = false;
+      state.bankExchanged = false;
+      state.borrowedToOnes = false;
+
+      state.gradingLocked = false;
+
+      // Reset UI state
+      bankSlotEl.innerHTML = "";
+      bankStatusEl.textContent = t("bankStatusNone");
+      exchangeBtn.disabled = true;
+
+      // Remove strike on new problem
+      aTensEl.classList.remove("struck");
+
+      ansTensEl.value = "";
+      ansOnesEl.value = "";
+
+      // Focus right-most input every time
+      queueMicrotask(() => ansOnesEl.focus());
+
+      renderProblem();
+      renderCoins();     // coins reset each new problem
+      updateAnswerBtn();
     }
 
-    state.a = a;
-    state.b = b;
-    state.answer = a - b;
-    state.lastKey = `${a}-${b}`;
+    function renderProblem(){
+      updateHeader();
 
-    const da = digits(a);
-    state.tensCoins = da.tens;
-    state.onesCoins = da.ones;
+      const da = digits(state.a);
+      const db = digits(state.b);
 
-    state.borrowNeeded = needsBorrow(a, b);
-    state.borrowDone = false;
-    state.bankHasTen = false;
-    state.bankExchanged = false;
-    state.borrowedToOnes = false;
+      aTensEl.textContent = da.tens;
+      aOnesEl.textContent = da.ones;
+      bTensEl.textContent = db.tens;
+      bOnesEl.textContent = db.ones;
 
-    state.gradingLocked = false;
+      borrowOnesMarkEl.textContent = state.borrowedToOnes ? "10" : "";
 
-    // Reset UI state
-    bankSlotEl.innerHTML = "";
-    bankStatusEl.textContent = t("bankStatusNone");
-    exchangeBtn.disabled = true;
+      tensCountEl.textContent = fmt(t("piecesShort"), { n: state.tensCoins });
+      onesCountEl.textContent = fmt(t("piecesShort"), { n: state.onesCoins });
 
-    // Remove strike on new problem
-    aTensEl.classList.remove("struck");
+      if (state.level === 1){
+        bankRulesEl.textContent = t("bankRulesLvl1");
+      } else if (!state.borrowNeeded){
+        bankRulesEl.textContent = t("bankRulesNoNeed");
+      } else {
+        bankRulesEl.textContent = t("bankRulesNeed");
+      }
 
-    ansTensEl.value = "";
-    ansOnesEl.value = "";
-
-    // Focus right-most input every time
-    queueMicrotask(() => ansOnesEl.focus());
-
-    renderProblem();
-    renderCoins();     // coins reset each new problem
-    updateAnswerBtn();
-  }
-
-  function renderProblem(){
-    updateHeader();
-
-    const da = digits(state.a);
-    const db = digits(state.b);
-
-    aTensEl.textContent = da.tens;
-    aOnesEl.textContent = da.ones;
-    bTensEl.textContent = db.tens;
-    bOnesEl.textContent = db.ones;
-
-    borrowOnesMarkEl.textContent = state.borrowedToOnes ? "10" : "";
-
-    tensCountEl.textContent = fmt(t("piecesShort"), { n: state.tensCoins });
-    onesCountEl.textContent = fmt(t("piecesShort"), { n: state.onesCoins });
-
-    if (state.level === 1){
-      bankRulesEl.textContent = t("bankRulesLvl1");
-    } else if (!state.borrowNeeded){
-      bankRulesEl.textContent = t("bankRulesNoNeed");
-    } else {
-      bankRulesEl.textContent = t("bankRulesNeed");
+      exchangeBtn.disabled = !canExchangeNow();
     }
 
-    exchangeBtn.disabled = !canExchangeNow();
-  }
+    function renderCoins(){
+      tensPileEl.innerHTML = "";
+      onesPileEl.innerHTML = "";
 
-  function renderCoins(){
-    tensPileEl.innerHTML = "";
-    onesPileEl.innerHTML = "";
+      for (let i=0;i<state.tensCoins;i++){
+        const c = document.createElement("div");
+        c.className = "coin tens";
+        c.textContent = "10";
+        c.setAttribute("draggable", "true");
 
-    for (let i=0;i<state.tensCoins;i++){
-      const c = document.createElement("div");
-      c.className = "coin tens";
-      c.textContent = "10";
-      c.setAttribute("draggable", "true");
+        c.addEventListener("click", () => {
+          if (state.gradingLocked || state.overlayOpen) return;
+          c.classList.toggle("crossed");
+        });
 
-      c.addEventListener("click", () => {
-        if (state.gradingLocked || state.overlayOpen) return;
-        c.classList.toggle("crossed");
-      });
+        c.addEventListener("dragstart", (e) => {
+          if (!canDropTenToBank() || state.overlayOpen) { e.preventDefault(); return; }
+          e.dataTransfer.setData("text/plain", "TEN_COIN");
+        });
 
-      c.addEventListener("dragstart", (e) => {
-        if (!canDropTenToBank() || state.overlayOpen) { e.preventDefault(); return; }
-        e.dataTransfer.setData("text/plain", "TEN_COIN");
-      });
+        tensPileEl.appendChild(c);
+      }
 
-      tensPileEl.appendChild(c);
+      for (let i=0;i<state.onesCoins;i++){
+        const c = document.createElement("div");
+        c.className = "coin ones";
+        c.textContent = "1";
+        c.addEventListener("click", () => {
+          if (state.gradingLocked || state.overlayOpen) return;
+          c.classList.toggle("crossed");
+        });
+        onesPileEl.appendChild(c);
+      }
     }
 
-    for (let i=0;i<state.onesCoins;i++){
-      const c = document.createElement("div");
-      c.className = "coin ones";
-      c.textContent = "1";
-      c.addEventListener("click", () => {
-        if (state.gradingLocked || state.overlayOpen) return;
-        c.classList.toggle("crossed");
-      });
-      onesPileEl.appendChild(c);
-    }
-  }
-
-  // --------- Bank logic ----------
-  function canDropTenToBank(){
-    if (state.level === 1) return false;
-    if (!state.borrowNeeded) return false;
-    if (state.borrowDone) return false;
-    if (state.bankHasTen) return false;
-    if (state.tensCoins <= 0) return false;
-    return true;
-  }
-
-  function canExchangeNow(){
-    if (state.level === 1) return false;
-    if (!state.borrowNeeded) return false;
-    if (state.borrowDone) return false;
-    if (!state.bankHasTen) return false;
-    if (state.bankExchanged) return false;
-    return true;
-  }
-
-  function placeTenInBank(){
-    if (!canDropTenToBank() || state.overlayOpen) return;
-
-    // Strike tens digit when borrowing begins
-    aTensEl.classList.add("struck");
-
-    state.tensCoins -= 1;
-    state.bankHasTen = true;
-
-    bankSlotEl.innerHTML = "";
-    const ten = document.createElement("div");
-    ten.className = "coin tens";
-    ten.textContent = "10";
-    bankSlotEl.appendChild(ten);
-
-    bankStatusEl.textContent = t("bankStatusTenPlaced");
-    renderProblem();
-    renderCoins();
-  }
-
-  async function exchangeInBank(){
-    if (!canExchangeNow() || state.overlayOpen) return;
-
-    state.bankExchanged = true;
-    state.borrowDone = true;
-    state.borrowedToOnes = true;
-
-    bankStatusEl.textContent = t("bankStatusExchanging");
-    exchangeBtn.disabled = true;
-
-    // Create 10 ones in bank
-    bankSlotEl.innerHTML = "";
-    const bankOnes = [];
-    for (let i=0;i<10;i++){
-      const c = document.createElement("div");
-      c.className = "coin ones";
-      c.textContent = "1";
-      bankSlotEl.appendChild(c);
-      bankOnes.push(c);
+    // --------- Bank logic ----------
+    function canDropTenToBank(){
+      if (state.level === 1) return false;
+      if (!state.borrowNeeded) return false;
+      if (state.borrowDone) return false;
+      if (state.bankHasTen) return false;
+      if (state.tensCoins <= 0) return false;
+      return true;
     }
 
-    await wait(2000);
-    await animateBankOnesToOnesPile(bankOnes);
-
-    // Apply result and reset bank
-    state.onesCoins += 10;
-    state.bankHasTen = false;
-
-    bankSlotEl.innerHTML = "";
-    bankStatusEl.textContent = t("bankStatusDone");
-    renderProblem();
-    renderCoins();
-    updateAnswerBtn();
-  }
-
-  function wait(ms){ return new Promise(res => setTimeout(res, ms)); }
-
-  // Reliable animation: Web Animations API + hard cleanup
-  function createFlyingCoin(start, end){
-    const d = document.createElement("div");
-    d.className = "coin ones flying-coin";
-    d.style.left = start.x + "px";
-    d.style.top  = start.y + "px";
-
-    const dx = end.x - start.x;
-    const dy = end.y - start.y;
-
-    document.body.appendChild(d);
-
-    const anim = d.animate(
-      [
-        { transform: "translate(0px, 0px)", opacity: 1 },
-        { transform: `translate(${dx}px, ${dy}px)`, opacity: 1 }
-      ],
-      { duration: 650, easing: "ease-in-out", fill: "forwards" }
-    );
-
-    const hard = setTimeout(() => d.remove(), 1200);
-
-    return anim.finished
-      .catch(() => {})
-      .finally(() => {
-        clearTimeout(hard);
-        d.remove();
-      });
-  }
-
-  function getRectPage(el){
-    const r = el.getBoundingClientRect();
-    return { x: r.left + window.scrollX, y: r.top + window.scrollY };
-  }
-
-  function readPileLayout(){
-    const cs = getComputedStyle(onesPileEl);
-    const gap = parseFloat(cs.gap || "8") || 8;
-    const cols = 5;
-    const colWidth = 40;
-    return { cols, gap, colWidth, cell: colWidth + gap };
-  }
-
-  async function animateBankOnesToOnesPile(bankOnesEls){
-    const pileRect = getRectPage(onesPileEl);
-    const { cols, cell } = readPileLayout();
-
-    const startIndex = state.onesCoins; // BEFORE adding 10
-
-    const tasks = [];
-    for (let i=0;i<bankOnesEls.length;i++){
-      const start = getRectPage(bankOnesEls[i]);
-
-      const idx = startIndex + i;
-      const col = idx % cols;
-      const row = Math.floor(idx / cols);
-
-      const end = {
-        x: pileRect.x + 6 + col * cell,
-        y: pileRect.y + 6 + row * cell
-      };
-
-      tasks.push(createFlyingCoin(start, end));
+    function canExchangeNow(){
+      if (state.level === 1) return false;
+      if (!state.borrowNeeded) return false;
+      if (state.borrowDone) return false;
+      if (!state.bankHasTen) return false;
+      if (state.bankExchanged) return false;
+      return true;
     }
 
-    bankOnesEls.forEach(el => el.style.visibility = "hidden");
-    await Promise.all(tasks);
-  }
+    function placeTenInBank(){
+      if (!canDropTenToBank() || state.overlayOpen) return;
 
-  // Drag/drop bank
-  bankDropEl.addEventListener("dragover", (e) => {
-    e.preventDefault();
-    if (canDropTenToBank() && !state.overlayOpen) bankDropEl.classList.add("dragover");
-  });
-  bankDropEl.addEventListener("dragleave", () => bankDropEl.classList.remove("dragover"));
-  bankDropEl.addEventListener("drop", (e) => {
-    e.preventDefault();
-    bankDropEl.classList.remove("dragover");
-    const payload = e.dataTransfer.getData("text/plain");
-    if (payload === "TEN_COIN") placeTenInBank();
-  });
+      // Strike tens digit when borrowing begins
+      aTensEl.classList.add("struck");
 
-  exchangeBtn.addEventListener("click", exchangeInBank);
+      state.tensCoins -= 1;
+      state.bankHasTen = true;
 
-  // --------- Answer button + Enter support ----------
-  function updateAnswerBtn(){
-    if (state.gradingLocked || state.overlayOpen) { answerBtn.disabled = true; return; }
+      bankSlotEl.innerHTML = "";
+      const ten = document.createElement("div");
+      ten.className = "coin tens";
+      ten.textContent = "10";
+      bankSlotEl.appendChild(ten);
 
-    const onesFilled = ansOnesEl.value !== "";
-    if (!onesFilled) { answerBtn.disabled = true; return; }
-
-    const needsTens = (state.answer >= 10);
-    if (needsTens && ansTensEl.value === "") { answerBtn.disabled = true; return; }
-
-    answerBtn.disabled = false;
-  }
-
-  ansOnesEl.addEventListener("input", () => {
-    if (state.overlayOpen) return;
-    clampDigitInput(ansOnesEl);
-    if (ansOnesEl.value.length === 1) ansTensEl.focus();
-    updateAnswerBtn();
-  });
-  ansTensEl.addEventListener("input", () => {
-    if (state.overlayOpen) return;
-    clampDigitInput(ansTensEl);
-    updateAnswerBtn();
-  });
-
-  function parseGivenAnswer(){
-    const tens = ansTensEl.value === "" ? 0 : Number(ansTensEl.value);
-    const ones = ansOnesEl.value === "" ? 0 : Number(ansOnesEl.value);
-    return tens*10 + ones;
-  }
-
-  function showOverlay(ok, correctAnswer){
-    const name = state.studentName || "Elev";
-    if (ok){
-      modalTitleEl.innerHTML = t("modalGoodTitle", { praise: praiseLine(name) });
-      modalTextEl.textContent = t("modalEq", { a: state.a, b: state.b, ans: correctAnswer });
-      modalSubEl.textContent = t("modalGoodSub");
-    } else {
-      modalTitleEl.innerHTML = t("modalBadTitle", { name });
-      modalTextEl.innerHTML = t("modalCorrect", { ans: correctAnswer });
-      modalSubEl.textContent = t("modalBadSub");
+      bankStatusEl.textContent = t("bankStatusTenPlaced");
+      renderProblem();
+      renderCoins();
     }
-    state.overlayOpen = true;
-    overlayEl.classList.add("show");
-    overlayEl.setAttribute("aria-hidden", "false");
-    // Put focus on the modal button so Enter naturally activates it
-    queueMicrotask(() => modalBtn.focus());
-  }
 
-  function hideOverlay(){
-    overlayEl.classList.remove("show");
-    overlayEl.setAttribute("aria-hidden", "true");
-    state.overlayOpen = false;
-  }
+    async function exchangeInBank(){
+      if (!canExchangeNow() || state.overlayOpen) return;
 
-  // KEY FIX: global key handler to route Enter to modal when overlay is open
-  document.addEventListener("keydown", (e) => {
-    if (!state.overlayOpen) return;
+      state.bankExchanged = true;
+      state.borrowDone = true;
+      state.borrowedToOnes = true;
 
-    if (e.key === "Enter") {
+      bankStatusEl.textContent = t("bankStatusExchanging");
+      exchangeBtn.disabled = true;
+
+      // Create 10 ones in bank
+      bankSlotEl.innerHTML = "";
+      const bankOnes = [];
+      for (let i=0;i<10;i++){
+        const c = document.createElement("div");
+        c.className = "coin ones";
+        c.textContent = "1";
+        bankSlotEl.appendChild(c);
+        bankOnes.push(c);
+      }
+
+      await wait(2000);
+      await animateBankOnesToOnesPile(bankOnes);
+
+      // Apply result and reset bank
+      state.onesCoins += 10;
+      state.bankHasTen = false;
+
+      bankSlotEl.innerHTML = "";
+      bankStatusEl.textContent = t("bankStatusDone");
+      renderProblem();
+      renderCoins();
+      updateAnswerBtn();
+    }
+
+    function wait(ms){ return new Promise(res => setTimeout(res, ms)); }
+
+    // Reliable animation: Web Animations API + hard cleanup
+    function createFlyingCoin(start, end){
+      const d = document.createElement("div");
+      d.className = "coin ones flying-coin";
+      d.style.left = start.x + "px";
+      d.style.top  = start.y + "px";
+
+      const dx = end.x - start.x;
+      const dy = end.y - start.y;
+
+      document.body.appendChild(d);
+
+      const anim = d.animate(
+        [
+          { transform: "translate(0px, 0px)", opacity: 1 },
+          { transform: `translate(${dx}px, ${dy}px)`, opacity: 1 }
+        ],
+        { duration: 650, easing: "ease-in-out", fill: "forwards" }
+      );
+
+      const hard = setTimeout(() => d.remove(), 1200);
+
+      return anim.finished
+        .catch(() => {})
+        .finally(() => {
+          clearTimeout(hard);
+          d.remove();
+        });
+    }
+
+    function getRectPage(el){
+      const r = el.getBoundingClientRect();
+      return { x: r.left + window.scrollX, y: r.top + window.scrollY };
+    }
+
+    function readPileLayout(){
+      const cs = getComputedStyle(onesPileEl);
+      const gap = parseFloat(cs.gap || "8") || 8;
+      const cols = 5;
+      const colWidth = 40;
+      return { cols, gap, colWidth, cell: colWidth + gap };
+    }
+
+    async function animateBankOnesToOnesPile(bankOnesEls){
+      const pileRect = getRectPage(onesPileEl);
+      const { cols, cell } = readPileLayout();
+
+      const startIndex = state.onesCoins; // BEFORE adding 10
+
+      const tasks = [];
+      for (let i=0;i<bankOnesEls.length;i++){
+        const start = getRectPage(bankOnesEls[i]);
+
+        const idx = startIndex + i;
+        const col = idx % cols;
+        const row = Math.floor(idx / cols);
+
+        const end = {
+          x: pileRect.x + 6 + col * cell,
+          y: pileRect.y + 6 + row * cell
+        };
+
+        tasks.push(createFlyingCoin(start, end));
+      }
+
+      bankOnesEls.forEach(el => el.style.visibility = "hidden");
+      await Promise.all(tasks);
+    }
+
+    // Drag/drop bank
+    bankDropEl.addEventListener("dragover", (e) => {
       e.preventDefault();
-      e.stopPropagation();
-      modalBtn.click();
+      if (canDropTenToBank() && !state.overlayOpen) bankDropEl.classList.add("dragover");
+    });
+    bankDropEl.addEventListener("dragleave", () => bankDropEl.classList.remove("dragover"));
+    bankDropEl.addEventListener("drop", (e) => {
+      e.preventDefault();
+      bankDropEl.classList.remove("dragover");
+      const payload = e.dataTransfer.getData("text/plain");
+      if (payload === "TEN_COIN") placeTenInBank();
+    });
+
+    exchangeBtn.addEventListener("click", exchangeInBank);
+
+    // --------- Answer button + Enter support ----------
+    function updateAnswerBtn(){
+      if (state.gradingLocked || state.overlayOpen) { answerBtn.disabled = true; return; }
+
+      const onesFilled = ansOnesEl.value !== "";
+      if (!onesFilled) { answerBtn.disabled = true; return; }
+
+      const needsTens = (state.answer >= 10);
+      if (needsTens && ansTensEl.value === "") { answerBtn.disabled = true; return; }
+
+      answerBtn.disabled = false;
     }
-  }, true);
 
-  answerBtn.addEventListener("click", () => {
-    if (answerBtn.disabled || state.overlayOpen) return;
+    ansOnesEl.addEventListener("input", () => {
+      if (state.overlayOpen) return;
+      clampDigitInput(ansOnesEl);
+      if (ansOnesEl.value.length === 1) ansTensEl.focus();
+      updateAnswerBtn();
+    });
+    ansTensEl.addEventListener("input", () => {
+      if (state.overlayOpen) return;
+      clampDigitInput(ansTensEl);
+      updateAnswerBtn();
+    });
 
-    state.gradingLocked = true;
-
-    const given = parseGivenAnswer();
-    const correct = state.answer;
-    const ok = (given === correct);
-
-    const prog = getProg();
-    if (ok){
-      prog.streak += 1;
-      if (prog.streak % 5 === 0 && prog.stars < 5) prog.stars += 1;
-    } else {
-      prog.streak = 0; // stars remain
+    function parseGivenAnswer(){
+      const tens = ansTensEl.value === "" ? 0 : Number(ansTensEl.value);
+      const ones = ansOnesEl.value === "" ? 0 : Number(ansOnesEl.value);
+      return tens*10 + ones;
     }
 
-    updateHeader();
-    showOverlay(ok, correct);
-  });
+    function showOverlay(ok, correctAnswer){
+      const name = state.studentName || "Elev";
+      if (ok){
+        modalTitleEl.innerHTML = t("modalGoodTitle", { praise: praiseLine(name) });
+        modalTextEl.textContent = t("modalEq", { a: state.a, b: state.b, ans: correctAnswer });
+        modalSubEl.textContent = t("modalGoodSub");
+      } else {
+        modalTitleEl.innerHTML = t("modalBadTitle", { name });
+        modalTextEl.innerHTML = t("modalCorrect", { ans: correctAnswer });
+        modalSubEl.textContent = t("modalBadSub");
+      }
+      state.overlayOpen = true;
+      overlayEl.classList.add("show");
+      overlayEl.setAttribute("aria-hidden", "false");
+      // Put focus on the modal button so Enter naturally activates it
+      queueMicrotask(() => modalBtn.focus());
+    }
 
-  modalBtn.addEventListener("click", () => {
-    hideOverlay();
-    makeProblem();
-  });
+    function hideOverlay(){
+      overlayEl.classList.remove("show");
+      overlayEl.setAttribute("aria-hidden", "true");
+      state.overlayOpen = false;
+    }
 
-  // Also allow Enter to submit while typing (but NOT when overlay is open)
-  function trySubmitWithEnter(e){
-    if (state.overlayOpen) return;
-    if (e.key !== "Enter") return;
-    e.preventDefault();
-    if (!answerBtn.disabled) answerBtn.click();
-  }
-  ansOnesEl.addEventListener("keydown", trySubmitWithEnter);
-  ansTensEl.addEventListener("keydown", trySubmitWithEnter);
+    // KEY FIX: global key handler to route Enter to modal when overlay is open
+    document.addEventListener("keydown", (e) => {
+      if (!state.overlayOpen) return;
 
-  // --------- In-game level switching (separate streak/stars per level) ----------
-  applyLevelBtn.addEventListener("click", () => {
-    if (state.overlayOpen) return;
-    const newLevel = Number(levelInGameEl.value);
-    if (newLevel === state.level) return;
+      if (e.key === "Enter") {
+        e.preventDefault();
+        e.stopPropagation();
+        modalBtn.click();
+      }
+    }, true);
 
-    state.level = newLevel;
+    answerBtn.addEventListener("click", () => {
+      if (answerBtn.disabled || state.overlayOpen) return;
 
-    updateHeader();
-    makeProblem();
-  });
+      state.gradingLocked = true;
 
-  levelInGameEl.addEventListener("change", () => applyLevelBtn.click());
+      const given = parseGivenAnswer();
+      const correct = state.answer;
+      const ok = (given === correct);
 
-  // --------- Start/reset ----------
-  function startApp(){
-    state.studentName = studentNameEl.value.trim() || (currentLang === "en" ? "Student" : "Elev");
-    state.level = Number(levelEl.value);
+      const prog = getProg();
+      if (ok){
+        prog.streak += 1;
+        if (prog.streak % 5 === 0 && prog.stars < 5) prog.stars += 1;
+      } else {
+        prog.streak = 0; // stars remain
+      }
 
-    setup.classList.add("hidden");
-    app.classList.remove("hidden");
+      updateHeader();
+      showOverlay(ok, correct);
+    });
 
-    updateHeader();
-    makeProblem();
-  }
+    modalBtn.addEventListener("click", () => {
+      hideOverlay();
+      makeProblem();
+    });
 
-  startBtn.addEventListener("click", startApp);
-  studentNameEl.addEventListener("keydown", (e) => {
-    if (e.key === "Enter") startApp();
-  });
+    // Also allow Enter to submit while typing (but NOT when overlay is open)
+    function trySubmitWithEnter(e){
+      if (state.overlayOpen) return;
+      if (e.key !== "Enter") return;
+      e.preventDefault();
+      if (!answerBtn.disabled) answerBtn.click();
+    }
+    ansOnesEl.addEventListener("keydown", trySubmitWithEnter);
+    ansTensEl.addEventListener("keydown", trySubmitWithEnter);
 
-  newStudentBtn.addEventListener("click", () => {
-    // Keep per-level progress for this session; only return to setup screen.
-    app.classList.add("hidden");
-    setup.classList.remove("hidden");
-    ansTensEl.value = "";
-    ansOnesEl.value = "";
-    studentNameEl.focus();
-  });
+    // --------- In-game level switching (separate streak/stars per level) ----------
+    applyLevelBtn.addEventListener("click", () => {
+      if (state.overlayOpen) return;
+      const newLevel = Number(levelInGameEl.value);
+      if (newLevel === state.level) return;
 
-  // Apply language last (after elements exist), then boot stars render
-  applyLanguage(currentLang);
-  if (langSelect) langSelect.value = currentLang;
-  renderStars();
-})();
-</script>
+      state.level = newLevel;
+
+      updateHeader();
+      makeProblem();
+    });
+
+    levelInGameEl.addEventListener("change", () => applyLevelBtn.click());
+
+    // --------- Start/reset ----------
+    function startApp(){
+      state.studentName = studentNameEl.value.trim() || (currentLang === "en" ? "Student" : "Elev");
+      state.level = Number(levelEl.value);
+
+      setup.classList.add("hidden");
+      app.classList.remove("hidden");
+
+      updateHeader();
+      makeProblem();
+    }
+
+    startBtn.addEventListener("click", startApp);
+    studentNameEl.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") startApp();
+    });
+
+    newStudentBtn.addEventListener("click", () => {
+      // Keep per-level progress for this session; only return to setup screen.
+      app.classList.add("hidden");
+      setup.classList.remove("hidden");
+      ansTensEl.value = "";
+      ansOnesEl.value = "";
+      studentNameEl.focus();
+    });
+
+    // Apply language last (after elements exist), then boot stars render
+    applyLanguage(currentLang);
+    if (langSelect) langSelect.value = currentLang;
+    renderStars();
+  })();
+  </script>
 
 </body>
 </html>
