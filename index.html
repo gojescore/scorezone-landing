@@ -324,7 +324,14 @@
   </div>
 
   <script>
-    // --- Landing: Language carousel + i18n + stable persistence + auto-pass ?lang=xx to internal links ---
+    // --- LOCKED language system (single source of truth) ---
+    // Guarantees:
+    // 1) Selected language persists (localStorage).
+    // 2) Landing URL is always kept in sync (?lang=xx) without reloading (history.replaceState).
+    // 3) Clicking SAME-ORIGIN links automatically appends ?lang=xx (so /math/ opens correct language).
+    // 4) If a link already has ?lang=, we respect it (do not override).
+    // 5) External links (xmas.scorezone.dk) are not rewritten.
+
     const LANG_KEY = "scorezone_lang";
 
     const languages = [
@@ -334,7 +341,9 @@
       { code: "es", label: "Español", flag: "🇪🇸" }
     ];
 
-    // Landing page translations (keep only keys used on landing)
+    const SUPPORTED = languages.map(l => l.code);
+
+    // Landing page translations
     const I18N = {
       da: {
         "lang.label": "Sprog",
@@ -386,20 +395,12 @@
     const prevBtn = document.getElementById("langPrev");
     const nextBtn = document.getElementById("langNext");
 
-    function isSupported(code){
-      return languages.some(l => l.code === code);
-    }
+    function isSupported(code){ return SUPPORTED.includes(code); }
 
     function readLangFromUrl(){
       const url = new URL(window.location.href);
       const lang = url.searchParams.get("lang");
       return (lang && isSupported(lang)) ? lang : null;
-    }
-
-    function browserLang(){
-      const raw = (navigator.language || "da").toLowerCase();
-      const base = raw.split("-")[0];
-      return isSupported(base) ? base : "da";
     }
 
     function getSavedLang(){
@@ -411,26 +412,39 @@
       if(isSupported(code)) localStorage.setItem(LANG_KEY, code);
     }
 
+    function browserLang(){
+      const raw = (navigator.language || "da").toLowerCase(); // e.g. en-us
+      const base = raw.split("-")[0];
+      return isSupported(base) ? base : "da";
+    }
+
     function currentLang(){
       // Priority: URL ?lang= > saved > browser
       const urlLang = readLangFromUrl();
-      if (urlLang) { setSavedLang(urlLang); return urlLang; }
+      if(urlLang){ setSavedLang(urlLang); return urlLang; }
 
       const saved = getSavedLang();
-      if (saved) return saved;
+      if(saved) return saved;
 
       const b = browserLang();
       setSavedLang(b);
       return b;
     }
 
+    // LOCK-IN: keep landing URL synced with chosen language (no reload)
+    function setLangInUrl(lang){
+      const url = new URL(window.location.href);
+      url.searchParams.set("lang", lang);
+      history.replaceState({}, "", url.toString());
+    }
+
     function applyLanguage(lang){
       const dict = I18N[lang] || I18N.da;
 
-      document.querySelectorAll("[data-i18n]").forEach(node => {
-        const key = node.getAttribute("data-i18n");
+      document.querySelectorAll("[data-i18n]").forEach(elm => {
+        const key = elm.getAttribute("data-i18n");
         const value = dict[key];
-        if (typeof value === "string") node.textContent = value;
+        if(typeof value === "string") elm.textContent = value;
       });
 
       document.documentElement.lang = lang;
@@ -440,7 +454,7 @@
       row.innerHTML = "";
       const selected = currentLang();
 
-      for (const lang of languages){
+      for(const lang of languages){
         const btn = document.createElement("button");
         btn.type = "button";
         btn.className = "langChip";
@@ -457,6 +471,7 @@
 
         btn.addEventListener("click", () => {
           setSavedLang(lang.code);
+          setLangInUrl(lang.code);     // <- KEY FIX: makes /math/ open correct language
           updateSelectedUI(lang.code);
           applyLanguage(lang.code);
         });
@@ -469,7 +484,7 @@
       row.querySelectorAll(".langChip").forEach(chip => {
         const isSelected = chip.dataset.lang === code;
         chip.setAttribute("aria-selected", isSelected ? "true" : "false");
-        if (isSelected) chip.scrollIntoView({ behavior: "smooth", inline: "center", block: "nearest" });
+        if(isSelected) chip.scrollIntoView({ behavior: "smooth", inline: "center", block: "nearest" });
       });
     }
 
@@ -482,8 +497,8 @@
     nextBtn.addEventListener("click", () => scrollRow(1));
 
     row.addEventListener("keydown", (e) => {
-      if (e.key === "ArrowLeft") scrollRow(-1);
-      if (e.key === "ArrowRight") scrollRow(1);
+      if(e.key === "ArrowLeft") scrollRow(-1);
+      if(e.key === "ArrowRight") scrollRow(1);
     });
 
     function withLangParam(href, lang){
@@ -492,35 +507,38 @@
       return url.toString();
     }
 
-    // Auto-pass lang to internal (same-origin) links ONLY.
-    // IMPORTANT: Do NOT touch external links (e.g. xmas.scorezone.dk).
+    // LOCK-IN: auto-pass lang ONLY on same-origin navigation.
+    // This applies to tile clicks (including /math/) and any same-site links you add later.
     document.addEventListener("click", (e) => {
       const a = e.target.closest("a");
-      if (!a) return;
+      if(!a) return;
 
       // allow normal new-tab / modified clicks
-      if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return;
+      if(e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return;
 
       const href = a.getAttribute("href");
-      if (!href || href.startsWith("#") || href.startsWith("mailto:") || href.startsWith("tel:")) return;
+      if(!href || href.startsWith("#") || href.startsWith("mailto:") || href.startsWith("tel:")) return;
 
       const url = new URL(href, window.location.href);
 
-      // only rewrite same-origin links
-      if (url.origin !== window.location.origin) return;
+      // Only rewrite same-origin links (do NOT touch xmas.scorezone.dk)
+      if(url.origin !== window.location.origin) return;
 
-      // If link already has lang=, don't override it
-      if (url.searchParams.get("lang")) return;
+      // Respect explicit lang in link
+      if(url.searchParams.get("lang")) return;
 
       e.preventDefault();
       window.location.href = withLangParam(url.toString(), currentLang());
     }, true);
 
-    // Init (single source of truth)
-    const lang = currentLang();
-    renderLanguages();
-    applyLanguage(lang);
-    updateSelectedUI(lang);
+    // INIT (locked)
+    (function init(){
+      const lang = currentLang();
+      setLangInUrl(lang);            // <- keeps URL correct even on first load
+      renderLanguages();
+      applyLanguage(lang);
+      updateSelectedUI(lang);
+    })();
   </script>
 
 </body>
