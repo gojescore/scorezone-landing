@@ -293,7 +293,7 @@
       </div>
     </section>
 
-    <!-- GAME TILES (single grid) -->
+    <!-- GAME TILES (old math links removed; only math hub + xmas links remain) -->
     <main class="tiles" aria-label="Educational games">
       <!-- Math hub tile -->
       <a class="tile" href="/math/">
@@ -304,7 +304,7 @@
         </div>
       </a>
 
-      <!-- Existing tiles unchanged -->
+      <!-- Xmas tiles -->
       <a class="tile" href="https://xmas.scorezone.dk">
         <div class="icon">🎄</div>
         <div class="text">
@@ -320,263 +320,222 @@
           <div class="sub" data-i18n="tile.xmas.team.sub">Join the game as a team</div>
         </div>
       </a>
-
     </main>
 
   </div>
 
   <script>
-    // --- Language carousel + i18n + auto-pass ?lang=xx from landing → /math/ (same-origin only) ---
-    const LANG_KEY = "scorezone_lang";
+    // --- Language carousel + i18n + auto-pass ?lang= to same-origin navigation (landing -> /math/) ---
+    (() => {
+      const LANG_KEY = "scorezone_lang";
 
-    const languages = [
-      { code: "da", label: "Dansk",   flag: "🇩🇰" },
-      { code: "en", label: "English", flag: "🇬🇧" },
-      { code: "de", label: "Deutsch", flag: "🇩🇪" },
-      { code: "es", label: "Español", flag: "🇪🇸" }
-    ];
+      const languages = [
+        { code: "da", label: "Dansk",   flag: "🇩🇰" },
+        { code: "en", label: "English", flag: "🇬🇧" },
+        { code: "de", label: "Deutsch", flag: "🇩🇪" },
+        { code: "es", label: "Español", flag: "🇪🇸" }
+      ];
+      const SUPPORTED = languages.map(l => l.code);
 
-    // Landing page translations
-    const I18N = {
-      da: {
-        "lang.label": "Sprog",
-        "hero.title": "ScoreZone",
-        "hero.lead": "Simple og engagerende læringsspil til elever, lærere og klasselokalet.",
+      // Landing page translations
+      const I18N = {
+        da: {
+          "lang.label": "Sprog",
+          "hero.title": "ScoreZone",
+          "hero.lead": "Simple og engagerende læringsspil til elever, lærere og klasselokalet.",
 
-        "tile.math.title": "Matematik",
-        "tile.math.sub": "Gå til matematikspil",
+          "tile.math.title": "Matematik",
+          "tile.math.sub": "Gå til matematikspil",
 
-        "tile.xmas.master.title": "Xmas – Spilleder",
-        "tile.xmas.master.sub": "Start og styr klassespillet",
+          "tile.xmas.master.title": "Xmas – Spilleder",
+          "tile.xmas.master.sub": "Start og styr klassespillet",
 
-        "tile.xmas.team.title": "Xmas – Hold",
-        "tile.xmas.team.sub": "Deltag i spillet som et hold",
+          "tile.xmas.team.title": "Xmas – Hold",
+          "tile.xmas.team.sub": "Deltag i spillet som et hold"
+        },
 
-        "tile.plusminus.title": "Plus/Minus Hjælper",
-        "tile.plusminus.sub": "Øv plus og minus",
+        en: {
+          "lang.label": "Language",
+          "hero.title": "ScoreZone",
+          "hero.lead": "Simple, engaging educational games designed for students, teachers, and classrooms.",
 
-        "tile.minus.title": "Minus (2-cifrede tal)",
-        "tile.minus.sub": "Subtraktion med to cifre",
+          "tile.math.title": "Math",
+          "tile.math.sub": "Go to math games",
 
-        "tile.plus.title": "Plus (2-cifrede tal)",
-        "tile.plus.sub": "Addition med to cifre"
-      },
+          "tile.xmas.master.title": "Xmas – Game Master",
+          "tile.xmas.master.sub": "Start and control the classroom game",
 
-      en: {
-        "lang.label": "Language",
-        "hero.title": "ScoreZone",
-        "hero.lead": "Simple, engaging educational games designed for students, teachers, and classrooms.",
+          "tile.xmas.team.title": "Xmas – Team",
+          "tile.xmas.team.sub": "Join the game as a team"
+        },
 
-        "tile.math.title": "Math",
-        "tile.math.sub": "Go to math games",
+        de: {
+          "lang.label": "Sprache",
+          "hero.title": "ScoreZone",
+          "hero.lead": "Einfache, motivierende Lernspiele für Schüler, Lehrkräfte und den Unterricht.",
 
-        "tile.xmas.master.title": "Xmas – Game Master",
-        "tile.xmas.master.sub": "Start and control the classroom game",
+          "tile.math.title": "Mathe",
+          "tile.math.sub": "Zu den Mathe-Spielen",
 
-        "tile.xmas.team.title": "Xmas – Team",
-        "tile.xmas.team.sub": "Join the game as a team",
+          "tile.xmas.master.title": "Xmas – Spielleiter",
+          "tile.xmas.master.sub": "Starte und steuere das Klassenspiel",
 
-        "tile.plusminus.title": "Plus/Minus Helper",
-        "tile.plusminus.sub": "Practice addition and subtraction",
+          "tile.xmas.team.title": "Xmas – Team",
+          "tile.xmas.team.sub": "Als Team dem Spiel beitreten"
+        },
 
-        "tile.minus.title": "Minus (two-digit)",
-        "tile.minus.sub": "Two-digit subtraction",
+        es: {
+          "lang.label": "Idioma",
+          "hero.title": "ScoreZone",
+          "hero.lead": "Juegos educativos sencillos y divertidos para estudiantes, docentes y el aula.",
 
-        "tile.plus.title": "Plus (two-digit)",
-        "tile.plus.sub": "Two-digit addition"
-      },
+          "tile.math.title": "Matemáticas",
+          "tile.math.sub": "Ir a los juegos de matemáticas",
 
-      de: {
-        "lang.label": "Sprache",
-        "hero.title": "ScoreZone",
-        "hero.lead": "Einfache, motivierende Lernspiele für Schüler, Lehrkräfte und den Unterricht.",
+          "tile.xmas.master.title": "Xmas – Moderador",
+          "tile.xmas.master.sub": "Inicia y controla el juego en clase",
 
-        "tile.math.title": "Mathe",
-        "tile.math.sub": "Zu den Mathe-Spielen",
+          "tile.xmas.team.title": "Xmas – Equipo",
+          "tile.xmas.team.sub": "Únete al juego como equipo"
+        }
+      };
 
-        "tile.xmas.master.title": "Xmas – Spielleiter",
-        "tile.xmas.master.sub": "Starte und steuere das Klassenspiel",
+      const row = document.getElementById("langRow");
+      const prevBtn = document.getElementById("langPrev");
+      const nextBtn = document.getElementById("langNext");
 
-        "tile.xmas.team.title": "Xmas – Team",
-        "tile.xmas.team.sub": "Als Team dem Spiel beitreten",
-
-        "tile.plusminus.title": "Plus/Minus Helfer",
-        "tile.plusminus.sub": "Addition und Subtraktion üben",
-
-        "tile.minus.title": "Minus (zweistellig)",
-        "tile.minus.sub": "Zweistellige Subtraktion",
-
-        "tile.plus.title": "Plus (zweistellig)",
-        "tile.plus.sub": "Zweistellige Addition"
-      },
-
-      es: {
-        "lang.label": "Idioma",
-        "hero.title": "ScoreZone",
-        "hero.lead": "Juegos educativos sencillos y divertidos para estudiantes, docentes y el aula.",
-
-        "tile.math.title": "Matemáticas",
-        "tile.math.sub": "Ir a los juegos de matemáticas",
-
-        "tile.xmas.master.title": "Xmas – Moderador",
-        "tile.xmas.master.sub": "Inicia y controla el juego en clase",
-
-        "tile.xmas.team.title": "Xmas – Equipo",
-        "tile.xmas.team.sub": "Únete al juego como equipo",
-
-        "tile.plusminus.title": "Ayudante de Suma/Resta",
-        "tile.plusminus.sub": "Practica suma y resta",
-
-        "tile.minus.title": "Resta (dos cifras)",
-        "tile.minus.sub": "Resta de dos cifras",
-
-        "tile.plus.title": "Suma (dos cifras)",
-        "tile.plus.sub": "Suma de dos cifras"
+      function browserLang(){
+        const raw = (navigator.language || "da").toLowerCase(); // e.g. "en-us"
+        const base = raw.split("-")[0]; // "en"
+        return SUPPORTED.includes(base) ? base : "da";
       }
-    };
 
-    const row = document.getElementById("langRow");
-    const prevBtn = document.getElementById("langPrev");
-    const nextBtn = document.getElementById("langNext");
+      function readLangFromUrl(){
+        const url = new URL(window.location.href);
+        const lang = url.searchParams.get("lang");
+        return (lang && SUPPORTED.includes(lang)) ? lang : null;
+      }
 
-    function isSupported(code){
-      return languages.some(l => l.code === code);
-    }
+      function getSavedLang(){
+        const saved = localStorage.getItem(LANG_KEY);
+        return (saved && SUPPORTED.includes(saved)) ? saved : null;
+      }
 
-    function browserLang(){
-      const raw = (navigator.language || "da").toLowerCase(); // e.g. "en-us"
-      const base = raw.split("-")[0]; // "en"
-      return isSupported(base) ? base : "da";
-    }
+      function setSavedLang(code){
+        if (SUPPORTED.includes(code)) localStorage.setItem(LANG_KEY, code);
+      }
 
-    function setSavedLang(code){
-      if (isSupported(code)) localStorage.setItem(LANG_KEY, code);
-    }
+      function currentLang(){
+        // Priority: URL ?lang= > saved > browser
+        const urlLang = readLangFromUrl();
+        if (urlLang) { setSavedLang(urlLang); return urlLang; }
 
-    function getSavedLang(){
-      const saved = localStorage.getItem(LANG_KEY);
-      if (saved && isSupported(saved)) return saved;
-      return null;
-    }
+        const saved = getSavedLang();
+        if (saved) return saved;
 
-    function readLangFromUrl(){
-      const url = new URL(window.location.href);
-      const lang = url.searchParams.get("lang");
-      return (lang && isSupported(lang)) ? lang : null;
-    }
+        const b = browserLang();
+        setSavedLang(b);
+        return b;
+      }
 
-    function currentLang(){
-      // Priority: URL ?lang= > saved > browser (and persist)
-      const urlLang = readLangFromUrl();
-      if (urlLang){ setSavedLang(urlLang); return urlLang; }
+      function applyLanguage(lang){
+        const dict = I18N[lang] || I18N.da;
 
-      const saved = getSavedLang();
-      if (saved) return saved;
-
-      const b = browserLang();
-      setSavedLang(b);
-      return b;
-    }
-
-    function applyLanguage(lang){
-      const dict = I18N[lang] || I18N.da;
-
-      document.querySelectorAll("[data-i18n]").forEach(el => {
-        const key = el.getAttribute("data-i18n");
-        const value = dict[key];
-        if (typeof value === "string") el.textContent = value;
-      });
-
-      document.documentElement.lang = lang;
-    }
-
-    function renderLanguages(){
-      row.innerHTML = "";
-      const selected = currentLang();
-
-      for (const lang of languages){
-        const btn = document.createElement("button");
-        btn.type = "button";
-        btn.className = "langChip";
-        btn.setAttribute("role", "option");
-        btn.dataset.lang = lang.code;
-
-        const isSelected = lang.code === selected;
-        btn.setAttribute("aria-selected", isSelected ? "true" : "false");
-
-        btn.innerHTML = `
-          <span aria-hidden="true">${lang.flag}</span>
-          <span>${lang.label}</span>
-        `;
-
-        btn.addEventListener("click", () => {
-          setSavedLang(lang.code);
-          updateSelectedUI(lang.code);
-          applyLanguage(lang.code);
+        document.querySelectorAll("[data-i18n]").forEach(node => {
+          const key = node.getAttribute("data-i18n");
+          const value = dict[key];
+          if (typeof value === "string") node.textContent = value;
         });
 
-        row.appendChild(btn);
+        document.documentElement.lang = lang;
       }
-    }
 
-    function updateSelectedUI(code){
-      const chips = row.querySelectorAll(".langChip");
-      chips.forEach(chip => {
-        const isSelected = chip.dataset.lang === code;
-        chip.setAttribute("aria-selected", isSelected ? "true" : "false");
-        if (isSelected) chip.scrollIntoView({ behavior: "smooth", inline: "center", block: "nearest" });
+      function updateSelectedUI(code){
+        const chips = row.querySelectorAll(".langChip");
+        chips.forEach(chip => {
+          const isSelected = chip.dataset.lang === code;
+          chip.setAttribute("aria-selected", isSelected ? "true" : "false");
+          if (isSelected) chip.scrollIntoView({ behavior: "smooth", inline: "center", block: "nearest" });
+        });
+      }
+
+      function renderLanguages(){
+        row.innerHTML = "";
+        const selected = currentLang();
+
+        for (const lang of languages){
+          const btn = document.createElement("button");
+          btn.type = "button";
+          btn.className = "langChip";
+          btn.setAttribute("role", "option");
+          btn.dataset.lang = lang.code;
+
+          const isSelected = lang.code === selected;
+          btn.setAttribute("aria-selected", isSelected ? "true" : "false");
+
+          btn.innerHTML = `
+            <span aria-hidden="true">${lang.flag}</span>
+            <span>${lang.label}</span>
+          `;
+
+          btn.addEventListener("click", () => {
+            setSavedLang(lang.code);
+            applyLanguage(lang.code);
+            updateSelectedUI(lang.code);
+          });
+
+          row.appendChild(btn);
+        }
+      }
+
+      function scrollRow(dir){
+        const amount = Math.max(220, Math.floor(row.clientWidth * 0.8));
+        row.scrollBy({ left: dir * amount, behavior: "smooth" });
+      }
+
+      prevBtn.addEventListener("click", () => scrollRow(-1));
+      nextBtn.addEventListener("click", () => scrollRow(1));
+
+      row.addEventListener("keydown", (e) => {
+        if (e.key === "ArrowLeft") scrollRow(-1);
+        if (e.key === "ArrowRight") scrollRow(1);
       });
-    }
 
-    function scrollRow(dir){
-      const amount = Math.max(220, Math.floor(row.clientWidth * 0.8));
-      row.scrollBy({ left: dir * amount, behavior: "smooth" });
-    }
+      function withLangParam(href, lang){
+        const url = new URL(href, window.location.href);
+        url.searchParams.set("lang", lang);
+        return url.toString();
+      }
 
-    prevBtn.addEventListener("click", () => scrollRow(-1));
-    nextBtn.addEventListener("click", () => scrollRow(1));
+      // Auto-pass lang on internal navigation (same-origin links, e.g. landing -> /math/)
+      document.addEventListener("click", (e) => {
+        const a = e.target.closest("a");
+        if (!a) return;
 
-    row.addEventListener("keydown", (e) => {
-      if (e.key === "ArrowLeft") scrollRow(-1);
-      if (e.key === "ArrowRight") scrollRow(1);
-    });
+        // allow normal new-tab / modified clicks
+        if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return;
 
-    function withLangParam(rawHref, lang){
-      const url = new URL(rawHref, window.location.href);
-      url.searchParams.set("lang", lang);
-      return url.toString();
-    }
+        const href = a.getAttribute("href");
+        if (!href || href.startsWith("#") || href.startsWith("mailto:") || href.startsWith("tel:")) return;
 
-    // Auto-pass lang for SAME-ORIGIN navigation (landing → /math/)
-    // Does NOT touch xmas.scorezone.dk (different origin).
-    document.addEventListener("click", (e) => {
-      const a = e.target.closest("a");
-      if (!a) return;
+        const url = new URL(href, window.location.href);
 
-      // allow normal new-tab / modified clicks
-      if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return;
+        // only rewrite same-origin links (do NOT touch xmas.scorezone.dk)
+        if (url.origin !== window.location.origin) return;
 
-      const href = a.getAttribute("href");
-      if (!href || href.startsWith("#") || href.startsWith("mailto:") || href.startsWith("tel:")) return;
+        // If link already has lang=, don't override it
+        if (url.searchParams.get("lang")) return;
 
-      const url = new URL(href, window.location.href);
+        e.preventDefault();
+        window.location.href = withLangParam(url.toString(), currentLang());
+      }, true);
 
-      // only rewrite same-origin links
-      if (url.origin !== window.location.origin) return;
-
-      // if already has lang=, don't override
-      if (url.searchParams.get("lang")) return;
-
-      e.preventDefault();
-      window.location.href = withLangParam(url.toString(), currentLang());
-    }, true);
-
-    // Init (and keep your “honor ?lang=” behavior)
-    const lang = currentLang();
-    renderLanguages();
-    applyLanguage(lang);
-    updateSelectedUI(lang);
+      // Init
+      const lang = currentLang();
+      renderLanguages();
+      applyLanguage(lang);
+      updateSelectedUI(lang);
+    })();
   </script>
-
 </body>
 </html>
