@@ -16,14 +16,18 @@
 
   <style>
     :root{
-      --bg:#f6f3ee;
-      --panel:rgba(255,255,255,.92);
-      --ink:#111827;
-      --muted:#6b7280;
-      --line:rgba(17,24,39,.10);
-      --accent:rgba(37,99,235,.30);
-      --shadowSoft:0 12px 28px rgba(0,0,0,.08);
-      --shadow:0 18px 46px rgba(0,0,0,.12);
+      /* Your new scheme */
+      --bg:#050E3C;
+      --panel:rgba(0,36,85,.92);     /* #002455 */
+      --ink:#ffffff;
+      --muted:rgba(255,255,255,.78);
+      --line:rgba(255,255,255,.14);
+
+      --accent:#DC0000;
+      --accentSoft:#FF3838;
+
+      --shadowSoft:0 12px 28px rgba(0,0,0,.22);
+      --shadow:0 18px 46px rgba(0,0,0,.28);
     }
 
     *{box-sizing:border-box}
@@ -45,11 +49,10 @@
     .hero{
       padding:28px 24px;
       border-radius:22px;
-      background:
-        linear-gradient(180deg,
-          rgba(255,255,255,.96),
-          rgba(255,255,255,.88)
-        );
+      background: linear-gradient(180deg,
+        rgba(0,36,85,.96),
+        rgba(0,36,85,.86)
+      );
       border:1px solid var(--line);
       box-shadow:var(--shadow);
       text-align:center;
@@ -66,41 +69,19 @@
       margin:10px auto 0;
       max-width:560px;
       font-size:16px;
-      font-weight:600;
+      font-weight:650;
       color:var(--muted);
       line-height:1.45;
     }
 
-    /* ---------- LANGUAGE CAROUSEL ---------- */
+    /* ---------- LANGUAGE BAR (shorter, label inline) ---------- */
     .langBar{
-      margin-top:14px;
-      padding:14px;
+      margin-top:12px;
+      padding:10px 12px;           /* shorter */
       border-radius:18px;
       border:1px solid var(--line);
       background:var(--panel);
       box-shadow:var(--shadowSoft);
-    }
-
-    .langTop{
-      display:flex;
-      align-items:flex-end;
-      justify-content:space-between;
-      gap:12px;
-      margin-bottom:10px;
-    }
-
-    .langTitle{
-      font-weight:950;
-      letter-spacing:.15px;
-      margin:0;
-      font-size:14px;
-    }
-
-    .langHint{
-      margin:0;
-      color:var(--muted);
-      font-weight:650;
-      font-size:13px;
     }
 
     .langRowWrap{
@@ -109,13 +90,22 @@
       gap:10px;
     }
 
+    .langLabel{
+      font-weight:950;
+      letter-spacing:.15px;
+      font-size:14px;
+      color:var(--ink);
+      white-space:nowrap;
+      margin-right:2px;
+    }
+
     .arrowBtn{
-      width:38px;
-      height:38px;
+      width:34px;                 /* slightly smaller */
+      height:34px;
       border-radius:12px;
       border:1px solid var(--line);
-      background:rgba(37,99,235,.06);
-      box-shadow:0 6px 16px rgba(0,0,0,.06);
+      background:rgba(255,255,255,.06);
+      box-shadow:0 6px 16px rgba(0,0,0,.18);
       cursor:pointer;
       font-weight:950;
       color:var(--ink);
@@ -125,16 +115,14 @@
 
     .arrowBtn:hover{
       transform:translateY(-1px);
-      box-shadow:0 12px 28px rgba(0,0,0,.10);
-      border-color:var(--accent);
+      box-shadow:0 12px 28px rgba(0,0,0,.24);
+      border-color:rgba(255,56,56,.55); /* #FF3838 */
     }
 
-    .arrowBtn:active{
-      transform:translateY(0px);
-    }
+    .arrowBtn:active{ transform:translateY(0px); }
 
     .arrowBtn:focus-visible{
-      outline:3px solid var(--accent);
+      outline:3px solid rgba(255,56,56,.55);
       outline-offset:2px;
     }
 
@@ -143,27 +131,27 @@
       gap:10px;
       overflow-x:auto;
       scroll-behavior:smooth;
-      padding:2px 2px 8px;
+      padding:2px 2px 4px;        /* shorter */
       flex:1 1 auto;
       scrollbar-width:thin;
     }
 
     .langRow::-webkit-scrollbar{ height:10px; }
     .langRow::-webkit-scrollbar-thumb{
-      background:rgba(17,24,39,.18);
+      background:rgba(255,255,255,.22);
       border-radius:999px;
     }
     .langRow::-webkit-scrollbar-track{
-      background:rgba(17,24,39,.06);
+      background:rgba(255,255,255,.08);
       border-radius:999px;
     }
 
     .langChip{
       border:1px solid var(--line);
-      background:rgba(255,255,255,.90);
-      box-shadow:0 10px 22px rgba(0,0,0,.06);
+      background:rgba(255,255,255,.06);
+      box-shadow:0 10px 22px rgba(0,0,0,.18);
       border-radius:999px;
-      padding:9px 12px;
+      padding:8px 12px;           /* shorter */
       display:flex;
       align-items:center;
       gap:8px;
@@ -177,34 +165,24 @@
 
     .langChip:hover{
       transform:translateY(-1px);
-      box-shadow:0 18px 34px rgba(0,0,0,.10);
-      border-color:var(--accent);
+      box-shadow:0 18px 34px rgba(0,0,0,.24);
+      border-color:rgba(255,56,56,.55);
     }
 
     .langChip[aria-selected="true"]{
-      background:rgba(37,99,235,.12);
-      border-color:rgba(37,99,235,.35);
-      box-shadow:0 18px 40px rgba(37,99,235,.12);
+      background:rgba(220,0,0,.22);     /* #DC0000 */
+      border-color:rgba(255,56,56,.70); /* #FF3838 */
+      box-shadow:0 18px 40px rgba(220,0,0,.18);
     }
 
     .langChip:focus-visible{
-      outline:3px solid var(--accent);
+      outline:3px solid rgba(255,56,56,.55);
       outline-offset:2px;
-    }
-
-    .langCode{
-      font-size:12px;
-      font-weight:950;
-      color:rgba(17,24,39,.75);
-      padding:2px 7px;
-      border-radius:999px;
-      background:rgba(17,24,39,.06);
-      border:1px solid rgba(17,24,39,.08);
     }
 
     /* ---------- TILES ---------- */
     .tiles{
-      margin-top:22px;
+      margin-top:18px;
       display:grid;
       grid-template-columns:repeat(3, minmax(220px,1fr));
       gap:14px;
@@ -231,11 +209,11 @@
     .tile:hover{
       transform:translateY(-2px);
       box-shadow:var(--shadow);
-      border-color:var(--accent);
+      border-color:rgba(255,56,56,.55);
     }
 
     .tile:focus-visible{
-      outline:3px solid var(--accent);
+      outline:3px solid rgba(255,56,56,.55);
       outline-offset:2px;
     }
 
@@ -247,7 +225,8 @@
       align-items:center;
       justify-content:center;
       font-size:22px;
-      background:rgba(37,99,235,.10);
+      background:rgba(255,255,255,.08);
+      border:1px solid rgba(255,255,255,.10);
       flex:0 0 auto;
     }
 
@@ -264,6 +243,7 @@
       white-space:nowrap;
       overflow:hidden;
       text-overflow:ellipsis;
+      color:var(--ink);
     }
 
     .sub{
@@ -280,8 +260,8 @@
       .tiles{grid-template-columns:1fr;}
       .hero h1{font-size:32px;}
       .wrap{padding-top:26px;}
-      .arrowBtn{display:none;} /* mobile: just swipe */
-      .langTop{flex-direction:column; align-items:flex-start;}
+      .arrowBtn{display:none;} /* mobile: swipe */
+      .langLabel{display:none;} /* optional: saves space on mobile */
     }
   </style>
 </head>
@@ -300,12 +280,9 @@
 
     <!-- LANGUAGE SELECTOR -->
     <section class="langBar" aria-label="Language selector">
-      <div class="langTop">
-        <p class="langTitle">Language</p>
-        <p class="langHint">Choose a site language (saved on this device)</p>
-      </div>
-
       <div class="langRowWrap">
+        <div class="langLabel">Language</div>
+
         <button class="arrowBtn" id="langPrev" type="button" aria-label="Scroll languages left">‹</button>
 
         <div class="langRow" id="langRow" role="listbox" aria-label="Languages" tabindex="0">
@@ -365,12 +342,13 @@
     // --- Language carousel + Option A (append ?lang=xx to tile clicks) ---
     const LANG_KEY = "scorezone_lang";
 
+    // Updated list: replaced Swedish/Norwegian with Spanish
+    // Also: no DK/code badges in UI; "Dansk" shown as just "Dansk"
     const languages = [
       { code: "da", label: "Dansk",   flag: "🇩🇰" },
       { code: "en", label: "English", flag: "🇬🇧" },
       { code: "de", label: "Deutsch", flag: "🇩🇪" },
-      { code: "sv", label: "Svenska", flag: "🇸🇪" },
-      { code: "no", label: "Norsk",   flag: "🇳🇴" }
+      { code: "es", label: "Español", flag: "🇪🇸" }
     ];
 
     const row = document.getElementById("langRow");
@@ -401,10 +379,10 @@
         const isSelected = lang.code === selected;
         btn.setAttribute("aria-selected", isSelected ? "true" : "false");
 
+        // No "DK/EN" badges; just the label (and flag)
         btn.innerHTML = `
           <span aria-hidden="true">${lang.flag}</span>
           <span>${lang.label}</span>
-          <span class="langCode">${lang.code.toUpperCase()}</span>
         `;
 
         btn.addEventListener("click", () => {
@@ -432,6 +410,7 @@
 
     prevBtn.addEventListener("click", () => scrollRow(-1));
     nextBtn.addEventListener("click", () => scrollRow(1));
+
     row.addEventListener("keydown", (e) => {
       if (e.key === "ArrowLeft") scrollRow(-1);
       if (e.key === "ArrowRight") scrollRow(1);
@@ -439,12 +418,8 @@
 
     // ---- Option A: append ?lang=xx to tile navigation on click ----
     function withLangParam(rawHref, lang){
-      // Use URL() to safely handle relative + absolute links
       const url = new URL(rawHref, window.location.href);
-
-      // If the link already has lang, overwrite it; else add it
       url.searchParams.set("lang", lang);
-
       return url.toString();
     }
 
@@ -452,11 +427,10 @@
       const tile = e.target.closest("a.tile");
       if (!tile) return;
 
-      // allow normal behavior for modifier keys (open in new tab, etc.)
+      // keep normal behavior for modifiers (new tab etc.)
       if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
 
       e.preventDefault();
-
       const lang = getSavedLang();
       const targetUrl = withLangParam(tile.getAttribute("href"), lang);
       window.location.href = targetUrl;
