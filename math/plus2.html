@@ -88,11 +88,18 @@
 
 /* Make controls inside the level pill match the same height */
 .pillCtrl{
-  height: 28px;
+  height: 32px;         /* a bit taller so the digit isn't cropped */
   padding: 0 10px;
+  line-height: 32px;    /* key: prevents vertical clipping */
   border-radius: 10px;
   display: inline-flex;
   align-items: center;
+}
+    
+    select.pillCtrl{
+  padding-top: 0;
+  padding-bottom: 0;
+  line-height: 32px;
 }
 
 /* Keep your existing styles, but ensure select/button don't stretch weirdly */
