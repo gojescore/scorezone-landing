@@ -1390,6 +1390,9 @@
   }
 
   async function onTapFromBox(owner, denom, node){
+    /* FIX: prevent tapping while exchanging or overlay is open */
+    if (state.isExchanging || state.overlayOpen) return;
+
     if (!canTapDenom(denom)) return;
     if (!removeOneFrom(owner, denom)) return;
 
