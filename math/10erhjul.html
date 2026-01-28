@@ -1,0 +1,967 @@
+<!DOCTYPE html>
+<html lang="da">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Place Value Wheels</title>
+
+<style>
+  :root{
+    /* ===== ScoreZone base palette (match other math games) ===== */
+    --bg:#f6f3ee;
+    --panel:#ffffff;
+    --ink:#1f2937;
+    --muted:#6b7280;
+    --line:#e5e7eb;
+
+    --brand:#2563eb;
+    --brand-600:#1d4ed8;
+    --accent:#e11d48;
+    --accent-100:#fde2e7;
+
+    /* Keep your cube + stick colors */
+    --cube:#60a5fa;
+    --cube-border:#1d4ed8;
+    --ten-stick:#fca5a5;
+    --ten-stick-border:#b91c1c;
+
+    /* Wheel sizing */
+    --wheel: clamp(200px, 42vh, 420px);
+    --tray-offset: calc(var(--wheel) * 0.52);
+
+    /* App feel */
+    --radius: 18px;
+    --shadow: 0 14px 30px rgba(15,23,42,.12);
+
+    /* Wheel border colors derived from assets */
+    --onesBlue: var(--cube-border);
+    --tensRed:  var(--ten-stick-border);
+  }
+
+  body[data-theme="dark"]{
+    --bg:#0b1220;
+    --panel:#0f172a;
+    --ink:#e2e8f0;
+    --muted:#94a3b8;
+    --line: rgba(226,232,240,.14);
+
+    --brand:#60a5fa;
+    --brand-600:#3b82f6;
+    --accent:#fb7185;
+    --accent-100:rgba(251,113,133,.12);
+
+    --cube:#60a5fa;
+    --cube-border:#3b82f6;
+    --ten-stick:#fb9aa7;
+    --ten-stick-border:#fb7185;
+
+    --shadow: 0 10px 30px rgba(0,0,0,.35);
+
+    --onesBlue: var(--cube-border);
+    --tensRed:  var(--ten-stick-border);
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, "Noto Sans";
+    margin: 0;
+    color: var(--ink);
+    background: var(--bg);
+    min-height: 100vh;
+    display: grid;
+    grid-template-columns: minmax(180px, 260px) 1fr;
+    grid-template-rows: auto 1fr;
+    gap: 16px;
+    padding: 16px;
+  }
+
+  /* Sidebar */
+  .sidebar {
+    grid-column: 1;
+    grid-row: 1 / span 2;
+    align-self: start;
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 14px;
+    position: sticky;
+    top: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .sidebar h1 {
+    margin: 0 0 12px;
+    font-size: 22px;
+    letter-spacing: .02em;
+    text-align: center;
+    width: 100%;
+  }
+  .buttons {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+  .btn {
+    padding: 10px 12px;
+    background: var(--brand);
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    font-weight: 700;
+    box-shadow: 0 4px 12px rgba(37,99,235,.25);
+    transition: transform .06s ease, box-shadow .2s ease, background .2s ease, opacity .2s ease;
+    width: 100%;
+  }
+  .btn:hover { background: var(--brand-600); }
+  .btn:active { transform: translateY(1px); }
+  .btn[disabled]{ opacity:.55; cursor:not-allowed; }
+
+  .reset-btn { background: #ef4444; box-shadow: 0 4px 12px rgba(239,68,68,.25); }
+  .reset-btn:hover { background:#dc2626; }
+  .theme-btn { background: #0ea5e9; box-shadow: 0 4px 12px rgba(14,165,233,.25); }
+  .theme-btn:hover { background:#0284c7; }
+  .speak-btn { background: #10b981; box-shadow: 0 4px 12px rgba(16,185,129,.25); }
+  .speak-btn:hover { background:#059669; }
+  .lang-btn { background: #9333ea; box-shadow: 0 4px 12px rgba(147,51,234,.25); }
+  .lang-btn:hover { background:#7e22ce; }
+
+  /* Content */
+  .content {
+    grid-column: 2;
+    grid-row: 1 / span 2;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+  }
+  .stage {
+    display: flex;
+    flex-wrap: wrap;
+    gap: clamp(14px, 3.5vw, 34px);
+    position: relative;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 12px;
+  }
+  .wheel-wrap {
+    position: relative;
+    width: var(--wheel);
+    height: var(--wheel);
+  }
+  .label {
+    text-align: center;
+    font-weight: 800;
+    color: var(--muted);
+    margin-bottom: 8px;
+    letter-spacing: .04em;
+    text-transform: uppercase;
+    font-size: 12px;
+  }
+
+  .wheel {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    border: 6px solid rgba(15,23,42,.7);
+    position: relative;
+    cursor: grab;
+    user-select: none;
+    box-shadow: inset 0 10px 30px rgba(0,0,0,.08), var(--shadow);
+    touch-action: none;
+    background:
+      radial-gradient(circle at 50% 45%, rgba(255,255,255,.92), rgba(255,255,255,.72) 40%, transparent 41%),
+      radial-gradient(circle at 50% 50%, #fff 0%, rgba(229,231,235,.55) 65%, rgba(229,231,235,.95) 100%);
+  }
+  .wheel:after{
+    content:"";
+    position:absolute; inset:0; margin:auto;
+    width:22px; height:22px; border-radius:50%;
+    background:#fff; border:3px solid rgba(15,23,42,.25);
+    box-shadow: inset 0 2px 3px rgba(0,0,0,.15);
+    z-index: 1;
+  }
+  .wheel.dragging { cursor: grabbing; }
+
+  /* Color wheels like your assets */
+  #wheel-tens{
+    border-color: var(--tensRed);
+    box-shadow:
+      inset 0 10px 30px rgba(0,0,0,.08),
+      0 14px 30px rgba(185,28,28,.14);
+    background:
+      radial-gradient(circle at 50% 45%, rgba(255,255,255,.92), rgba(255,255,255,.72) 40%, transparent 41%),
+      radial-gradient(circle at 50% 50%, #fff 0%, rgba(252,165,165,.25) 65%, rgba(229,231,235,.95) 100%);
+  }
+  #wheel-ones{
+    border-color: var(--onesBlue);
+    box-shadow:
+      inset 0 10px 30px rgba(0,0,0,.08),
+      0 14px 30px rgba(29,78,216,.14);
+    background:
+      radial-gradient(circle at 50% 45%, rgba(255,255,255,.92), rgba(255,255,255,.72) 40%, transparent 41%),
+      radial-gradient(circle at 50% 50%, #fff 0%, rgba(96,165,250,.22) 65%, rgba(229,231,235,.95) 100%);
+  }
+  #wheel-tens:after{ border-color: rgba(185,28,28,.35); }
+  #wheel-ones:after{ border-color: rgba(29,78,216,.35); }
+
+  /* Tick marks */
+  .wheel .tick {
+    position: absolute;
+    left: 50%; top: 50%;
+    width: 2px; height: 12px;
+    background: rgba(2,6,23,.2);
+    transform-origin: 0 -42%;
+    border-radius: 1px;
+    pointer-events:none;
+  }
+
+  /* Numbers */
+  .number {
+    position: absolute;
+    font-weight: 900;
+    color: var(--ink);
+    font-size: 22px;
+    transform: translate(-50%, -50%);
+    transition: color .12s ease, font-size .12s ease, text-shadow .12s ease;
+    pointer-events: none;
+    z-index: 2;
+  }
+  .number.highlight {
+    color: var(--accent);
+    font-size: 30px;
+    text-shadow: 0 2px 5px rgba(225,29,72,.15);
+  }
+
+  .highlight-window {
+    position: absolute;
+    left: 50%;
+    top: -10px;
+    transform: translateX(-50%);
+    width: 72px;
+    height: 48px;
+    border: 3px solid var(--accent);
+    border-radius: 12px;
+    background: var(--accent-100);
+    pointer-events: none;
+    z-index: 3;
+    box-shadow: 0 8px 20px rgba(225,29,72,.12);
+  }
+  .highlight-window:after{
+    content:"";
+    position:absolute; left:50%; bottom:-8px; transform:translateX(-50%);
+    width: 0; height:0;
+    border-left:8px solid transparent;
+    border-right:8px solid transparent;
+    border-top:8px solid var(--accent);
+    opacity:.7;
+  }
+
+  /* Trays */
+  .tray {
+    position: absolute;
+    left: 50%;
+    bottom: calc(var(--tray-offset) * -1);
+    transform: translateX(-50%);
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    flex-wrap: nowrap;
+    z-index: 1;
+  }
+  .tray:before{
+    content:"";
+    position:absolute;
+    left:-9999px; right:-9999px;
+    top:-12px; height:2px;
+    background: repeating-linear-gradient(90deg, rgba(2,6,23,.1), rgba(2,6,23,.1) 8px, transparent 8px, transparent 16px);
+  }
+
+  .cube {
+    width: 18px;
+    height: 18px;
+    background: var(--cube);
+    border: 2px solid var(--cube-border);
+    border-radius: 4px;
+    box-shadow: 0 2px 6px rgba(0,0,0,.15);
+  }
+  .ten-stick {
+    display: grid;
+    grid-template-rows: repeat(10, 1fr);
+    gap: 2px;
+    width: 24px;
+    height: 180px;
+    background: var(--ten-stick);
+    border: 2px solid var(--ten-stick-border);
+    border-radius: 8px;
+    padding: 2px;
+    box-shadow: var(--shadow);
+  }
+  .ten-stick .cube {
+    width: 100%;
+    height: 10%;
+    background: #f87171;
+    border: 1px solid var(--ten-stick-border);
+    border-radius: 2px;
+  }
+
+  /* Flying clones */
+  @keyframes flyToTensBounce {
+    0%   { transform: translate(0,0) scale(1);    opacity:1; }
+    55%  { transform: translate(calc(var(--dx)*.55), calc(var(--dy)*.55)) scale(1.18); opacity:1; }
+    100% { transform: translate(var(--dx), var(--dy)) scale(.6); opacity:0; }
+  }
+  .fly-clone {
+    position: absolute;
+    margin: 0;
+    z-index: 3000;
+    pointer-events: none;
+    animation: flyToTensBounce .9s cubic-bezier(.17,.84,.44,1) forwards;
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    .fly-clone { animation: none; opacity: 0; }
+    .number { transition: none; }
+  }
+
+  /* Middle value column (between wheels) */
+  .value-column{
+    align-self: center;
+    min-width: 6ch;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 8px 12px;
+  }
+  .value-column .number-display{
+    font-size: clamp(54px, 7vw, 88px);
+    font-weight: 900;
+    letter-spacing: .02em;
+    background: var(--panel);
+    border-radius: 12px;
+    box-shadow: var(--shadow);
+    padding: 10px 14px;
+    border: 1px solid var(--line);
+  }
+</style>
+</head>
+
+<body data-theme="dark">
+  <!-- LEFT SIDEBAR -->
+  <aside class="sidebar">
+    <h1 id="ui-title">Tal</h1>
+    <div class="buttons">
+      <button class="btn" id="toggleModeBtn">Tilstand: Automatisk</button>
+      <button class="btn reset-btn" id="resetBtn">Nulstil</button>
+      <button class="btn theme-btn" id="themeBtn" aria-pressed="true">Tema: Mørk</button>
+      <button class="btn speak-btn" id="speakBtn">🔊 Sig tallet</button>
+      <button class="btn lang-btn" id="langBtn">Sprog: Dansk</button>
+    </div>
+  </aside>
+
+  <!-- CONTENT: TWO WHEELS -->
+  <main class="content">
+    <div class="stage">
+      <div class="wheel-wrap" id="wrap-tens">
+        <div class="label" id="label-tens">Ti’ere</div>
+        <div class="wheel" id="wheel-tens"></div>
+        <div class="highlight-window"></div>
+        <div class="tray" id="tens-tray"></div>
+      </div>
+
+      <div class="value-column">
+        <div class="number-display" id="full-number" aria-live="polite">00</div>
+      </div>
+
+      <div class="wheel-wrap" id="wrap-ones">
+        <div class="label" id="label-ones">Enere</div>
+        <div class="wheel" id="wheel-ones"></div>
+        <div class="highlight-window"></div>
+        <div class="tray" id="ones-tray"></div>
+      </div>
+    </div>
+  </main>
+
+<script>
+(function(){
+  /* ===== “Like other math files” approach: tiny i18n dictionary + applyLanguage() ===== */
+  const I18N = {
+    da: {
+      title: "Tal",
+      mode_auto: "Tilstand: Automatisk",
+      mode_manual: "Tilstand: Manuel",
+      reset: "Nulstil",
+      theme_light: "Tema: Lys",
+      theme_dark: "Tema: Mørk",
+      speak: "🔊 Sig tallet",
+      lang: "Sprog: Dansk",
+      tens: "Ti’ere",
+      ones: "Enere",
+      no_da_voice: "Ingen dansk stemme på denne pc"
+    },
+    en: {
+      title: "Numbers",
+      mode_auto: "Mode: Automatic",
+      mode_manual: "Mode: Manual",
+      reset: "Reset",
+      theme_light: "Theme: Light",
+      theme_dark: "Theme: Dark",
+      speak: "🔊 Speak",
+      lang: "Language: English",
+      tens: "Tens",
+      ones: "Ones",
+      no_da_voice: "No Danish voice on this PC"
+    }
+  };
+
+  const STEP = 10;
+  const TOP_ANGLE = -Math.PI/2;
+  const RADIUS_PAD = 28;
+
+  const wheelTens = document.getElementById('wheel-tens');
+  const wheelOnes = document.getElementById('wheel-ones');
+  const onesTray  = document.getElementById('ones-tray');
+  const tensTray  = document.getElementById('tens-tray');
+  const resetBtn  = document.getElementById('resetBtn');
+  const fullNumber= document.getElementById('full-number');
+  const toggleBtn = document.getElementById('toggleModeBtn');
+  const themeBtn  = document.getElementById('themeBtn');
+
+  const speakBtn  = document.getElementById('speakBtn');
+  const langBtn   = document.getElementById('langBtn');
+
+  const uiTitle   = document.getElementById('ui-title');
+  const labelTens = document.getElementById('label-tens');
+  const labelOnes = document.getElementById('label-ones');
+
+  /* ---- Core state ---- */
+  let autoMode = true;
+  let tensValue = 0;
+  let tensRotation = rotationForValue(0);
+  let onesActive = 0;
+  let onesRotation = rotationForValue(0);
+
+  /* Start in Danish (you asked “everything should be Danish”) */
+  let currentLang = 'da';
+
+  /* ---- Build wheels ---- */
+  const numbersTens = buildNumbers(wheelTens);
+  const numbersOnes = buildNumbers(wheelOnes);
+  addTicks(wheelTens, 10);
+  addTicks(wheelOnes, 10);
+
+  renderWheel(wheelTens, numbersTens, tensRotation);
+  renderWheel(wheelOnes, numbersOnes, onesRotation);
+  renderOnesCubes(onesActive);
+  updateTensTray();
+  updateFullNumber();
+  alignTensTrayToOnes();
+
+  /* ---- i18n apply ---- */
+  function applyLanguage(lang){
+    currentLang = (lang === 'en') ? 'en' : 'da';
+    document.documentElement.lang = currentLang;
+
+    const t = I18N[currentLang];
+    uiTitle.textContent = t.title;
+
+    toggleBtn.textContent = autoMode ? t.mode_auto : t.mode_manual;
+    resetBtn.textContent = t.reset;
+
+    const dark = document.body.getAttribute('data-theme') === 'dark';
+    themeBtn.textContent = dark ? t.theme_dark : t.theme_light;
+    themeBtn.setAttribute('aria-pressed', dark ? 'true' : 'false');
+
+    speakBtn.textContent = t.speak;
+    langBtn.textContent  = t.lang;
+
+    labelTens.textContent = t.tens;
+    labelOnes.textContent = t.ones;
+  }
+
+  applyLanguage(currentLang);
+
+  /* ---- UI buttons ---- */
+  langBtn.addEventListener('click', ()=>{
+    applyLanguage(currentLang === 'da' ? 'en' : 'da');
+    playClick();
+  });
+
+  toggleBtn.addEventListener('click', ()=>{
+    autoMode = !autoMode;
+    applyLanguage(currentLang); // updates button label
+    playClick();
+  });
+
+  themeBtn.addEventListener('click', ()=>{
+    const dark = document.body.getAttribute('data-theme') === 'dark';
+    if(dark){
+      document.body.removeAttribute('data-theme');
+    } else {
+      document.body.setAttribute('data-theme','dark');
+    }
+    applyLanguage(currentLang);
+    playClick();
+  });
+
+  resetBtn.addEventListener('click', ()=>{ playClick(); resetAll(); });
+
+  /* ---- Speech: fallback if no Danish voice ---- */
+  if('speechSynthesis' in window){
+    window.speechSynthesis.onvoiceschanged = () => {
+      window.speechSynthesis.getVoices();
+    };
+  }
+
+  function hasVoiceFor(langPrefix){
+    const voices = speechSynthesis.getVoices() || [];
+    return voices.some(v => (v.lang || '').toLowerCase().startsWith(langPrefix));
+  }
+
+  function showNoDanishMessage(){
+    const msg = I18N[currentLang].no_da_voice;
+    fullNumber.title = msg;
+    fullNumber.style.boxShadow = '0 0 0 3px rgba(225,29,72,.20), var(--shadow)';
+  }
+
+  function clearNoDanishMessage(){
+    fullNumber.title = '';
+    fullNumber.style.boxShadow = 'var(--shadow)';
+  }
+
+  function speak(text, lang='en'){
+    if(!('speechSynthesis' in window)) {
+      alert('Speech not supported in this browser.');
+      return;
+    }
+    const voices = speechSynthesis.getVoices() || [];
+    const wantDa = (lang === 'da');
+    const match = voices.find(v => wantDa
+      ? (v.lang || '').toLowerCase().startsWith('da')
+      : (v.lang || '').toLowerCase().startsWith('en')
+    );
+
+    speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(text);
+    u.lang = wantDa ? 'da-DK' : 'en-US';
+    if(match) u.voice = match;
+    u.rate = wantDa ? 0.95 : 1;
+    u.pitch = 1;
+    speechSynthesis.speak(u);
+  }
+
+  function speakWithFallback(textDa, textEn){
+    const wantDa = (currentLang === 'da');
+    speechSynthesis.getVoices();
+
+    if(wantDa && !hasVoiceFor('da')){
+      showNoDanishMessage();
+      speak(textEn, 'en'); // fallback
+      return;
+    }
+
+    clearNoDanishMessage();
+    if(wantDa) speak(textDa, 'da');
+    else speak(textEn, 'en');
+  }
+
+  speakBtn.addEventListener('click', ()=>{
+    const n = tensValue*10 + onesActive;
+    const da = numberToWords(n, 'da');
+    const en = numberToWords(n, 'en');
+    speakWithFallback(da, en);
+  });
+
+  /* ---- Dragging + snap ---- */
+  let draggingWheel = null;
+  let startAngle = 0;
+  let startRotation = 0;
+  let isSnapping = false;
+
+  function getPoint(e){
+    if(e.touches && e.touches[0]) return { x: e.touches[0].clientX, y: e.touches[0].clientY };
+    if(e.changedTouches && e.changedTouches[0]) return { x: e.changedTouches[0].clientX, y: e.changedTouches[0].clientY };
+    return { x: e.clientX, y: e.clientY };
+  }
+
+  function enableDrag(wheelEl, isTens=false){
+    const onStart = (e)=>{
+      if(isSnapping) return;
+      if(e.button !== undefined && e.button!==0) return;
+      const p = getPoint(e);
+      draggingWheel = wheelEl;
+      wheelEl.classList.add('dragging');
+      startRotation = isTens ? tensRotation : onesRotation;
+      startAngle = pointerAngleFromPoint(p, wheelEl) - startRotation;
+      e.preventDefault();
+    };
+
+    const onMove = (e)=>{
+      if(!draggingWheel || isSnapping) return;
+      const p = getPoint(e);
+      const ang = pointerAngleFromPoint(p, draggingWheel);
+
+      if(draggingWheel===wheelOnes){
+        const prevActive = onesActive;
+        onesRotation = ang - startAngle;
+        onesActive = activeIndexFromRotation(onesRotation);
+        if(prevActive!==onesActive) handleOnesChange(prevActive, onesActive);
+        renderWheel(wheelOnes, numbersOnes, onesRotation);
+        renderOnesCubes(onesActive);
+      } else {
+        const freeRot = ang - startAngle;
+        tensValue = activeIndexFromRotation(freeRot);
+        tensRotation = rotationForValue(tensValue);
+        renderWheel(wheelTens, numbersTens, tensRotation);
+        updateTensTray();
+      }
+
+      updateFullNumber();
+      e.preventDefault();
+    };
+
+    const onEnd = ()=>{
+      if(!draggingWheel) return;
+      draggingWheel.classList.remove('dragging');
+      if(draggingWheel===wheelOnes) snapWheel(false);
+      draggingWheel = null;
+    };
+
+    wheelEl.addEventListener('mousedown', onStart);
+    window.addEventListener('mousemove', onMove, {passive:false});
+    window.addEventListener('mouseup',   onEnd);
+
+    wheelEl.addEventListener('touchstart', onStart, {passive:false});
+    window.addEventListener('touchmove', onMove, {passive:false});
+    window.addEventListener('touchend',  onEnd);
+    window.addEventListener('touchcancel', onEnd);
+  }
+
+  enableDrag(wheelOnes);
+  enableDrag(wheelTens, true);
+
+  /* ---- Helpers ---- */
+  function buildNumbers(wheelEl){
+    const size = wheelEl.offsetWidth || parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--wheel'));
+    const radius = size/2 - 6 - RADIUS_PAD;
+    const cx = size/2, cy=size/2;
+    const arr=[];
+    for(let i=0;i<STEP;i++){
+      const span=document.createElement('div');
+      span.className='number';
+      span.textContent=i;
+      wheelEl.appendChild(span);
+      arr.push({el:span, baseIndex:i, cx, cy, radius});
+    }
+    return arr;
+  }
+
+  function addTicks(wheelEl, count=10){
+    const size = wheelEl.offsetWidth;
+    const r = size/2 - 12;
+    for(let i=0;i<count;i++){
+      const t = document.createElement('div');
+      t.className = 'tick';
+      const angle = i*(2*Math.PI/count);
+      const x = size/2 + Math.cos(angle)*r;
+      const y = size/2 + Math.sin(angle)*r;
+      t.style.left = x + 'px';
+      t.style.top  = y + 'px';
+      t.style.transform = `translate(-1px,-6px) rotate(${angle}rad)`;
+      wheelEl.appendChild(t);
+    }
+  }
+
+  function renderWheel(wheelEl, nums, rotation){
+    nums.forEach(({el, baseIndex, cx, cy, radius})=>{
+      const theta = baseIndex*(2*Math.PI/10) + rotation;
+      const x = cx + Math.cos(theta)*radius;
+      const y = cy + Math.sin(theta)*radius;
+      el.style.left = `${x}px`;
+      el.style.top  = `${y}px`;
+      el.style.transform = `translate(-50%, -50%) rotate(0rad)`;
+      const topDiff = Math.abs((theta - TOP_ANGLE) % (2*Math.PI));
+      el.classList.toggle('highlight', topDiff < (2*Math.PI/10)/2 || topDiff > 2*Math.PI - (2*Math.PI/10)/2);
+    });
+  }
+
+  function pointerAngleFromPoint(p, wheelEl){
+    const rect = wheelEl.getBoundingClientRect();
+    const cx = rect.left + rect.width/2;
+    const cy = rect.top  + rect.height/2;
+    return Math.atan2(p.y-cy, p.x-cx);
+  }
+
+  function activeIndexFromRotation(rot){
+    const idx = Math.round(((TOP_ANGLE-rot)/(2*Math.PI)*10))%10;
+    return (idx+10)%10;
+  }
+
+  function rotationForValue(val){
+    return TOP_ANGLE - val*(2*Math.PI/10);
+  }
+
+  function snapWheel(isTens){
+    const duration = 140;
+    if(isSnapping) return;
+    isSnapping = true;
+
+    const start = performance.now();
+    const from = isTens ? tensRotation : onesRotation;
+    const to   = isTens ? rotationForValue(tensValue) : rotationForValue(onesActive);
+
+    const TAU = Math.PI * 2;
+    const shortestDelta = (a, b) => {
+      let d = (b - a) % TAU;
+      if (d > Math.PI) d -= TAU;
+      if (d <= -Math.PI) d += TAU;
+      return d;
+    };
+
+    const delta = shortestDelta(from, to);
+    const easeOutCubic = t => 1 - Math.pow(1 - t, 3);
+
+    function step(now){
+      const t = Math.min(1, (now - start)/duration);
+      const k = easeOutCubic(t);
+      const value = from + delta * k;
+
+      if(isTens){
+        tensRotation = value;
+        renderWheel(wheelTens, numbersTens, tensRotation);
+      } else {
+        onesRotation = value;
+        renderWheel(wheelOnes, numbersOnes, onesRotation);
+      }
+
+      if(t < 1){
+        requestAnimationFrame(step);
+      } else {
+        if(isTens){
+          tensRotation = to;
+          renderWheel(wheelTens, numbersTens, tensRotation);
+          updateTensTray();
+          alignTensTrayToOnes();
+        } else {
+          onesRotation = to;
+          renderWheel(wheelOnes, numbersOnes, onesRotation);
+        }
+        updateFullNumber();
+        isSnapping = false;
+      }
+    }
+    requestAnimationFrame(step);
+  }
+
+  /* Carry logic */
+  let carryInProgress = false;
+
+  function handleOnesChange(prev, current){
+    if(prev===9 && current===0 && autoMode && !carryInProgress){
+      carryInProgress = true;
+      playSwish();
+
+      const trayCubes = Array.from(onesTray.children);
+      const tensRect = tensTray.getBoundingClientRect();
+
+      const doCarry = ()=>{
+        tensValue = (tensValue+1)%10;
+        tensRotation = rotationForValue(tensValue);
+        renderWheel(wheelTens, numbersTens, tensRotation);
+        updateTensTray();
+        updateFullNumber();
+        if(navigator.vibrate) navigator.vibrate(30);
+        playPop();
+        alignTensTrayToOnes();
+        carryInProgress = false;
+      };
+
+      if(trayCubes.length === 0){
+        doCarry();
+      } else {
+        let finished = 0;
+        trayCubes.forEach((cube)=>{
+          const r = cube.getBoundingClientRect();
+          const clone = cube.cloneNode(true);
+          clone.classList.add('fly-clone');
+          clone.style.left = `${r.left}px`;
+          clone.style.top  = `${r.top}px`;
+          document.body.appendChild(clone);
+
+          const dx = (tensRect.left + tensRect.width/2) - (r.left + r.width/2);
+          const dy = (tensRect.top  + tensRect.height/2) - (r.top  + r.height/2);
+          clone.style.setProperty('--dx', dx+'px');
+          clone.style.setProperty('--dy', dy+'px');
+
+          clone.addEventListener('animationend', ()=>{
+            clone.remove();
+            finished++;
+            if(finished === trayCubes.length) doCarry();
+          });
+        });
+        onesTray.innerHTML='';
+      }
+    }
+
+    if(prev===0 && current===9 && autoMode){
+      tensValue = (tensValue-1+10)%10;
+      tensRotation = rotationForValue(tensValue);
+      renderWheel(wheelTens, numbersTens, tensRotation);
+      updateTensTray();
+      updateFullNumber();
+      if(navigator.vibrate) navigator.vibrate(15);
+      playPop(0.85);
+      alignTensTrayToOnes();
+    }
+
+    renderOnesCubes(current);
+    updateFullNumber();
+  }
+
+  function renderOnesCubes(count){
+    onesTray.innerHTML='';
+    for(let i=0;i<count;i++){
+      const c=document.createElement('div');
+      c.className='cube';
+      onesTray.appendChild(c);
+    }
+  }
+
+  function updateTensTray(){
+    tensTray.innerHTML='';
+    for(let i=0;i<tensValue;i++){
+      const stick=document.createElement('div');
+      stick.className='ten-stick';
+      for(let j=0;j<10;j++){
+        const c=document.createElement('div');
+        c.className='cube';
+        stick.appendChild(c);
+      }
+      tensTray.appendChild(stick);
+    }
+    requestAnimationFrame(alignTensTrayToOnes);
+  }
+
+  function updateFullNumber(){
+    fullNumber.textContent = `${tensValue}${onesActive}`;
+  }
+
+  function resetAll(){
+    tensValue=0; tensRotation=rotationForValue(0);
+    onesActive=0; onesRotation=rotationForValue(0);
+    renderWheel(wheelTens, numbersTens, tensRotation);
+    renderWheel(wheelOnes,  numbersOnes,  onesRotation);
+    tensTray.innerHTML='';
+    renderOnesCubes(0);
+    updateFullNumber();
+    alignTensTrayToOnes();
+    clearNoDanishMessage();
+  }
+
+  function alignTensTrayToOnes(){
+    const firstStick = tensTray.querySelector('.ten-stick');
+    if(!firstStick){
+      tensTray.style.transform = 'translateX(-50%)';
+      return;
+    }
+
+    tensTray.style.transform = 'translateX(-50%)';
+    tensTray.getBoundingClientRect();
+
+    const firstCube = onesTray.querySelector('.cube');
+    const onesTop = (firstCube || onesTray).getBoundingClientRect().top;
+
+    const stickTop = firstStick.getBoundingClientRect().top;
+    const dy = onesTop - stickTop;
+
+    tensTray.style.transform = `translate(-50%, ${dy}px)`;
+  }
+
+  window.addEventListener('resize', ()=> requestAnimationFrame(alignTensTrayToOnes));
+
+  /* -------- Number to words (EN + DA) ---------- */
+  function numberToWords(n, lang='en'){
+    return (lang === 'en') ? numberToEnglish(n) : numberToDanish(n);
+  }
+
+  function numberToEnglish(n){
+    const ones = ["zero","one","two","three","four","five","six","seven","eight","nine"];
+    const teens = ["ten","eleven","twelve","thirteen","fourteen","fifteen","sixteen","seventeen","eighteen","nineteen"];
+    const tens = ["","","twenty","thirty","forty","fifty","sixty","seventy","eighty","ninety"];
+    if(n < 10) return ones[n];
+    if(n < 20) return teens[n-10];
+    const t = Math.floor(n/10), o = n%10;
+    if(o === 0) return tens[t];
+    return `${tens[t]}-${ones[o]}`;
+  }
+
+  function numberToDanish(n){
+    const ones = ["nul","en","to","tre","fire","fem","seks","syv","otte","ni"];
+    const teens = ["ti","elleve","tolv","tretten","fjorten","femten","seksten","sytten","atten","nitten"];
+    const tens = ["","", "tyve","tredive","fyrre","halvtreds","tres","halvfjerds","firs","halvfems"];
+    if(n < 10) return ones[n];
+    if(n < 20) return teens[n-10];
+    const t = Math.floor(n/10);
+    const o = n % 10;
+    if(o === 0) return tens[t];
+    return `${ones[o]} og ${tens[t]}`;
+  }
+
+  /* -------- Sounds (click/pop/swish) ---------- */
+  let audioCtx;
+  function getCtx(){
+    if(!audioCtx){
+      const AC = window.AudioContext || window.webkitAudioContext;
+      audioCtx = new AC();
+    }
+    return audioCtx;
+  }
+  function playClick(){
+    const ctx = getCtx();
+    const o = ctx.createOscillator();
+    const g = ctx.createGain();
+    o.type = 'square';
+    o.frequency.setValueAtTime(600, ctx.currentTime);
+    o.frequency.exponentialRampToValueAtTime(300, ctx.currentTime+0.05);
+    g.gain.setValueAtTime(0.0001, ctx.currentTime);
+    g.gain.linearRampToValueAtTime(0.08, ctx.currentTime+0.01);
+    g.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime+0.09);
+    o.connect(g); g.connect(ctx.destination); o.start(); o.stop(ctx.currentTime+0.1);
+  }
+  function playPop(pitch=1){
+    const ctx = getCtx();
+    const o = ctx.createOscillator();
+    const g = ctx.createGain();
+    o.type = 'sine';
+    o.frequency.setValueAtTime(700*pitch, ctx.currentTime);
+    o.frequency.exponentialRampToValueAtTime(180*pitch, ctx.currentTime+0.12);
+    g.gain.setValueAtTime(0.0001, ctx.currentTime);
+    g.gain.linearRampToValueAtTime(0.12, ctx.currentTime+0.02);
+    g.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime+0.14);
+    o.connect(g); g.connect(ctx.destination); o.start(); o.stop(ctx.currentTime+0.16);
+  }
+  function playSwish(){
+    const ctx = getCtx();
+    const bufferSize = 2 * ctx.sampleRate * 0.2;
+    const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+    const data = buffer.getChannelData(0);
+    for (let i=0; i<bufferSize; i++) data[i] = (Math.random()*2-1) * (1 - i/bufferSize);
+    const src = ctx.createBufferSource();
+    src.buffer = buffer;
+    const filter = ctx.createBiquadFilter();
+    filter.type = 'lowpass';
+    filter.frequency.setValueAtTime(800, ctx.currentTime);
+    filter.frequency.linearRampToValueAtTime(2000, ctx.currentTime+0.2);
+    const g = ctx.createGain();
+    g.gain.setValueAtTime(0.0001, ctx.currentTime);
+    g.gain.linearRampToValueAtTime(0.2, ctx.currentTime+0.02);
+    g.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime+0.22);
+    src.connect(filter); filter.connect(g); g.connect(ctx.destination);
+    src.start(); src.stop(ctx.currentTime+0.24);
+  }
+})();
+</script>
+</body>
+</html>
