@@ -3,108 +3,267 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <!-- Helps reduce browser/Google auto-translate prompts -->
   <meta name="google" content="notranslate" />
 
   <link rel="stylesheet" href="https://scorezone.dk/assets/scorezone-season.css">
   <script src="https://scorezone.dk/assets/scorezone-season.js" defer></script>
 
-  <title>Plus Hjælper – Bank & Veksling</title>
+  <title>ScoreZone – Plus/Minus Hjælper</title>
 
   <style>
     :root{
-      --bg:#f6f3ee;
-      --panel:#ffffff;
-      --ink:#1f2937;
-      --muted:#6b7280;
-      --line:#e5e7eb;
-      --accent:#2563eb;
+      --bgA:#7c3aed;
+      --bgB:#06b6d4;
+      --bgC:#f97316;
+
+      --card:#ffffff;
+      --card2:#f8fafc;
+
+      --ink:#0f172a;
+      --muted:#475569;
+
       --good:#16a34a;
-      --bad:#dc2626;
+      --warn:#f59e0b;
+      --bad:#ef4444;
 
-      /* Keep colors */
-      --coin:#f4b000;
-      --coin2:#f7c948;
+      --border: rgba(15, 23, 42, 0.14);
+      --shadow: 0 14px 30px rgba(15,23,42,0.18);
+      --radius: 18px;
 
-      --ten:#60a5fa;
-      --ten2:#93c5fd;
-
-      --bill:#34d399;
-      --bill2:#a7f3d0;
+      --cube: 30px;
     }
 
-    *{box-sizing:border-box}
+    *{ box-sizing:border-box; }
     body{
       margin:0;
-      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-      background: var(--bg);
-      color: var(--ink);
-    }
-    .wrap{max-width:1200px;margin:0 auto;padding:18px;}
-    .card{
-      background: var(--panel);
-      border:1px solid var(--line);
-      border-radius:14px;
-      padding:16px;
-      box-shadow:0 6px 18px rgba(0,0,0,.06);
-    }
-    .topbar{
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+      min-height:100vh;
       display:flex;
-      gap:12px;
+      justify-content:center;
+      align-items:center;
+      padding:16px;
+      color:var(--ink);
+      background:
+        radial-gradient(900px 600px at 15% 15%, rgba(124,58,237,0.35), transparent 60%),
+        radial-gradient(900px 600px at 85% 20%, rgba(6,182,212,0.35), transparent 55%),
+        radial-gradient(900px 600px at 50% 90%, rgba(249,115,22,0.22), transparent 60%),
+        #f1f5f9;
+    }
+
+    .app{
+      width:min(1050px, 100%);
+      background:rgba(255,255,255,0.72);
+      backdrop-filter: blur(8px);
+      border:1px solid rgba(15,23,42,0.10);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+    }
+
+    header{
+      display:flex;
       align-items:center;
       justify-content:space-between;
-      margin-bottom:12px;
-      flex-wrap:wrap;
+      gap:12px;
+      padding:14px 16px;
+      background: linear-gradient(90deg, rgba(124,58,237,0.18), rgba(6,182,212,0.16), rgba(249,115,22,0.14));
+      border-bottom:1px solid rgba(15,23,42,0.10);
     }
-    h1{font-size:20px;margin:0}
-    .meta{
+    header .title{
       display:flex;
+      flex-direction:column;
+      gap:2px;
+      min-width: 220px;
+    }
+    header .title strong{
+      font-size:1.05rem;
+      letter-spacing:0.2px;
+    }
+    header .title div{
+      font-size:0.92rem;
+      color: rgba(15,23,42,0.70);
+      font-weight: 650;
+    }
+
+    .headerStars{
+      flex: 1;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      min-width: 260px;
+    }
+
+    /* UPDATED: match Level pill size */
+    .stars{
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      gap:10px;
+      padding:9px 12px;
+      border-radius: 999px;
+      background: #ffffff;
+      border: 1px solid rgba(15,23,42,0.14);
+      user-select:none;
+    }
+
+    .star{
+      width: 26px;
+      height: 26px;
+      display:grid;
+      place-items:center;
+      font-size: 1.25rem;
+      line-height: 1;
+      transform-origin: center;
+      filter: drop-shadow(0 6px 10px rgba(15,23,42,0.12));
+      opacity: 0.55;
+    }
+    .star.filled{
+      opacity: 1;
+      filter:
+        drop-shadow(0 6px 10px rgba(15,23,42,0.10))
+        drop-shadow(0 0 14px rgba(249,115,22,0.55));
+    }
+    .star.filled.glow{
+      animation: starGlow 900ms ease-in-out infinite;
+    }
+    .star.pop{ animation: starPop 520ms ease-out forwards; }
+    .star.dance{ animation: starDance 700ms ease-in-out forwards; }
+
+    .starsHelp{
+      margin-left: 10px;
+      font-weight: 950;
+      color: rgba(15,23,42,0.62);
+      font-size: 0.9rem;
+      white-space: nowrap;
+    }
+    @keyframes starPop{
+      0%   { transform: scale(0.85) rotate(-8deg); }
+      45%  { transform: scale(1.28) rotate(8deg); }
+      100% { transform: scale(1) rotate(0deg); }
+    }
+    @keyframes starDance{
+      0%   { transform: translateY(0) rotate(0deg); }
+      25%  { transform: translateY(-5px) rotate(-6deg); }
+      55%  { transform: translateY(0) rotate(6deg); }
+      80%  { transform: translateY(-3px) rotate(-4deg); }
+      100% { transform: translateY(0) rotate(0deg); }
+    }
+    @keyframes starGlow{
+      0%   { filter: drop-shadow(0 6px 10px rgba(15,23,42,0.10)) drop-shadow(0 0 10px rgba(249,115,22,0.35)); }
+      50%  { filter: drop-shadow(0 6px 10px rgba(15,23,42,0.10)) drop-shadow(0 0 18px rgba(249,115,22,0.75)); }
+      100% { filter: drop-shadow(0 6px 10px rgba(15,23,42,0.10)) drop-shadow(0 0 10px rgba(249,115,22,0.35)); }
+    }
+    @media (max-width: 760px){
+      .headerStars{ display:none; }
+    }
+
+    /* UPDATED: match Level pill size */
+    .streakPill{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      padding:9px 12px;
+      border-radius:999px;
+      background: #ffffff;
+      border:1px solid rgba(15,23,42,0.14);
+      font-weight: 1000;
+      user-select:none;
+      white-space:nowrap;
+    }
+
+    /* NEW: Name pill (matches Level pills) */
+    .namePill{
+      display:flex;
+      align-items:center;
       gap:10px;
       flex-wrap:wrap;
-      align-items:center;
-      color:var(--muted);
-      font-size:14px;
-    }
-    .badge{
-      display:inline-flex;
-      gap:8px;
-      align-items:center;
-      padding:6px 10px;
-      border:1px solid var(--line);
+      padding:9px 12px;
       border-radius:999px;
-      background:#fafafa;
+      background:#ffffff;
+      border:1px solid rgba(15,23,42,0.14);
+      font-weight:1000;
+      user-select:none;
+      white-space:nowrap;
     }
 
-    .stars{display:inline-flex;gap:2px;font-size:16px;line-height:1;}
-    .stars .off{opacity:.22}
-
-    button{
-      border:0;
-      border-radius:12px;
-      padding:10px 14px;
-      font-size:16px;
-      font-weight:800;
-      cursor:pointer;
-      background:var(--accent);
-      color:white;
+    .dot{
+      width:11px; height:11px;
+      border-radius:999px;
+      background: var(--good);
+      box-shadow: 0 0 0 6px rgba(22,163,74,0.18);
     }
-    button.secondary{background:#111827;}
-    button:disabled{opacity:.5;cursor:not-allowed;}
 
-    /* Setup */
-    #setup{display:grid;gap:10px;max-width:720px;margin:34px auto;}
-    .row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
-    label{font-weight:600}
-    input[type="text"], select{
+    main{ padding:14px 16px 16px; display:grid; gap:12px; }
+
+    .card{
+      background: rgba(255,255,255,0.88);
+      border:1px solid rgba(15,23,42,0.10);
+      border-radius: var(--radius);
+      padding: 14px;
+      box-shadow: 0 10px 22px rgba(15,23,42,0.08);
+    }
+
+    .row{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      align-items:center;
+    }
+
+    label{ font-weight: 1000; }
+    input[type="text"], input[type="number"]{
       padding:10px 12px;
-      border:1px solid var(--line);
-      border-radius:10px;
-      font-size:16px;
+      border-radius: 14px;
+      border:1px solid rgba(15,23,42,0.16);
+      background: #ffffff;
+      font-size: 1rem;
       outline:none;
-      min-width:220px;
-      background:white;
     }
-    .help{color:var(--muted);font-size:14px;line-height:1.35;}
+
+    .btn{
+      border:1px solid rgba(15,23,42,0.14);
+      background: #ffffff;
+      padding:10px 14px;
+      border-radius: 16px;
+      font-weight: 1000;
+      cursor:pointer;
+      user-select:none;
+      transition: transform 80ms ease, box-shadow 120ms ease;
+      box-shadow: 0 8px 18px rgba(15,23,42,0.08);
+    }
+    .btn:active{ transform: translateY(1px); box-shadow: 0 6px 14px rgba(15,23,42,0.08); }
+    .btn.primary{
+      background: linear-gradient(135deg, rgba(34,197,94,0.24), rgba(6,182,212,0.18));
+      border-color: rgba(22,163,74,0.22);
+    }
+
+    .btn.back{
+      background: linear-gradient(135deg, rgba(124,58,237,0.30), rgba(6,182,212,0.16), rgba(249,115,22,0.10));
+      border-color: rgba(124,58,237,0.30);
+      box-shadow: 0 10px 22px rgba(15,23,42,0.10);
+    }
+
+    .pill-group{ display:flex; gap:8px; flex-wrap:wrap; }
+    .pill{
+      padding:9px 12px;
+      border-radius: 999px;
+      border:1px solid rgba(15,23,42,0.14);
+      background:#ffffff;
+      font-weight: 1000;
+      cursor:pointer;
+      user-select:none;
+    }
+    .pill[aria-pressed="true"]{
+      background: linear-gradient(135deg, rgba(124,58,237,0.18), rgba(6,182,212,0.16));
+      border-color: rgba(124,58,237,0.24);
+    }
+
+    .subtle{
+      color: rgba(15,23,42,0.62);
+      font-weight: 850;
+      font-size: 0.95rem;
+    }
+
     .hintFound{
       font-size:12px;
       color:#0b1224;
@@ -113,807 +272,825 @@
       padding:8px 10px;
       border-radius:12px;
       display:none;
+      margin-top:10px;
+      white-space: pre-wrap;
     }
     .hintFound.show{display:block;}
 
-    .panel{
-      border:1px solid var(--line);
-      border-radius:14px;
-      padding:14px;
-      background:#fcfcfc;
-      display:grid;
-      gap:14px;
-    }
+    .hidden{ display:none !important; }
 
-    /* Board row */
-    .boardRow{
-      display:grid;
-      grid-template-columns: 44px 1fr 580px;
-      gap:12px;
-      align-items:start;
-    }
-    .op{
-      font-size:28px;
-      font-weight:900;
-      padding-top:34px;
-      text-align:center;
-    }
-
-    /* digits: carry + H + T + O */
-    .digits{
-      display:grid;
-      grid-template-columns: 36px 70px 70px 70px;
-      column-gap:10px;
-      row-gap:10px;
-      align-items:center;
-    }
-    .carryCell{
-      height:24px;
+    .gameGrid{ display:grid; gap: 12px; }
+    .topBar{
       display:flex;
-      align-items:center;
-      justify-content:center;
-      font-size:14px;
-      font-weight:900;
-      color:#111827;
-      opacity:.9;
-    }
-
-    /* Number boxes */
-    .numCell{
-      height:62px;
-      border:1px solid var(--line);
-      border-radius:12px;
-      background:white;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      font-size:30px;
-      font-weight:900;
-      position:relative;
-    }
-    .numCell.small{height:54px;font-size:26px;font-weight:850;}
-
-    .line{
-      grid-column: 2 / 5;
-      height:2px;
-      background:#111827;
-      border-radius:999px;
-      margin-top:2px;
-      margin-bottom:2px;
-    }
-
-    /* Result inputs + button close */
-    .resultRow{
-      display:flex;
-      gap:8px;
-      align-items:flex-end;
-      justify-content:flex-start;
-      flex-wrap:wrap;
-      margin-top:8px;
-    }
-    .inputs{
-      display:grid;
-      grid-template-columns: 36px 70px 70px 70px;
-      column-gap:10px;
-      align-items:center;
-    }
-    .digitInput{
-      width:70px;
-      height:56px;
-      font-size:22px;
-      font-weight:800;
-      text-align:center;
-      border:2px solid var(--line);
-      border-radius:12px;
-      outline:none;
-      background:white;
-    }
-    .digitInput:focus{
-      border-color:var(--accent);
-      box-shadow:0 0 0 3px rgba(37,99,235,.14);
-    }
-    #answerBtn{padding:12px 14px;}
-
-    /* Coin side */
-    .coinSide{display:grid;gap:14px;}
-    .coinGroupTitle{
-      font-size:12px;
-      color:var(--muted);
-      margin:0 0 4px 2px;
-      font-weight:800;
-      letter-spacing:.2px;
-    }
-    .coinRow3{
-      display:grid;
-      grid-template-columns: 1fr 1fr 1fr;
-      gap:12px;
-      align-items:start;
-    }
-
-    /* Coin box wrapper (for top-right button) */
-    .coinBoxWrap{
-      position:relative;
-    }
-
-    /* Small box button */
-    .boxBtn{
-      position:absolute;
-      top:6px;
-      right:6px;
-      width:26px;
-      height:22px;
-      border-radius:8px;
-      border:1px solid var(--line);
-      background:#fff;
-      color:#111827;
-      font-weight:1000;
-      font-size:12px;
-      line-height:1;
-      cursor:pointer;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      padding:0;
-      z-index:2;
-    }
-    .boxBtn:disabled{
-      opacity:.35;
-      cursor:not-allowed;
-    }
-    .boxCount{
-      position:absolute;
-      top:2px;
-      left:2px;
-      min-width:22px;
-      height:20px;
-      padding:0 6px;
-      border-radius:20px;
-      border:1px solid var(--line);
-      background:#fff;
-      color:#111827;
-      font-weight:1000;
-      font-size:12px;
-      line-height:20px;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      z-index:2;
-      background-color: #09fa11;
-    }
-
-    /* Fixed height (matches number boxes), horizontal scroll */
-    .coinBox{
-      height:62px;
-      border:1px dashed #d1d5db;
-      border-radius:12px;
-      background:#fff;
-      padding:10px;
-      display:flex;
-      flex-wrap:nowrap;
-      gap:0;                 /* overlap controls spacing */
-      align-items:center;
-      justify-content:flex-start;
-      overflow-x:auto;
-      overflow-y:hidden;
-      scrollbar-width: thin;
-    }
-
-    /* Overlap rule: each next item overlaps ~50% of its own width */
-    .coinBox > * + *{
-      margin-left: calc(var(--w) * -0.5);
-    }
-
-    /* Colored coins + rectangular bills */
-    .coin{
-      --w:34px;
-      width:34px;
-      height:34px;
-      border-radius:999px;
-      border:2px solid rgba(0,0,0,.12);
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      font-weight:900;
-      user-select:none;
-      cursor:pointer;
-      flex: 0 0 auto;
-      font-size:14px;
-      line-height:1;
-      color:#111827;
-      background: radial-gradient(circle at 30% 25%, var(--coin2), var(--coin));
-    }
-    .coin.ten{
-      --w:38px;
-      width:38px;
-      height:38px;
-      background: radial-gradient(circle at 30% 25%, var(--ten2), var(--ten));
-      color:#0b1224;
-    }
-    .bill{
-      --w:58px;
-      width:58px;
-      height:34px;
-      border-radius:10px;
-      border:2px solid rgba(0,0,0,.12);
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      font-weight:950;
-      user-select:none;
-      cursor:pointer;
-      flex: 0 0 auto;
-      font-size:14px;
-      line-height:1;
-      color:#064e3b;
-      background: linear-gradient(135deg, var(--bill2), var(--bill));
-    }
-    .disabled{
-      opacity: 1;
-      cursor: not-allowed;
-      filter: grayscale(.65);
-      box-shadow: inset 0 0 0 2px rgba(17,24,39,.22);
-    }
-
-    /* Bank */
-    .bankPanel{
-      border:1px solid var(--line);
-      border-radius:14px;
-      background:#0b1224;
-      color:#fff;
-      padding:14px;
-      display:grid;
-      gap:10px;
-      position:relative;
-    }
-    .bankPanel h2{margin:0;font-size:16px;}
-    .bankHint{font-size:13px;opacity:.9;line-height:1.3;}
-    .bankRow{
-      display:flex;
-      gap:10px;
-      align-items:center;
       justify-content:space-between;
+      align-items:center;
       flex-wrap:wrap;
-    }
-    .bankStatus{
-      font-size:16px;
-      font-weight:900;
-      opacity:1;
+      gap:10px;
     }
 
-    .bankSlot{
-      border:1px solid rgba(255,255,255,.22);
-      border-radius:14px;
-      padding:10px;
-      min-height:92px;
-      background:rgba(255,255,255,.06);
+    .equationCard{
+      background: var(--card);
+      border:1px solid rgba(15,23,42,0.10);
+      border-radius: var(--radius);
+      padding: 14px;
+      box-shadow: 0 10px 20px rgba(15,23,42,0.08);
+    }
+
+    .equationTop{
+      display:grid;
+      grid-template-columns: 1fr 90px 1fr;
+      gap: 10px;
+      align-items: start;
+    }
+
+    @media (max-width: 760px){
+      .equationTop{ grid-template-columns: 1fr; }
+      .opSign{ display:none; }
+      .opSignMobile{ display:flex; }
+    }
+
+    .opSign{
       display:flex;
-      flex-wrap:wrap;
-      gap:8px;
-      align-items:flex-start;
-      justify-content:flex-start;
+      align-items:center;
+      justify-content:center;
+      font-size: 4.2rem;
+      font-weight: 1100;
+      color: rgba(15,23,42,0.70);
+      line-height:1;
+      user-select:none;
     }
-    .tinyNote{font-size:12px;color:rgba(255,255,255,.78);line-height:1.35;}
-
-    /* Bank "return all" button (top-right) */
-    .bankTopBtn{
-      position:absolute;
-      top:12px;
-      right:12px;
-      padding:6px 10px;
-      border-radius:10px;
-      background: rgba(255,255,255,.12);
-      color:#fff;
-      border:1px solid rgba(255,255,255,.22);
-      font-size:12px;
-      font-weight:900;
-      cursor:pointer;
-    }
-    .bankTopBtn:disabled{opacity:.35;cursor:not-allowed;}
-
-    /* Flying element */
-    .flying{
-      position:absolute;
-      z-index:10000;
-      pointer-events:none;
-      will-change:transform;
-    }
-
-    /* Level switch in-game */
-    .lvlSel{
-      padding:6px 8px;
-      border-radius:10px;
-      border:1px solid var(--line);
-      font-weight:800;
-      background:#fff;
-      min-width:64px;
-    }
-    .miniBtn{
-      padding:6px 10px;
-      border-radius:10px;
-      background:var(--accent);
-      font-size:14px;
-      font-weight:900;
-    }
-
-    /* Overlay */
-    .overlay{
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,.55);
+    .opSignMobile{
       display:none;
       align-items:center;
       justify-content:center;
-      padding: 18px;
-      z-index: 9999;
+      font-size: 3.4rem;
+      font-weight: 1100;
+      color: rgba(15,23,42,0.70);
+      line-height:1;
+      user-select:none;
     }
-    .overlay.show{display:flex;}
-    .modal{
-      width:min(520px, 100%);
-      background:#fff;
-      border-radius:16px;
-      border:1px solid var(--line);
-      box-shadow:0 18px 60px rgba(0,0,0,.25);
-      padding:16px;
+
+    .side{ display:grid; gap: 10px; }
+    .bigNumber{
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-size: 3.6rem;
+      font-weight: 1100;
+      padding: 8px 10px;
+      border-radius: 18px;
+      background: linear-gradient(135deg, rgba(249,115,22,0.18), rgba(124,58,237,0.14));
+      border:1px solid rgba(15,23,42,0.10);
+      user-select:none;
+    }
+    .bigNumber.primaryPick{
+      outline: 5px solid rgba(124,58,237,0.35);
+      border-color: rgba(124,58,237,0.45);
+      background: linear-gradient(135deg, rgba(124,58,237,0.22), rgba(6,182,212,0.12), rgba(249,115,22,0.12));
+      transform: translateY(-2px);
+    }
+
+    .hint{
+      text-align:center;
+      font-weight: 950;
+      color: rgba(15,23,42,0.62);
+      font-size: 0.95rem;
+      margin-top: -2px;
+    }
+
+    .dropZone{
+      min-height: calc(var(--cube) * 2.2);
+      padding: 10px;
+      border-radius: 18px;
+      background: #f8fafc;
+      border: 3px dashed rgba(15,23,42,0.18);
+      display:flex;
+      flex-wrap:wrap;
+      gap: 8px;
+      align-content:flex-start;
+    }
+    .dropZone.correct{
+      border-color: rgba(22,163,74,0.55);
+      background: rgba(22,163,74,0.08);
+    }
+    .dropZone.wrong{
+      border-color: rgba(239,68,68,0.55);
+      background: rgba(239,68,68,0.08);
+    }
+
+    .pileWrap{
+      background: var(--card);
+      border:1px solid rgba(15,23,42,0.10);
+      border-radius: var(--radius);
+      padding: 14px;
+      box-shadow: 0 10px 20px rgba(15,23,42,0.08);
+    }
+
+    .pileHeader{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      margin-bottom: 10px;
+    }
+    .pileHeader strong{
+      font-size: 1.05rem;
+      font-weight: 1100;
+    }
+    .pileHeader span{
+      color: rgba(15,23,42,0.62);
+      font-weight: 900;
+    }
+
+    .pileArea{
+      min-height: 170px;
+      padding: 10px;
+      border-radius: 18px;
+      background: #f8fafc;
+      border: 3px dashed rgba(15,23,42,0.18);
+      display:flex;
+      flex-wrap:wrap;
+      gap: 8px;
+      align-content:flex-start;
+    }
+
+    .cube{
+      width: var(--cube);
+      height: var(--cube);
+      border-radius: 10px;
+      border: 1px solid rgba(15,23,42,0.14);
+      box-shadow: 0 6px 14px rgba(15,23,42,0.12);
+      user-select:none;
+      touch-action:none;
+      position: relative;
+      cursor: grab;
+    }
+    .cube:active{ cursor: grabbing; }
+
+    .cube.crossed{
+      opacity: 0.45;
+      filter: saturate(0.8);
+    }
+    .cube.crossed::after{
+      content:"";
+      position:absolute;
+      left:-6px;
+      right:-6px;
+      top: calc(50% - 2px);
+      height: 4px;
+      background: rgba(239,68,68,0.92);
+      transform: rotate(-18deg);
+      border-radius: 999px;
+      box-shadow: 0 0 0 2px rgba(239,68,68,0.18);
+    }
+
+    .cube.static{
+      cursor: default;
+      touch-action: auto;
+    }
+
+    .actions{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap: 10px;
+      flex-wrap:wrap;
+      margin-top: 12px;
+    }
+
+    .message{
+      min-height: 26px;
+      font-weight: 1000;
+      color: rgba(15,23,42,0.70);
+    }
+    .message.good{ color: var(--good); }
+    .message.warn{ color: #b45309; }
+    .message.bad{ color: var(--bad); }
+
+    .questionCard{
+      background: var(--card);
+      border:1px solid rgba(15,23,42,0.10);
+      border-radius: var(--radius);
+      padding: 14px;
+      box-shadow: 0 10px 20px rgba(15,23,42,0.08);
+      display:grid;
+      gap: 8px;
+    }
+    .qRow{
+      display:flex;
+      flex-wrap:wrap;
+      gap: 10px;
+      align-items:center;
+    }
+    .qText{
+      font-size: 1.55rem;
+      font-weight: 1100;
+    }
+
+    .ghost{
+      position: fixed;
+      z-index: 10000;
+      pointer-events: none;
+      opacity: 0.95;
+      transform: translate(0,0);
+      box-shadow: 0 18px 40px rgba(15,23,42,0.22) !important;
+    }
+
+    .lineWrap{
+      background: var(--card);
+      border:1px solid rgba(15,23,42,0.10);
+      border-radius: var(--radius);
+      padding: 14px;
+      box-shadow: 0 10px 20px rgba(15,23,42,0.08);
       display:grid;
       gap:10px;
     }
-    .modal h3{margin:0;font-size:18px;}
-    .modal .mtext{color:var(--muted);font-size:14px;line-height:1.35;}
-    .modal .good{color:var(--good);font-weight:900;}
-    .modal .bad{color:var(--bad);font-weight:900;}
-    .modal .btnRow{display:flex;gap:10px;justify-content:flex-end;flex-wrap:wrap;}
+    .lineTitle{
+      font-weight:1100;
+      color: rgba(15,23,42,0.72);
+      display:flex;
+      justify-content:center;
+      user-select:none;
+    }
+    .line{
+      display:flex;
+      gap:6px;
+      align-items:flex-end;
+      justify-content:space-between;
+      user-select:none;
+      position: relative;
+    }
+    .tick{
+      flex:1;
+      border-radius: 14px;
+      padding: 12px 0;
+      text-align:center;
+      border:1px solid rgba(15,23,42,0.12);
+      background: linear-gradient(135deg, rgba(124,58,237,0.10), rgba(6,182,212,0.08), rgba(249,115,22,0.08));
+      font-weight:1100;
+      color: rgba(15,23,42,0.75);
+      position: relative;
+    }
+    .tick.clickable{
+      cursor: pointer;
+      transition: transform 80ms ease, box-shadow 120ms ease;
+    }
+    .tick.clickable:active{ transform: translateY(1px); }
 
-    .hidden{display:none !important;}
+    .tick.active{
+      outline: 4px solid rgba(124,58,237,0.35);
+      border-color: rgba(124,58,237,0.45);
+      background: linear-gradient(135deg, rgba(124,58,237,0.18), rgba(6,182,212,0.10), rgba(249,115,22,0.10));
+      transform: translateY(-3px);
+    }
+    .tick.active::after{
+      content:"";
+      position:absolute;
+      left:50%;
+      transform:translateX(-50%);
+      bottom:-10px;
+      width:0; height:0;
+      border-left:8px solid transparent;
+      border-right:8px solid transparent;
+      border-top:10px solid rgba(124,58,237,0.35);
+    }
 
-    @media (max-width: 1120px){
-      .boardRow{grid-template-columns: 44px 1fr;}
-      .coinSide{grid-column: 1 / -1;}
+    .sliderRow{
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      gap:10px;
+      flex-wrap:wrap;
+    }
+    .sliderTrack{
+      width: 100%;
+      max-width: 100%;
+      display:flex;
+      justify-content:center;
+    }
+    .sliderInner{ width: 100%; }
+    input[type="range"]{
+      width: 100%;
+      accent-color: var(--bgA);
+      margin: 0;
+    }
+    .sliderPill{
+      padding:8px 12px;
+      border-radius:999px;
+      background: rgba(255,255,255,0.9);
+      border:1px solid rgba(15,23,42,0.14);
+      font-weight:1100;
+      color: rgba(15,23,42,0.78);
+      user-select:none;
+      white-space: nowrap;
+    }
+
+    .monster{
+      position: fixed;
+      width: 160px;
+      height: 120px;
+      border-radius: 22px;
+      background: rgba(255,255,255,0.92);
+      border: 1px solid rgba(15,23,42,0.14);
+      box-shadow: 0 18px 35px rgba(15,23,42,0.18);
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      justify-content:center;
+      gap: 6px;
+      opacity: 0;
+      pointer-events:none;
+      transform-origin: center;
+      will-change: transform, opacity, left, top;
+      z-index: 999999;
+      left: 0;
+      top: 0;
+    }
+    .monster .face{ font-size: 2.8rem; line-height: 1; }
+    .monster .label{
+      font-weight: 1100;
+      color: rgba(15,23,42,0.70);
+      font-size: 0.95rem;
+    }
+
+    .monster.show{ opacity: 1; }
+    .monster.run-in{ opacity: 1; animation: monsterIn 420ms ease-out forwards; }
+    .monster.run-chomp{ opacity: 1; animation: monsterChomp 520ms ease-in-out forwards; }
+    .monster.run-turn{ opacity: 1; animation: monsterTurn 260ms ease-in-out forwards; }
+    .monster.run-out{ opacity: 1; animation: monsterOut 420ms ease-in forwards; }
+
+    @keyframes monsterIn{
+      from { transform: translateX(260px) scale(0.95) rotateY(0deg); }
+      to   { transform: translateX(0) scale(1) rotateY(0deg); }
+    }
+    @keyframes monsterChomp{
+      0%   { transform: translateX(0) scale(1) rotateY(0deg); }
+      25%  { transform: translateX(0) scale(1.05) rotateY(0deg); }
+      55%  { transform: translateX(0) scale(0.98) rotateY(0deg); }
+      100% { transform: translateX(0) scale(1) rotateY(0deg); }
+    }
+    @keyframes monsterTurn{
+      0%   { transform: translateX(0) scale(1) rotateY(0deg); }
+      100% { transform: translateX(0) scale(1) rotateY(180deg); }
+    }
+    @keyframes monsterOut{
+      from { transform: translateX(0) scale(1) rotateY(180deg); }
+      to   { transform: translateX(260px) scale(0.95) rotateY(180deg); }
     }
   </style>
 </head>
 
 <body>
-  <div class="wrap">
-
-    <!-- SETUP -->
-    <div id="setup" class="card">
-      <h1 data-i18n="plus2.title">Plus Hjælper – Bank & Veksling</h1>
-      <div class="help" data-i18n="plus2.setup.help">
-        Tap mønter fra <strong>begge tal</strong> ind i banken, indtil der er 10. Tryk <strong>Veksel</strong>.
+  <div class="app">
+    <header>
+      <div class="title">
+        <strong data-i18n="pm.title">Plus/Minus Hjælper</strong>
+        <div data-i18n="pm.subtitle">Vælg på startsiden – løs på spilsiden</div>
       </div>
 
-      <div class="row">
-        <label for="studentName" data-i18n="label.name">Navn</label>
-        <input
-          id="studentName"
-          type="text"
-          autocomplete="off"
-          data-i18n-placeholder="placeholder.name"
-          placeholder="Skriv dit navn"
-        />
-      </div>
-
-      <div id="foundHint" class="hintFound" aria-live="polite"></div>
-
-      <div class="row">
-        <label for="level" data-i18n="label.startLevel">Start-niveau</label>
-        <select id="level">
-          <option value="1" data-i18n="plus2.level.1">Niveau 1</option>
-          <option value="2" data-i18n="plus2.level.2">Niveau 2</option>
-          <option value="3" data-i18n="plus2.level.3">Niveau 3 (hver 5. gang: tal1 er 3 cifre og ti’ere=0)</option>
-        </select>
-      </div>
-
-      <div class="row">
-        <button id="startBtn" data-i18n="btn.start">Start</button>
-      </div>
-    </div>
-
-    <!-- APP -->
-    <div id="app" class="hidden">
-      <div class="topbar">
-        <h1 data-i18n="plus2.title">Plus Hjælper – Bank & Veksling</h1>
-
-        <div class="meta">
-          <span class="badge"><strong id="who">—</strong></span>
-
-          <span class="badge">
-            <span data-i18n="label.level">Niveau</span>:
-            <select id="levelInGame" class="lvlSel" data-i18n-aria-label="aria.changeLevel" aria-label="Skift niveau">
-              <option value="1">1</option>
-              <option value="2">2</option>
-              <option value="3">3</option>
-            </select>
-            <button id="applyLevelBtn" class="miniBtn" type="button" data-i18n="btn.switch">Skift</button>
-          </span>
-
-          <span class="badge"><span data-i18n="label.streak">Streak</span>: <strong id="streak">0</strong></span>
-          <span class="badge"><span data-i18n="label.stars">Stjerner</span>: <span class="stars" id="stars"></span></span>
-
-          <button class="secondary" id="newStudentBtn" type="button" data-i18n="btn.newStudent">Ny elev</button>
+      <div class="headerStars" aria-hidden="false">
+        <div class="stars" id="stars" data-i18n-aria-label="pm.stars.aria" aria-label="Stjerner (rekord for denne øvelse)">
+          <span class="star" data-i="1">☆</span>
+          <span class="star" data-i="2">☆</span>
+          <span class="star" data-i="3">☆</span>
+          <span class="star" data-i="4">☆</span>
+          <span class="star" data-i="5">☆</span>
         </div>
+        <div class="starsHelp" id="starsHelp" data-i18n-title="pm.stars.title" title="Rekordstjerner: 1 stjerne for hver 5 i bedste streak" data-i18n="pm.stars.best">Best</div>
       </div>
 
-      <div class="panel">
+      <div class="streakPill" data-i18n-title="pm.streak.title" title="Streak for den valgte øvelse">
+        <span class="dot"></span>
+        <span><span data-i18n="pm.streak.label">Streak</span>: <span id="streakHeader">0</span></span>
+      </div>
+    </header>
 
-        <div class="boardRow">
-          <div class="op">+</div>
+    <main>
+      <section class="card" id="startScreen">
+        <div class="row" style="justify-content:space-between;">
+          <div class="namePill">
+            <label for="studentName" data-i18n="pm.name">Navn:</label>
+            <input id="studentName" type="text" data-i18n-placeholder="pm.name.ph" placeholder="Skriv dit navn" autocomplete="off" />
+          </div>
+          <div class="subtle" id="helloText"></div>
+        </div>
 
-          <!-- Numbers + result -->
-          <div>
-            <div class="digits">
-              <div class="carryCell"></div>
-              <div class="carryCell" id="carryH"></div>
-              <div class="carryCell" id="carryT"></div>
-              <div class="carryCell"></div>
+        <div id="foundHint" class="hintFound" aria-live="polite"></div>
 
-              <div class="carryCell"></div>
-              <div class="numCell" id="aH">0</div>
-              <div class="numCell" id="aT">0</div>
-              <div class="numCell" id="aO">0</div>
+        <hr style="border:none; border-top:1px solid rgba(15,23,42,0.10); margin: 12px 0;"/>
 
-              <div class="carryCell"></div>
-              <div class="numCell small" id="bH">0</div>
-              <div class="numCell small" id="bT">0</div>
-              <div class="numCell small" id="bO">0</div>
-
-              <div class="line"></div>
-            </div>
-
-            <div class="resultRow">
-              <div class="inputs">
-                <div></div>
-                <input class="digitInput" id="ansH" inputmode="numeric" maxlength="1" data-i18n-aria-label="aria.hundreds" aria-label="Hundreder" />
-                <input class="digitInput" id="ansT" inputmode="numeric" maxlength="1" data-i18n-aria-label="aria.tens" aria-label="Ti'ere" />
-                <input class="digitInput" id="ansO" inputmode="numeric" maxlength="1" data-i18n-aria-label="aria.ones" aria-label="Enere" />
-              </div>
-
-              <button id="answerBtn" type="button" data-i18n="btn.answer">Svar</button>
-            </div>
+        <div class="row">
+          <label data-i18n="pm.choose">Vælg:</label>
+          <div class="pill-group" role="group" data-i18n-aria-label="pm.op.group" aria-label="Plus eller minus">
+            <button class="pill" id="opPlus" aria-pressed="true" data-i18n="pm.op.plus">Plus (+)</button>
+            <button class="pill" id="opMinus" aria-pressed="false" data-i18n="pm.op.minus">Minus (−)</button>
           </div>
 
-          <!-- Coin boxes -->
-          <div class="coinSide">
+          <label style="margin-left: 10px;" data-i18n="pm.level">Level:</label>
+          <div class="pill-group" role="group" data-i18n-aria-label="pm.level.group" aria-label="Level">
+            <button class="pill" id="lvl1" aria-pressed="true" data-i18n="pm.level.1">Level 1</button>
+            <button class="pill" id="lvl2" aria-pressed="false" data-i18n="pm.level.2">Level 2</button>
+            <button class="pill" id="lvl3" aria-pressed="false" data-i18n="pm.level.3">Level 3</button>
+          </div>
 
-            <div>
-              <div class="coinGroupTitle" data-i18n="plus2.group.a">Tal 1 – 100 / 10 / 1</div>
-              <div class="coinRow3">
+          <button class="btn primary" id="goBtn" style="margin-left:auto;" data-i18n="pm.go">Gå til øvelsen</button>
+        </div>
 
-                <div class="coinBoxWrap">
-                  <button class="boxBtn" id="btnA100" type="button" disabled data-i18n-title="title.notActive" title="(ikke aktiv i denne version)">↦</button>
-                  <div class="boxCount" id="countA100">0</div>
-                  <div class="coinBox" id="aBoxH"></div>
-                </div>
+        <div class="subtle" style="margin-top:8px;" id="startStreakText" data-i18n="pm.streak.preview">
+          Din streak for denne øvelse: 0
+        </div>
 
-                <div class="coinBoxWrap">
-                  <button class="boxBtn" id="btnA10" type="button" data-i18n-title="title.sendAllToBank" title="Send alle til bank">↦</button>
-                  <div class="boxCount" id="countA10">0</div>
-                  <div class="coinBox" id="aBoxT"></div>
-                </div>
+        <div class="subtle" style="margin-top:6px;" data-i18n="pm.desc">
+          Level 1: små tal (plus sum ≤ 9, minus uden negative) + svar via tallinje. Level 2: plus sum ≤ 9 (drag) / minus (tryk og kryds ud). Level 3: tallinje 0–30 + slider (plus sum ≤ 30).
+        </div>
+      </section>
 
-                <div class="coinBoxWrap">
-                  <button class="boxBtn" id="btnA1" type="button" data-i18n-title="title.sendAllToBank" title="Send alle til bank">↦</button>
-                  <div class="boxCount" id="countA1">0</div>
-                  <div class="coinBox" id="aBoxO"></div>
-                </div>
-
-              </div>
-            </div>
-
-            <div>
-              <div class="coinGroupTitle" data-i18n="plus2.group.b">Tal 2 – 100 / 10 / 1</div>
-              <div class="coinRow3">
-
-                <div class="coinBoxWrap">
-                  <button class="boxBtn" id="btnB100" type="button" disabled data-i18n-title="title.notActive" title="(ikke aktiv i denne version)">↦</button>
-                  <div class="boxCount" id="countB100">0</div>
-                  <div class="coinBox" id="bBoxH"></div>
-                </div>
-
-                <div class="coinBoxWrap">
-                  <button class="boxBtn" id="btnB10" type="button" data-i18n-title="title.sendAllToBank" title="Send alle til bank">↦</button>
-                  <div class="boxCount" id="countB10">0</div>
-                  <div class="coinBox" id="bBoxT"></div>
-                </div>
-
-                <div class="coinBoxWrap">
-                  <button class="boxBtn" id="btnB1" type="button" data-i18n-title="title.sendAllToBank" title="Send alle til bank">↦</button>
-                  <div class="boxCount" id="countB1">0</div>
-                  <div class="coinBox" id="bBoxO"></div>
-                </div>
-
-              </div>
-            </div>
-
+      <section class="card hidden" id="gameScreen">
+        <div class="topBar">
+          <div class="row">
+            <button class="btn back" id="backBtn" data-i18n="pm.back">← Tilbage</button>
+            <div class="subtle" id="modeText"></div>
+          </div>
+          <div class="streakPill">
+            <span class="dot"></span>
+            <span><span data-i18n="pm.streak.label">Streak</span>: <span id="streakGame">0</span></span>
           </div>
         </div>
 
-        <!-- BANK under all other boxes -->
-        <div class="bankPanel">
-          <button class="bankTopBtn" id="returnAllBtn" type="button" disabled data-i18n="btn.returnAll">Returnér alle</button>
+        <div class="gameGrid" style="margin-top:10px;">
+          <div class="equationCard">
+            <div class="equationTop">
+              <div class="side">
+                <div class="bigNumber" id="n1">?</div>
+                <div class="hint" id="hint1" data-i18n="pm.hint.dragDown">Træk klodser herned</div>
+                <div class="dropZone" id="zone1" data-i18n-aria-label="pm.box.1" aria-label="Boks 1"></div>
+              </div>
 
-          <h2 data-i18n="bank.title">Bank</h2>
-          <div class="bankHint" id="bankHint">—</div>
+              <div class="opSign" id="opSign">+</div>
+              <div class="opSignMobile" id="opSignMobile">+</div>
 
-          <div class="bankSlot" id="bankSlot" aria-label="Bank slot"></div>
+              <div class="side">
+                <div class="bigNumber" id="n2">?</div>
+                <div class="hint" id="hint2" data-i18n="pm.hint.dragDown">Træk klodser herned</div>
+                <div class="dropZone" id="zone2" data-i18n-aria-label="pm.box.2" aria-label="Boks 2"></div>
+              </div>
+            </div>
 
-          <div class="bankRow">
-            <button id="exchangeBtn" type="button" disabled data-i18n="btn.exchange">Veksel</button>
-            <div class="bankStatus" id="bankStatus" data-i18n="bank.empty">Banken er tom.</div>
+            <div class="actions">
+              <div class="message" id="cubeMsg"></div>
+              <div class="row">
+                <button class="btn primary" id="klarBtn" data-i18n="pm.ready">Klar</button>
+              </div>
+            </div>
           </div>
 
-          <div class="tinyNote" data-i18n="bank.note">
-            Tryk på en mønt i banken for at lægge den tilbage til det tal, den kom fra (med animation).
+          <div class="lineWrap" id="lineWrap">
+            <div class="lineTitle" id="lineTitle" data-i18n="pm.numberline">Tallinje</div>
+            <div class="line" id="line"></div>
+
+            <div class="sliderRow hidden" id="sliderRow">
+              <div class="sliderTrack" id="sliderTrack">
+                <div class="sliderInner">
+                  <input type="range" id="lineSlider" min="0" max="30" value="0" />
+                </div>
+              </div>
+              <div class="sliderPill" id="sliderPill">Slider: 0</div>
+            </div>
+          </div>
+
+          <div class="pileWrap" id="pileWrap">
+            <div class="pileHeader">
+              <strong id="pileTitle" data-i18n="pm.pile.title">Klodse-bunke</strong>
+              <span id="pileHint" data-i18n="pm.pile.hint">Træk klodser op i boksene</span>
+            </div>
+            <div class="pileArea" id="pileArea" data-i18n-aria-label="pm.pile.aria" aria-label="Klodse bunke"></div>
+          </div>
+
+          <div class="questionCard hidden" id="questionCard">
+            <div class="qRow">
+              <div class="qText" id="qText">Hvad er 1 + 2?</div>
+              <input id="answerInput" type="number" inputmode="numeric" style="width:120px;" />
+              <button class="btn primary" id="svarBtn" data-i18n="pm.answer">Svar</button>
+            </div>
+            <div class="message" id="answerMsg"></div>
+            <div class="subtle" id="streakAck"></div>
           </div>
         </div>
-
-      </div>
-    </div>
-
+      </section>
+    </main>
   </div>
 
-  <!-- RESULT OVERLAY -->
-  <div class="overlay" id="overlay" aria-hidden="true">
-    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
-      <h3 id="modalTitle">—</h3>
-      <div class="mtext" id="modalText">—</div>
-      <div class="mtext" id="modalSub">—</div>
-      <div class="btnRow">
-        <button class="secondary" id="modalBtn" type="button" data-i18n="btn.next">Næste</button>
-      </div>
-    </div>
+  <div class="monster" id="monster" aria-hidden="true">
+    <div class="face">👾</div>
+    <div class="label" data-i18n="pm.monster">Nom nom!</div>
   </div>
 
 <script>
-/* -------------------- ScoreZone i18n (Plus2) -------------------- */
+/* -------------------- ScoreZone i18n (Plus/Minus) -------------------- */
 (() => {
   const LANG_KEY = "scorezone_lang";
   const SUPPORTED = ["da","en","de","es"];
 
   const I18N = {
     da: {
-      "plus2.title": "Plus Hjælper – Bank & Veksling",
-      "plus2.setup.help": `Tap mønter fra <strong>begge tal</strong> ind i banken, indtil der er 10. Tryk <strong>Veksel</strong>.`,
+      "pm.title":"Plus/Minus Hjælper",
+      "pm.subtitle":"Vælg på startsiden – løs på spilsiden",
+      "pm.stars.aria":"Stjerner (rekord for denne øvelse)",
+      "pm.stars.title":"Rekordstjerner: 1 stjerne for hver 5 i bedste streak",
+      "pm.stars.best":"Best",
+      "pm.streak.title":"Streak for den valgte øvelse",
+      "pm.streak.label":"Streak",
 
-      "label.name": "Navn",
-      "placeholder.name": "Skriv dit navn",
-      "label.startLevel": "Start-niveau",
-      "plus2.level.1": "Niveau 1",
-      "plus2.level.2": "Niveau 2",
-      "plus2.level.3": "Niveau 3 (hver 5. gang: tal1 er 3 cifre og ti’ere=0)",
+      "pm.name":"Navn:",
+      "pm.name.ph":"Skriv dit navn",
+      "pm.choose":"Vælg:",
+      "pm.op.group":"Plus eller minus",
+      "pm.op.plus":"Plus (+)",
+      "pm.op.minus":"Minus (−)",
+      "pm.level":"Level:",
+      "pm.level.group":"Level",
+      "pm.level.1":"Level 1",
+      "pm.level.2":"Level 2",
+      "pm.level.3":"Level 3",
+      "pm.go":"Gå til øvelsen",
+      "pm.back":"← Tilbage",
 
-      "label.level": "Niveau",
-      "label.streak": "Streak",
-      "label.stars": "Stjerner",
+      "pm.streak.preview":"Din streak for denne øvelse: {streak}",
+      "pm.desc":"Level 1: små tal (plus sum ≤ 9, minus uden negative) + svar via tallinje. Level 2: plus sum ≤ 9 (drag) / minus (tryk og kryds ud). Level 3: tallinje 0–30 + slider (plus sum ≤ 30).",
 
-      "btn.start": "Start",
-      "btn.switch": "Skift",
-      "btn.newStudent": "Ny elev",
-      "btn.answer": "Svar",
-      "btn.exchange": "Veksel",
-      "btn.returnAll": "Returnér alle",
-      "btn.next": "Næste",
+      "pm.hint.dragDown":"Træk klodser herned",
+      "pm.box.1":"Boks 1",
+      "pm.box.2":"Boks 2",
+      "pm.ready":"Klar",
+      "pm.numberline":"Tallinje",
+      "pm.pile.title":"Klodse-bunke",
+      "pm.pile.hint":"Træk klodser op i boksene",
+      "pm.pile.aria":"Klodse bunke",
+      "pm.answer":"Svar",
+      "pm.monster":"Nom nom!",
 
-      "plus2.group.a": "Tal 1 – 100 / 10 / 1",
-      "plus2.group.b": "Tal 2 – 100 / 10 / 1",
+      "pm.hello":"Hej {name}!",
+      "pm.mode":"{op} • Level {level}",
+      "pm.opText.plus":"Plus (+)",
+      "pm.opText.minus":"Minus (−)",
 
-      "bank.title": "Bank",
-      "bank.empty": "Banken er tom.",
-      "bank.note": "Tryk på en mønt i banken for at lægge den tilbage til det tal, den kom fra (med animation).",
+      "pm.line.0_9":"Tallinje (0–9)",
+      "pm.line.0_20":"Tallinje (0–20)",
+      "pm.line.0_30":"Tallinje (0–30) + slider",
+      "pm.slider":"Slider: {v}",
 
-      "bank.hint.ones": "<strong>Trin:</strong> Tap <strong>1’ere</strong> i banken (fra begge tal). Når der er 10 → Veksel.",
-      "bank.hint.tens": "<strong>Trin:</strong> Tap <strong>10’ere</strong> i banken (fra begge tal). Når der er 10 → Veksel.",
+      "pm.q":"Hvad er {a} {op} {b}?",
+      "pm.cubes.countLine":"Tryk på et tal på tallinjen og tryk Svar.",
+      "pm.minus.needCross":"Først: kryds {need} klodser ud. Du har krydset {have} ud.",
+      "pm.needNumber":"Skriv et tal (eller tryk på tallinjen).",
+      "pm.correct":"Ikke helt. Det rigtige svar er {correct}.",
+      "pm.reset":"Streak nulstilles – du prøver bare igen.",
+      "pm.streakAck":"Streak: {streak} – fortsæt sådan!",
 
-      "bank.status.count.ones": "I banken: {n} × 1",
-      "bank.status.count.tens": "I banken: {n} × 10",
-      "bank.status.exchanging": "Veksler… 10×{from} → 1×{to}",
+      "pm.tryAgain":"Prøv igen. Se hvilke bokse der er rigtige.",
+      "pm.cubesMatch":"{praise} Klodserne passer!",
+      "pm.minusOk":"{praise} Du tog det rigtige antal væk!",
+      "pm.minusProgress":"Krydset ud: {have} / {need}",
+      "pm.crossHint":"Kryds det rigtige antal ud. Vælg svar på tallinjen og tryk Svar.",
+      "pm.minusFirst":"Tryk på klodser for at krydse dem ud",
+      "pm.minusBox":"Her kan du tælle dem du tog væk",
+      "pm.plusCount":"Tæl klodserne",
+      "pm.level3Hint":"Brug slideren til at finde et tal",
 
-      "title.sendAllToBank": "Send alle til bank",
-      "title.notActive": "(ikke aktiv i denne version)",
+      "pm.found":"Tidligere elev fundet: \"{name}\".\nPlus L1: streak {p1s}, stjerner {p1st}\nPlus L2: streak {p2s}, stjerner {p2st}\nPlus L3: streak {p3s}, stjerner {p3st}\nMinus L1: streak {m1s}, stjerner {m1st}\nMinus L2: streak {m2s}, stjerner {m2st}\nMinus L3: streak {m3s}, stjerner {m3st}",
 
-      "aria.changeLevel": "Skift niveau",
-      "aria.hundreds": "Hundreder",
-      "aria.tens": "Ti'ere",
-      "aria.ones": "Enere",
-
-      "found.exists": `Tidligere elev fundet: "{name}". N1: streak {s1}, stjerner {st1}. N2: streak {s2}, stjerner {st2}. N3: streak {s3}, stjerner {st3}.`,
-
-      "overlay.ok.sub": "Næste opgave klar.",
-      "overlay.bad.sub": "Prøv igen på næste opgave.",
-
-      "overlay.bad.title": "Ikke helt, {name}.",
-      "overlay.correct": "Rigtigt svar: {correct}",
-      "overlay.eq": "{a} + {b} = {correct}",
-
-      "praise.0": "Godt klaret",
-      "praise.1": "Flot arbejde",
-      "praise.2": "Super",
-      "praise.3": "Stærkt",
-      "praise.4": "Rigtig godt",
+      "praise.0":"Flot arbejde, {name}!",
+      "praise.1":"Mega sejt, {name}!",
+      "praise.2":"Du er virkelig god, {name}!",
+      "praise.3":"Yes! Det sad lige i skabet, {name}!",
+      "praise.4":"Stærkt gået, {name}!",
+      "pm.correctYes":"{praise} Det er rigtigt!"
     },
 
     en: {
-      "plus2.title": "Plus Helper – Bank & Exchange",
-      "plus2.setup.help": `Tap coins from <strong>both numbers</strong> into the bank until there are 10. Press <strong>Exchange</strong>.`,
+      "pm.title":"Plus/Minus Helper",
+      "pm.subtitle":"Choose on the start screen – solve on the game screen",
+      "pm.stars.aria":"Stars (best for this exercise)",
+      "pm.stars.title":"Best stars: 1 star for every 5 in your best streak",
+      "pm.stars.best":"Best",
+      "pm.streak.title":"Streak for the selected exercise",
+      "pm.streak.label":"Streak",
 
-      "label.name": "Name",
-      "placeholder.name": "Type your name",
-      "label.startLevel": "Start level",
-      "plus2.level.1": "Level 1",
-      "plus2.level.2": "Level 2",
-      "plus2.level.3": "Level 3 (every 5th time: number 1 has 3 digits and tens=0)",
+      "pm.name":"Name:",
+      "pm.name.ph":"Type your name",
+      "pm.choose":"Choose:",
+      "pm.op.group":"Plus or minus",
+      "pm.op.plus":"Plus (+)",
+      "pm.op.minus":"Minus (−)",
+      "pm.level":"Level:",
+      "pm.level.group":"Level",
+      "pm.level.1":"Level 1",
+      "pm.level.2":"Level 2",
+      "pm.level.3":"Level 3",
+      "pm.go":"Go to exercise",
+      "pm.back":"← Back",
 
-      "label.level": "Level",
-      "label.streak": "Streak",
-      "label.stars": "Stars",
+      "pm.streak.preview":"Your streak for this exercise: {streak}",
+      "pm.desc":"Level 1: small numbers (plus sum ≤ 9, minus without negatives) + answer via number line. Level 2: plus sum ≤ 9 (drag) / minus (tap and cross out). Level 3: number line 0–30 + slider (plus sum ≤ 30).",
 
-      "btn.start": "Start",
-      "btn.switch": "Switch",
-      "btn.newStudent": "New student",
-      "btn.answer": "Answer",
-      "btn.exchange": "Exchange",
-      "btn.returnAll": "Return all",
-      "btn.next": "Next",
+      "pm.hint.dragDown":"Drag cubes down here",
+      "pm.box.1":"Box 1",
+      "pm.box.2":"Box 2",
+      "pm.ready":"Ready",
+      "pm.numberline":"Number line",
+      "pm.pile.title":"Cube pile",
+      "pm.pile.hint":"Drag cubes up into the boxes",
+      "pm.pile.aria":"Cube pile",
+      "pm.answer":"Answer",
+      "pm.monster":"Nom nom!",
 
-      "plus2.group.a": "Number 1 – 100 / 10 / 1",
-      "plus2.group.b": "Number 2 – 100 / 10 / 1",
+      "pm.hello":"Hi {name}!",
+      "pm.mode":"{op} • Level {level}",
+      "pm.opText.plus":"Plus (+)",
+      "pm.opText.minus":"Minus (−)",
 
-      "bank.title": "Bank",
-      "bank.empty": "The bank is empty.",
-      "bank.note": "Click a coin in the bank to return it to the number it came from (with animation).",
+      "pm.line.0_9":"Number line (0–9)",
+      "pm.line.0_20":"Number line (0–20)",
+      "pm.line.0_30":"Number line (0–30) + slider",
+      "pm.slider":"Slider: {v}",
 
-      "bank.hint.ones": "<strong>Step:</strong> Tap <strong>1s</strong> into the bank (from both numbers). When there are 10 → Exchange.",
-      "bank.hint.tens": "<strong>Step:</strong> Tap <strong>10s</strong> into the bank (from both numbers). When there are 10 → Exchange.",
+      "pm.q":"What is {a} {op} {b}?",
+      "pm.cubes.countLine":"Pick a number on the number line and press Answer.",
+      "pm.minus.needCross":"First: cross out {need} cubes. You crossed out {have}.",
+      "pm.needNumber":"Type a number (or click the number line).",
+      "pm.correct":"Not quite. The correct answer is {correct}.",
+      "pm.reset":"Streak resets — keep going.",
+      "pm.streakAck":"Streak: {streak} — keep it up!",
 
-      "bank.status.count.ones": "In bank: {n} × 1",
-      "bank.status.count.tens": "In bank: {n} × 10",
-      "bank.status.exchanging": "Exchanging… 10×{from} → 1×{to}",
+      "pm.tryAgain":"Try again. Check which boxes are correct.",
+      "pm.cubesMatch":"{praise} The cubes match!",
+      "pm.minusOk":"{praise} You removed the right amount!",
+      "pm.minusProgress":"Crossed out: {have} / {need}",
+      "pm.crossHint":"Cross out the right amount. Choose on the number line and press Answer.",
+      "pm.minusFirst":"Tap cubes to cross them out",
+      "pm.minusBox":"Here you can count what you removed",
+      "pm.plusCount":"Count the cubes",
+      "pm.level3Hint":"Use the slider to find a number",
 
-      "title.sendAllToBank": "Send all to bank",
-      "title.notActive": "(not active in this version)",
+      "pm.found":"Previous student found: \"{name}\".\nPlus L1: streak {p1s}, stars {p1st}\nPlus L2: streak {p2s}, stars {p2st}\nPlus L3: streak {p3s}, stars {p3st}\nMinus L1: streak {m1s}, stars {m1st}\nMinus L2: streak {m2s}, stars {m2st}\nMinus L3: streak {m3s}, stars {m3st}",
 
-      "aria.changeLevel": "Change level",
-      "aria.hundreds": "Hundreds",
-      "aria.tens": "Tens",
-      "aria.ones": "Ones",
-
-      "found.exists": `Previous student found: "{name}". L1: streak {s1}, stars {st1}. L2: streak {s2}, stars {st2}. L3: streak {s3}, stars {st3}.`,
-
-      "overlay.ok.sub": "Ready for the next problem.",
-      "overlay.bad.sub": "Try again on the next problem.",
-
-      "overlay.bad.title": "Not quite, {name}.",
-      "overlay.correct": "Correct answer: {correct}",
-      "overlay.eq": "{a} + {b} = {correct}",
-
-      "praise.0": "Well done",
-      "praise.1": "Great work",
-      "praise.2": "Nice",
-      "praise.3": "Strong",
-      "praise.4": "Excellent",
+      "praise.0":"Great job, {name}!",
+      "praise.1":"Nice work, {name}!",
+      "praise.2":"You’re really good, {name}!",
+      "praise.3":"Yes! You nailed it, {name}!",
+      "praise.4":"Strong, {name}!",
+      "pm.correctYes":"{praise} That’s correct!"
     },
 
     de: {
-      "plus2.title": "Plus-Helfer – Bank & Tausch",
-      "plus2.setup.help": `Tippe Münzen von <strong>beiden Zahlen</strong> in die Bank, bis es 10 sind. Dann <strong>Tauschen</strong>.`,
+      "pm.title":"Plus/Minus-Helfer",
+      "pm.subtitle":"Auf der Startseite wählen – auf der Spielseite lösen",
+      "pm.stars.aria":"Sterne (Bestwert für diese Übung)",
+      "pm.stars.title":"Best-Sterne: 1 Stern je 5 in der besten Serie",
+      "pm.stars.best":"Best",
+      "pm.streak.title":"Serie für die gewählte Übung",
+      "pm.streak.label":"Serie",
 
-      "label.name": "Name",
-      "placeholder.name": "Name eingeben",
-      "label.startLevel": "Start-Level",
-      "plus2.level.1": "Level 1",
-      "plus2.level.2": "Level 2",
-      "plus2.level.3": "Level 3 (jedes 5. Mal: Zahl 1 hat 3 Ziffern und Zehner=0)",
+      "pm.name":"Name:",
+      "pm.name.ph":"Name eingeben",
+      "pm.choose":"Wähle:",
+      "pm.op.group":"Plus oder Minus",
+      "pm.op.plus":"Plus (+)",
+      "pm.op.minus":"Minus (−)",
+      "pm.level":"Level:",
+      "pm.level.group":"Level",
+      "pm.level.1":"Level 1",
+      "pm.level.2":"Level 2",
+      "pm.level.3":"Level 3",
+      "pm.go":"Zur Übung",
+      "pm.back":"← Zurück",
 
-      "label.level": "Level",
-      "label.streak": "Serie",
-      "label.stars": "Sterne",
+      "pm.streak.preview":"Deine Serie für diese Übung: {streak}",
+      "pm.desc":"Level 1: kleine Zahlen (Plus Summe ≤ 9, Minus ohne Negative) + Antwort über Zahlenstrahl. Level 2: Plus Summe ≤ 9 (ziehen) / Minus (antippen und durchstreichen). Level 3: Zahlenstrahl 0–30 + Slider (Plus Summe ≤ 30).",
 
-      "btn.start": "Start",
-      "btn.switch": "Wechseln",
-      "btn.newStudent": "Neuer Schüler",
-      "btn.answer": "Antwort",
-      "btn.exchange": "Tauschen",
-      "btn.returnAll": "Alles zurück",
-      "btn.next": "Weiter",
+      "pm.hint.dragDown":"Würfel hierher ziehen",
+      "pm.box.1":"Kasten 1",
+      "pm.box.2":"Kasten 2",
+      "pm.ready":"Fertig",
+      "pm.numberline":"Zahlenstrahl",
+      "pm.pile.title":"Würfel-Stapel",
+      "pm.pile.hint":"Würfel in die Kästen ziehen",
+      "pm.pile.aria":"Würfel-Stapel",
+      "pm.answer":"Antwort",
+      "pm.monster":"Nom nom!",
 
-      "plus2.group.a": "Zahl 1 – 100 / 10 / 1",
-      "plus2.group.b": "Zahl 2 – 100 / 10 / 1",
+      "pm.hello":"Hallo {name}!",
+      "pm.mode":"{op} • Level {level}",
+      "pm.opText.plus":"Plus (+)",
+      "pm.opText.minus":"Minus (−)",
 
-      "bank.title": "Bank",
-      "bank.empty": "Die Bank ist leer.",
-      "bank.note": "Klicke eine Münze in der Bank, um sie zurückzulegen (mit Animation).",
+      "pm.line.0_9":"Zahlenstrahl (0–9)",
+      "pm.line.0_20":"Zahlenstrahl (0–20)",
+      "pm.line.0_30":"Zahlenstrahl (0–30) + Slider",
+      "pm.slider":"Slider: {v}",
 
-      "bank.hint.ones": "<strong>Schritt:</strong> Tippe <strong>1er</strong> in die Bank (von beiden Zahlen). Bei 10 → Tauschen.",
-      "bank.hint.tens": "<strong>Schritt:</strong> Tippe <strong>10er</strong> in die Bank (von beiden Zahlen). Bei 10 → Tauschen.",
+      "pm.q":"Was ist {a} {op} {b}?",
+      "pm.cubes.countLine":"Zahl am Zahlenstrahl wählen und Antwort drücken.",
+      "pm.minus.needCross":"Zuerst: {need} Würfel durchstreichen. Du hast {have}.",
+      "pm.needNumber":"Gib eine Zahl ein (oder klicke den Zahlenstrahl).",
+      "pm.correct":"Nicht ganz. Richtig ist {correct}.",
+      "pm.reset":"Serie wird zurückgesetzt — weiter so.",
+      "pm.streakAck":"Serie: {streak} — weiter so!",
 
-      "bank.status.count.ones": "In Bank: {n} × 1",
-      "bank.status.count.tens": "In Bank: {n} × 10",
-      "bank.status.exchanging": "Tausche… 10×{from} → 1×{to}",
+      "pm.tryAgain":"Nochmal. Schau welche Kästen richtig sind.",
+      "pm.cubesMatch":"{praise} Die Würfel passen!",
+      "pm.minusOk":"{praise} Du hast die richtige Anzahl entfernt!",
+      "pm.minusProgress":"Durchgestrichen: {have} / {need}",
+      "pm.crossHint":"Richtige Anzahl durchstreichen. Antwort wählen und drücken.",
+      "pm.minusFirst":"Würfel antippen zum Durchstreichen",
+      "pm.minusBox":"Hier kannst du zählen, was du entfernt hast",
+      "pm.plusCount":"Würfel zählen",
+      "pm.level3Hint":"Nutze den Slider, um eine Zahl zu finden",
 
-      "title.sendAllToBank": "Alles zur Bank",
-      "title.notActive": "(in dieser Version nicht aktiv)",
+      "pm.found":"Vorheriger Schüler gefunden: \"{name}\".\nPlus L1: Serie {p1s}, Sterne {p1st}\nPlus L2: Serie {p2s}, Sterne {p2st}\nPlus L3: Serie {p3s}, Sterne {p3st}\nMinus L1: Serie {m1s}, Sterne {m1st}\nMinus L2: Serie {m2s}, Sterne {m2st}\nMinus L3: Serie {m3s}, Sterne {m3st}",
 
-      "aria.changeLevel": "Level ändern",
-      "aria.hundreds": "Hunderter",
-      "aria.tens": "Zehner",
-      "aria.ones": "Einer",
-
-      "found.exists": `Vorheriger Schüler gefunden: "{name}". L1: Serie {s1}, Sterne {st1}. L2: Serie {s2}, Sterne {st2}. L3: Serie {s3}, Sterne {st3}.`,
-
-      "overlay.ok.sub": "Bereit für die nächste Aufgabe.",
-      "overlay.bad.sub": "Versuche es bei der nächsten Aufgabe erneut.",
-
-      "overlay.bad.title": "Nicht ganz, {name}.",
-      "overlay.correct": "Richtig: {correct}",
-      "overlay.eq": "{a} + {b} = {correct}",
-
-      "praise.0": "Gut gemacht",
-      "praise.1": "Tolle Arbeit",
-      "praise.2": "Super",
-      "praise.3": "Stark",
-      "praise.4": "Sehr gut",
+      "praise.0":"Gut gemacht, {name}!",
+      "praise.1":"Tolle Arbeit, {name}!",
+      "praise.2":"Du bist echt gut, {name}!",
+      "praise.3":"Yes! Voll getroffen, {name}!",
+      "praise.4":"Stark, {name}!",
+      "pm.correctYes":"{praise} Das ist richtig!"
     },
 
     es: {
-      "plus2.title": "Ayuda de Suma – Banco y Cambio",
-      "plus2.setup.help": `Toca monedas de <strong>ambos números</strong> al banco hasta llegar a 10. Pulsa <strong>Cambiar</strong>.`,
+      "pm.title":"Ayuda de Suma/Resta",
+      "pm.subtitle":"Elige en inicio – resuelve en el juego",
+      "pm.stars.aria":"Estrellas (mejor marca de este ejercicio)",
+      "pm.stars.title":"Mejor: 1 estrella por cada 5 en la mejor racha",
+      "pm.stars.best":"Best",
+      "pm.streak.title":"Racha del ejercicio seleccionado",
+      "pm.streak.label":"Racha",
 
-      "label.name": "Nombre",
-      "placeholder.name": "Escribe tu nombre",
-      "label.startLevel": "Nivel inicial",
-      "plus2.level.1": "Nivel 1",
-      "plus2.level.2": "Nivel 2",
-      "plus2.level.3": "Nivel 3 (cada 5ª vez: el número 1 tiene 3 cifras y decenas=0)",
+      "pm.name":"Nombre:",
+      "pm.name.ph":"Escribe tu nombre",
+      "pm.choose":"Elige:",
+      "pm.op.group":"Suma o resta",
+      "pm.op.plus":"Suma (+)",
+      "pm.op.minus":"Resta (−)",
+      "pm.level":"Nivel:",
+      "pm.level.group":"Nivel",
+      "pm.level.1":"Nivel 1",
+      "pm.level.2":"Nivel 2",
+      "pm.level.3":"Nivel 3",
+      "pm.go":"Ir al ejercicio",
+      "pm.back":"← Volver",
 
-      "label.level": "Nivel",
-      "label.streak": "Racha",
-      "label.stars": "Estrellas",
+      "pm.streak.preview":"Tu racha para este ejercicio: {streak}",
+      "pm.desc":"Nivel 1: números pequeños (suma ≤ 9, resta sin negativos) + respuesta con recta numérica. Nivel 2: suma ≤ 9 (arrastrar) / resta (tocar y tachar). Nivel 3: recta 0–30 + deslizador (suma ≤ 30).",
 
-      "btn.start": "Empezar",
-      "btn.switch": "Cambiar",
-      "btn.newStudent": "Nuevo alumno",
-      "btn.answer": "Responder",
-      "btn.exchange": "Cambiar",
-      "btn.returnAll": "Devolver todo",
-      "btn.next": "Siguiente",
+      "pm.hint.dragDown":"Arrastra cubos aquí",
+      "pm.box.1":"Caja 1",
+      "pm.box.2":"Caja 2",
+      "pm.ready":"Listo",
+      "pm.numberline":"Recta numérica",
+      "pm.pile.title":"Montón de cubos",
+      "pm.pile.hint":"Arrastra cubos a las cajas",
+      "pm.pile.aria":"Montón de cubos",
+      "pm.answer":"Responder",
+      "pm.monster":"Nom nom!",
 
-      "plus2.group.a": "Número 1 – 100 / 10 / 1",
-      "plus2.group.b": "Número 2 – 100 / 10 / 1",
+      "pm.hello":"Hola {name}!",
+      "pm.mode":"{op} • Nivel {level}",
+      "pm.opText.plus":"Suma (+)",
+      "pm.opText.minus":"Resta (−)",
 
-      "bank.title": "Banco",
-      "bank.empty": "El banco está vacío.",
-      "bank.note": "Haz clic en una moneda del banco para devolverla al número de origen (con animación).",
+      "pm.line.0_9":"Recta (0–9)",
+      "pm.line.0_20":"Recta (0–20)",
+      "pm.line.0_30":"Recta (0–30) + deslizador",
+      "pm.slider":"Slider: {v}",
 
-      "bank.hint.ones": "<strong>Paso:</strong> Toca <strong>1</strong> en el banco (de ambos números). Al llegar a 10 → Cambiar.",
-      "bank.hint.tens": "<strong>Paso:</strong> Toca <strong>10</strong> en el banco (de ambos números). Al llegar a 10 → Cambiar.",
+      "pm.q":"¿Cuánto es {a} {op} {b}?",
+      "pm.cubes.countLine":"Elige un número en la recta y pulsa Responder.",
+      "pm.minus.needCross":"Primero: tacha {need} cubos. Has tachado {have}.",
+      "pm.needNumber":"Escribe un número (o pulsa la recta).",
+      "pm.correct":"No del todo. La respuesta correcta es {correct}.",
+      "pm.reset":"La racha se reinicia — sigue intentando.",
+      "pm.streakAck":"Racha: {streak} — ¡bien!",
 
-      "bank.status.count.ones": "En banco: {n} × 1",
-      "bank.status.count.tens": "En banco: {n} × 10",
-      "bank.status.exchanging": "Cambiando… 10×{from} → 1×{to}",
+      "pm.tryAgain":"Inténtalo de nuevo. Mira qué cajas están correctas.",
+      "pm.cubesMatch":"{praise} ¡Los cubos coinciden!",
+      "pm.minusOk":"{praise} ¡Quitaste la cantidad correcta!",
+      "pm.minusProgress":"Tachado: {have} / {need}",
+      "pm.crossHint":"Tacha la cantidad correcta. Elige en la recta y responde.",
+      "pm.minusFirst":"Toca cubos para tacharlos",
+      "pm.minusBox":"Aquí puedes contar lo que quitaste",
+      "pm.plusCount":"Cuenta los cubos",
+      "pm.level3Hint":"Usa el deslizador para elegir un número",
 
-      "title.sendAllToBank": "Enviar todo al banco",
-      "title.notActive": "(no activo en esta versión)",
+      "pm.found":"Alumno anterior encontrado: \"{name}\".\nSuma N1: racha {p1s}, estrellas {p1st}\nSuma N2: racha {p2s}, estrellas {p2st}\nSuma N3: racha {p3s}, estrellas {p3st}\nResta N1: racha {m1s}, estrellas {m1st}\nResta N2: racha {m2s}, estrellas {m2st}\nResta N3: racha {m3s}, estrellas {m3st}",
 
-      "aria.changeLevel": "Cambiar nivel",
-      "aria.hundreds": "Centenas",
-      "aria.tens": "Decenas",
-      "aria.ones": "Unidades",
-
-      "found.exists": `Alumno anterior encontrado: "{name}". N1: racha {s1}, estrellas {st1}. N2: racha {s2}, estrellas {st2}. N3: racha {s3}, estrellas {st3}.`,
-
-      "overlay.ok.sub": "Listo para el siguiente ejercicio.",
-      "overlay.bad.sub": "Inténtalo de nuevo en el siguiente ejercicio.",
-
-      "overlay.bad.title": "No del todo, {name}.",
-      "overlay.correct": "Correcto: {correct}",
-      "overlay.eq": "{a} + {b} = {correct}",
-
-      "praise.0": "Bien hecho",
-      "praise.1": "Gran trabajo",
-      "praise.2": "Genial",
-      "praise.3": "Muy bien",
-      "praise.4": "Excelente",
-    }
+      "praise.0":"¡Bien hecho, {name}!",
+      "praise.1":"¡Buen trabajo, {name}!",
+      "praise.2":"¡Eres muy bueno, {name}!",
+      "praise.3":"¡Sí! ¡Lo lograste, {name}!",
+      "praise.4":"¡Genial, {name}!",
+      "pm.correctYes":"{praise} ¡Correcto!"
+    },
   };
 
   function readLangFromUrl(){
@@ -928,12 +1105,10 @@
   function setSavedLang(lang){
     if (SUPPORTED.includes(lang)) localStorage.setItem(LANG_KEY, lang);
   }
-
   function fmt(str, vars){
     if (!vars) return str;
     return str.replace(/\{(\w+)\}/g, (_, k) => (vars[k] ?? `{${k}}`));
   }
-
   function t(key, vars){
     const lang = getSavedLang();
     const dict = I18N[lang] || I18N.da;
@@ -941,35 +1116,27 @@
     const raw = (dict[key] ?? fallback ?? key);
     return fmt(String(raw), vars);
   }
-
   function applyLanguage(lang){
     const dict = I18N[lang] || I18N.da;
 
-    // textContent replacements
     document.querySelectorAll("[data-i18n]").forEach(el => {
       const key = el.getAttribute("data-i18n");
       const val = dict[key] ?? I18N.da[key];
-      if (typeof val !== "string") return;
-      // Allow HTML if it contains markup (we store help/hints with <strong>)
-      if (val.includes("<") && val.includes(">")) el.innerHTML = val;
-      else el.textContent = val;
+      if (typeof val === "string") el.textContent = val;
     });
 
-    // placeholder
     document.querySelectorAll("[data-i18n-placeholder]").forEach(el => {
       const key = el.getAttribute("data-i18n-placeholder");
       const val = dict[key] ?? I18N.da[key];
       if (typeof val === "string") el.setAttribute("placeholder", val);
     });
 
-    // title
     document.querySelectorAll("[data-i18n-title]").forEach(el => {
       const key = el.getAttribute("data-i18n-title");
       const val = dict[key] ?? I18N.da[key];
       if (typeof val === "string") el.setAttribute("title", val);
     });
 
-    // aria-label
     document.querySelectorAll("[data-i18n-aria-label]").forEach(el => {
       const key = el.getAttribute("data-i18n-aria-label");
       const val = dict[key] ?? I18N.da[key];
@@ -977,10 +1144,10 @@
     });
 
     document.documentElement.lang = lang;
-    document.title = dict["plus2.title"] ?? I18N.da["plus2.title"] ?? document.title;
+    document.title = dict["pm.title"] ? `ScoreZone – ${dict["pm.title"]}` : document.title;
   }
 
-  // Keep internal navigation links in same language (optional)
+  // keep internal navigation links in same language (optional)
   function withLangParam(rawHref, lang){
     const url = new URL(rawHref, window.location.href);
     url.searchParams.set("lang", lang);
@@ -1006,814 +1173,932 @@
   if (urlLang) setSavedLang(urlLang);
   applyLanguage(getSavedLang());
 
-  // Expose minimal API for the game script
   window.SZ_I18N = { t, getLang: getSavedLang, setLang: setSavedLang, applyLanguage };
 })();
 </script>
 
 <script>
 (() => {
-  const $ = (id) => document.getElementById(id);
-  const t = (key, vars) => window.SZ_I18N ? window.SZ_I18N.t(key, vars) : key;
+  const t = (k, v) => window.SZ_I18N ? window.SZ_I18N.t(k, v) : k;
 
-  /* ---------- Per-student storage ---------- */
-  const STORAGE_KEY = "plusHelper_users_v1";
+  /* -------------------- Per-student storage (same idea as Plus2) -------------------- */
+  const USERS_KEY = "plusMinus_users_v1";
 
   function loadUsers(){
     try{
-      const raw = localStorage.getItem(STORAGE_KEY);
+      const raw = localStorage.getItem(USERS_KEY);
       return raw ? JSON.parse(raw) : {};
     }catch{
       return {};
     }
   }
   function saveUsers(users){
-    try{
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(users));
-    }catch{}
+    try{ localStorage.setItem(USERS_KEY, JSON.stringify(users)); }catch{}
   }
   function freshProgress(){
+    // progress[op][level] = { streak, bestStars }
+    const mk = () => ({ streak: 0, bestStars: 0 });
     return {
-      1: { streak: 0, stars: 0 },
-      2: { streak: 0, stars: 0 },
-      3: { streak: 0, stars: 0 },
+      plus: { 1: mk(), 2: mk(), 3: mk() },
+      minus:{ 1: mk(), 2: mk(), 3: mk() },
     };
   }
+  function normalizeName(s){ return (s || "").trim(); }
+  function nameKey(n){ return normalizeName(n).toLowerCase(); }
 
-  const setup = $("setup");
-  const app = $("app");
-  const studentNameEl = $("studentName");
-  const foundHintEl = $("foundHint");
-  const levelEl = $("level");
-  const startBtn = $("startBtn");
+  /* Optional migration from your old keys (per name/op/level) */
+  function oldStreakKey(nm, op, level){
+    const n = (nm || "").trim().toLowerCase();
+    return `scorezone_math_streak::${n}::${op}::lvl${level}`;
+  }
+  function oldBestStarsKey(nm, op, level){
+    const n = (nm || "").trim().toLowerCase();
+    return `scorezone_math_bestStars::${n}::${op}::lvl${level}`;
+  }
+  function migrateIfAny(users, name){
+    const key = nameKey(name);
+    if (!key) return;
+    if (users[key]?.migrated) return;
 
-  const whoEl = $("who");
-  const streakEl = $("streak");
-  const starsEl = $("stars");
-  const newStudentBtn = $("newStudentBtn");
+    if (!users[key]) users[key] = { displayName: normalizeName(name), progress: freshProgress(), migrated: false };
+    if (!users[key].progress) users[key].progress = freshProgress();
 
-  const levelInGameEl = $("levelInGame");
-  const applyLevelBtn = $("applyLevelBtn");
+    const prog = users[key].progress;
 
-  const aHEl = $("aH"), aTEl = $("aT"), aOEl = $("aO");
-  const bHEl = $("bH"), bTEl = $("bT"), bOEl = $("bO");
+    let moved = false;
+    for (const op of ["plus","minus"]){
+      for (const lvl of [1,2,3]){
+        const sRaw = localStorage.getItem(oldStreakKey(name, op, lvl));
+        const bRaw = localStorage.getItem(oldBestStarsKey(name, op, lvl));
+        const s = sRaw ? Number(sRaw) : 0;
+        const b = bRaw ? Number(bRaw) : 0;
 
-  const carryHEl = $("carryH");
-  const carryTEl = $("carryT");
+        if (Number.isFinite(s) && s > (prog[op][lvl].streak || 0)){
+          prog[op][lvl].streak = s;
+          moved = true;
+        }
+        if (Number.isFinite(b) && b > (prog[op][lvl].bestStars || 0)){
+          prog[op][lvl].bestStars = Math.max(0, Math.min(5, b));
+          moved = true;
+        }
+      }
+    }
 
-  const ansHEl = $("ansH"), ansTEl = $("ansT"), ansOEl = $("ansO");
-  const answerBtn = $("answerBtn");
+    users[key].migrated = true;
+    if (moved) saveUsers(users);
+  }
 
-  const aBoxHEl = $("aBoxH"), aBoxTEl = $("aBoxT"), aBoxOEl = $("aBoxO");
-  const bBoxHEl = $("bBoxH"), bBoxTEl = $("bBoxT"), bBoxOEl = $("bBoxO");
-
-  const btnA10 = $("btnA10"), btnA1 = $("btnA1");
-  const btnB10 = $("btnB10"), btnB1 = $("btnB1");
-
-  const returnAllBtn = $("returnAllBtn");
-  const exchangeBtn = $("exchangeBtn");
-  const bankHintEl = $("bankHint");
-  const bankSlotEl = $("bankSlot");
-  const bankStatusEl = $("bankStatus");
-
-  const overlayEl = $("overlay");
-  const modalTitleEl = $("modalTitle");
-  const modalTextEl = $("modalText");
-  const modalSubEl = $("modalSub");
-  const modalBtn = $("modalBtn");
-
-  const countA100 = $("countA100");
-  const countA10  = $("countA10");
-  const countA1   = $("countA1");
-  const countB100 = $("countB100");
-  const countB10  = $("countB10");
-  const countB1   = $("countB1");
-
+  /* -------------------- App state -------------------- */
   const state = {
-    studentName: "",
+    name: "",
+    op: "plus",
     level: 1,
+    n1: 0,
+    n2: 0,
+    pendingMinusReward: false,
+
+    lastProblemKey: "",
+    round: 0,
 
     users: loadUsers(),
-    userData: null,
-
-    problemCount: 0,
-    a: 0,
-    b: 0,
-    answer: 0,
-
-    coinsA: { h:0, t:0, o:0 },
-    coinsB: { h:0, t:0, o:0 },
-
-    stage: "ones", // "ones" | "tens"
-    isExchanging: false,
-
-    // each item: { denom: "o"|"t", owner: "A"|"B" }
-    bankItems: [],
-
-    carryMarks: { t:0, h:0 },
-
-    overlayOpen: false
+    userKey: "",
   };
 
-  function randInt(min, max){ return Math.floor(Math.random()*(max-min+1))+min; }
-  function digits3(n){
-    const h = Math.floor(n/100);
-    const t2 = Math.floor((n%100)/10);
-    const o = n%10;
-    return {h, t: t2, o};
+  const cubeColors = ["#60a5fa", "#34d399", "#fb7185", "#fbbf24", "#a78bfa", "#22d3ee", "#f97316"];
+
+  const el = {
+    startScreen: document.getElementById("startScreen"),
+    gameScreen: document.getElementById("gameScreen"),
+
+    studentName: document.getElementById("studentName"),
+    helloText: document.getElementById("helloText"),
+    startStreakText: document.getElementById("startStreakText"),
+    foundHint: document.getElementById("foundHint"),
+    goBtn: document.getElementById("goBtn"),
+
+    opPlus: document.getElementById("opPlus"),
+    opMinus: document.getElementById("opMinus"),
+    lvl1: document.getElementById("lvl1"),
+    lvl2: document.getElementById("lvl2"),
+    lvl3: document.getElementById("lvl3"),
+
+    streakHeader: document.getElementById("streakHeader"),
+    backBtn: document.getElementById("backBtn"),
+    modeText: document.getElementById("modeText"),
+    streakGame: document.getElementById("streakGame"),
+
+    n1: document.getElementById("n1"),
+    n2: document.getElementById("n2"),
+    hint1: document.getElementById("hint1"),
+    hint2: document.getElementById("hint2"),
+    opSign: document.getElementById("opSign"),
+    opSignMobile: document.getElementById("opSignMobile"),
+
+    zone1: document.getElementById("zone1"),
+    zone2: document.getElementById("zone2"),
+
+    pileWrap: document.getElementById("pileWrap"),
+    pileTitle: document.getElementById("pileTitle"),
+    pileHint: document.getElementById("pileHint"),
+    pileArea: document.getElementById("pileArea"),
+
+    cubeMsg: document.getElementById("cubeMsg"),
+    klarBtn: document.getElementById("klarBtn"),
+
+    questionCard: document.getElementById("questionCard"),
+    qText: document.getElementById("qText"),
+    answerInput: document.getElementById("answerInput"),
+    svarBtn: document.getElementById("svarBtn"),
+    answerMsg: document.getElementById("answerMsg"),
+    streakAck: document.getElementById("streakAck"),
+
+    monster: document.getElementById("monster"),
+
+    lineWrap: document.getElementById("lineWrap"),
+    lineTitle: document.getElementById("lineTitle"),
+    line: document.getElementById("line"),
+
+    sliderRow: document.getElementById("sliderRow"),
+    sliderTrack: document.getElementById("sliderTrack"),
+    lineSlider: document.getElementById("lineSlider"),
+    sliderPill: document.getElementById("sliderPill"),
+
+    stars: document.getElementById("stars"),
+    starsHelp: document.getElementById("starsHelp")
+  };
+
+  function randInt(min, max){
+    return Math.floor(Math.random() * (max - min + 1)) + min;
   }
-  function clampDigitInput(el){
-    el.value = el.value.replace(/[^0-9]/g, "");
-    if (el.value.length > 1) el.value = el.value.slice(0,1);
+  function setPill(btn, pressed){
+    btn.setAttribute("aria-pressed", pressed ? "true" : "false");
   }
-
-  function getProg(){
-    if (!state.userData) return { streak: 0, stars: 0 };
-    return state.userData.progress[state.level];
+  function setMessage(node, text, kind){
+    node.textContent = text || "";
+    node.classList.remove("good","warn","bad");
+    if(kind) node.classList.add(kind);
   }
-
-  function renderStars(){
-    const max = 5;
-    const { stars } = getProg();
-    let html = "";
-    for (let i=0;i<max;i++){
-      html += `<span class="${i < stars ? "" : "off"}">★</span>`;
-    }
-    starsEl.innerHTML = html;
-  }
-
-  function updateHeader(){
-    whoEl.textContent = state.studentName || "—";
-    levelInGameEl.value = String(state.level);
-    streakEl.textContent = String(getProg().streak);
-    renderStars();
-  }
-
-  function onesCarryNeeded(){
-    const A = digits3(state.a);
-    const B = digits3(state.b);
-    return (A.o + B.o) >= 10;
-  }
-
-  function makeProblemOperands(){
-    const forced = (state.level === 3 && (state.problemCount + 1) % 5 === 0);
-    let a;
-    if (forced){
-      const h = randInt(1,4);
-      const t2 = 0;
-      const o = randInt(0,9);
-      a = h*100 + t2*10 + o;
-      if (a < 100) a = 100;
-    } else {
-      a = randInt(16, 499);
-    }
-    const b = randInt(16, 499);
-    return {a,b};
-  }
-
-  function setCoinsFromNumber(n){
-    const d = digits3(n);
-    return { h:d.h, t:d.t, o:d.o };
-  }
-
-  function renderNumbers(){
-    const A = digits3(state.a);
-    const B = digits3(state.b);
-
-    aHEl.textContent = A.h;
-    aTEl.textContent = A.t;
-    aOEl.textContent = A.o;
-
-    bHEl.textContent = B.h;
-    bTEl.textContent = B.t;
-    bOEl.textContent = B.o;
-
-    carryTEl.textContent = state.carryMarks.t ? "1" : "";
-    carryHEl.textContent = state.carryMarks.h ? "1" : "";
-  }
-
-  function makeCoinNode(kind){
-    if (kind === "h"){
-      const el = document.createElement("div");
-      el.className = "bill";
-      el.textContent = "100";
-      return el;
-    }
-    const el = document.createElement("div");
-    el.className = "coin " + (kind === "t" ? "ten" : "");
-    el.textContent = kind === "t" ? "10" : "1";
-    return el;
+  function nameOrFallback(){
+    return state.name?.trim() ? state.name.trim() : "ven";
   }
 
-  function bankCount(){ return state.bankItems.length; }
-
-  function canTapDenom(denom){
-    return (state.stage === "ones" && denom === "o") ||
-           (state.stage === "tens" && denom === "t");
+  const praiseCount = 5;
+  function randomPraise(){
+    const idx = randInt(0, praiseCount - 1);
+    return t(`praise.${idx}`, { name: nameOrFallback() });
   }
 
-  function updateTopRightButtons(){
-    if (state.isExchanging || state.overlayOpen){
-      btnA1.disabled = true;
-      btnB1.disabled = true;
-      btnA10.disabled = true;
-      btnB10.disabled = true;
-      returnAllBtn.disabled = true;
-      return;
-    }
-
-    const onesActive = canTapDenom("o");
-    const tensActive = canTapDenom("t");
-
-    btnA1.disabled  = !onesActive || state.coinsA.o === 0;
-    btnB1.disabled  = !onesActive || state.coinsB.o === 0;
-
-    btnA10.disabled = !tensActive || state.coinsA.t === 0;
-    btnB10.disabled = !tensActive || state.coinsB.t === 0;
-
-    returnAllBtn.disabled = (bankCount() === 0);
+  function playSuccessSound(){
+    try{
+      const AudioCtx = window.AudioContext || window.webkitAudioContext;
+      const ctx = new AudioCtx();
+      const now = ctx.currentTime;
+      const notes = [523.25, 659.25, 783.99];
+      notes.forEach((freq, i) => {
+        const o = ctx.createOscillator();
+        const g = ctx.createGain();
+        o.type = "sine";
+        o.frequency.value = freq;
+        g.gain.setValueAtTime(0.0001, now + i * 0.12);
+        g.gain.exponentialRampToValueAtTime(0.14, now + i * 0.12 + 0.02);
+        g.gain.exponentialRampToValueAtTime(0.0001, now + i * 0.12 + 0.11);
+        o.connect(g).connect(ctx.destination);
+        o.start(now + i * 0.12);
+        o.stop(now + i * 0.12 + 0.12);
+      });
+      setTimeout(() => ctx.close(), 650);
+    } catch(e){}
   }
 
-  function updateExchangeBtn(){
-    exchangeBtn.disabled = state.isExchanging || bankCount() < 10;
-  }
+  /* -------------------- progress helpers -------------------- */
+  function ensureUser(){
+    const nm = normalizeName(state.name);
+    const key = nameKey(nm);
+    state.userKey = key;
 
-  function updateBankHint(){
-    if (state.stage === "ones"){
-      bankHintEl.innerHTML = t("bank.hint.ones");
-    } else {
-      bankHintEl.innerHTML = t("bank.hint.tens");
-    }
-  }
+    if (!key) return null;
 
-  function updateBankStatus(){
-    if (bankCount() === 0){
-      bankStatusEl.textContent = t("bank.empty");
-      return;
-    }
-    const denomLabel = (state.stage === "ones") ? "ones" : "tens";
-    bankStatusEl.textContent = t(`bank.status.count.${denomLabel}`, { n: bankCount() });
-  }
+    migrateIfAny(state.users, nm);
 
-  function resetBank(){
-    state.bankItems = [];
-    bankSlotEl.innerHTML = "";
-    updateBankStatus();
-    updateExchangeBtn();
-    updateTopRightButtons();
-  }
-
-  function clearBoxes(){
-    aBoxHEl.innerHTML = ""; aBoxTEl.innerHTML = ""; aBoxOEl.innerHTML = "";
-    bBoxHEl.innerHTML = ""; bBoxTEl.innerHTML = ""; bBoxOEl.innerHTML = "";
-  }
-
-  function renderBoxCounts(){
-    countA100.textContent = state.coinsA.h;
-    countA10.textContent  = state.coinsA.t;
-    countA1.textContent   = state.coinsA.o;
-
-    countB100.textContent = state.coinsB.h;
-    countB10.textContent  = state.coinsB.t;
-    countB1.textContent   = state.coinsB.o;
-  }
-
-  function renderCoins(){
-    clearBoxes();
-    renderBoxCounts();
-
-    // A
-    for (let i=0;i<state.coinsA.h;i++){
-      const n = makeCoinNode("h");
-      n.classList.add("disabled");
-      aBoxHEl.appendChild(n);
-    }
-    for (let i=0;i<state.coinsA.t;i++){
-      const n = makeCoinNode("t");
-      n.addEventListener("click", () => onTapFromBox("A","t", n));
-      if (!canTapDenom("t")) n.classList.add("disabled");
-      aBoxTEl.appendChild(n);
-    }
-    for (let i=0;i<state.coinsA.o;i++){
-      const n = makeCoinNode("o");
-      n.addEventListener("click", () => onTapFromBox("A","o", n));
-      if (!canTapDenom("o")) n.classList.add("disabled");
-      aBoxOEl.appendChild(n);
-    }
-
-    // B
-    for (let i=0;i<state.coinsB.h;i++){
-      const n = makeCoinNode("h");
-      n.classList.add("disabled");
-      bBoxHEl.appendChild(n);
-    }
-    for (let i=0;i<state.coinsB.t;i++){
-      const n = makeCoinNode("t");
-      n.addEventListener("click", () => onTapFromBox("B","t", n));
-      if (!canTapDenom("t")) n.classList.add("disabled");
-      bBoxTEl.appendChild(n);
-    }
-    for (let i=0;i<state.coinsB.o;i++){
-      const n = makeCoinNode("o");
-      n.addEventListener("click", () => onTapFromBox("B","o", n));
-      if (!canTapDenom("o")) n.classList.add("disabled");
-      bBoxOEl.appendChild(n);
-    }
-
-    updateTopRightButtons();
-  }
-
-  function ownerCounts(owner){ return owner === "A" ? state.coinsA : state.coinsB; }
-
-  function removeOneFrom(owner, denom){
-    const target = ownerCounts(owner);
-    if (denom === "o" && target.o > 0){ target.o--; return true; }
-    if (denom === "t" && target.t > 0){ target.t--; return true; }
-    return false;
-  }
-  function addOneTo(owner, denom){
-    const target = ownerCounts(owner);
-    if (denom === "o") target.o++;
-    if (denom === "t") target.t++;
-  }
-
-  function boxEl(owner, denom){
-    if (owner === "A" && denom === "o") return aBoxOEl;
-    if (owner === "A" && denom === "t") return aBoxTEl;
-    if (owner === "B" && denom === "o") return bBoxOEl;
-    if (owner === "B" && denom === "t") return bBoxTEl;
-    return null;
-  }
-
-  function getRectPage(el){
-    const r = el.getBoundingClientRect();
-    return { x: r.left + window.scrollX, y: r.top + window.scrollY, w: r.width, h: r.height };
-  }
-
-  /* durationMs supports fast variants */
-  function createFlyingNode(start, end, denom, durationMs = 650){
-    const d = makeCoinNode(denom);
-    d.classList.add("flying");
-    d.style.left = start.x + "px";
-    d.style.top  = start.y + "px";
-    document.body.appendChild(d);
-
-    const dx = end.x - start.x;
-    const dy = end.y - start.y;
-
-    const anim = d.animate(
-      [{ transform:"translate(0,0)", opacity:1 },
-       { transform:`translate(${dx}px,${dy}px)`, opacity:1 }],
-      { duration: durationMs, easing:"ease-in-out", fill:"forwards" }
-    );
-
-    const hard = setTimeout(() => d.remove(), Math.max(900, durationMs + 400));
-    return anim.finished
-      .catch(() => {})
-      .finally(() => { clearTimeout(hard); d.remove(); });
-  }
-
-  function bankAddVisual(item){
-    const node = makeCoinNode(item.denom);
-    node.title = (item.owner === "A") ? "Return to number 1" : "Return to number 2";
-    // Localize tooltip:
-    node.title = (item.owner === "A")
-      ? (window.SZ_I18N?.getLang() === "da" ? "Tryk for at lægge tilbage (Tal 1)" : "Click to return (Number 1)")
-      : (window.SZ_I18N?.getLang() === "da" ? "Tryk for at lægge tilbage (Tal 2)" : "Click to return (Number 2)");
-    node.addEventListener("click", () => returnFromBank(item, node));
-    bankSlotEl.appendChild(node);
-  }
-
-  function bankContainsOnlyCorrectDenom(){
-    const needed = state.stage === "ones" ? "o" : "t";
-    return state.bankItems.every(it => it.denom === needed);
-  }
-
-  async function onTapFromBox(owner, denom, node){
-    if (!canTapDenom(denom)) return;
-    if (!removeOneFrom(owner, denom)) return;
-
-    const start = getRectPage(node);
-    const bankRect = getRectPage(bankSlotEl);
-    const end = {
-      x: bankRect.x + 18 + (bankCount() % 10) * 42,
-      y: bankRect.y + 18
-    };
-
-    renderCoins();
-
-    const item = { denom, owner };
-    state.bankItems.push(item);
-
-    await createFlyingNode(start, end, denom, 360);
-
-    bankAddVisual(item);
-    updateBankStatus();
-    updateExchangeBtn();
-    updateTopRightButtons();
-  }
-
-  async function returnFromBank(item, nodeInBank){
-    if (state.isExchanging || state.overlayOpen) return;
-    if (!canTapDenom(item.denom)) return;
-
-    const idx = state.bankItems.indexOf(item);
-    if (idx === -1) return;
-
-    const start = getRectPage(nodeInBank);
-
-    state.bankItems.splice(idx, 1);
-    nodeInBank.remove();
-
-    addOneTo(item.owner, item.denom);
-    renderCoins();
-
-    const targetBox = boxEl(item.owner, item.denom);
-    const targetRect = getRectPage(targetBox);
-    const end = { x: targetRect.x + 22, y: targetRect.y + 22 };
-
-    /* very fast return */
-    await createFlyingNode(start, end, item.denom, 140);
-
-    renderCoins();
-    updateBankStatus();
-    updateExchangeBtn();
-    updateTopRightButtons();
-  }
-
-  async function addAllFromBox(owner, denom){
-    if (!canTapDenom(denom)) return;
-
-    const src = ownerCounts(owner);
-    const count = denom === "o" ? src.o : src.t;
-    if (count <= 0) return;
-
-    state.isExchanging = true;
-    updateExchangeBtn();
-    updateTopRightButtons();
-
-    const box = boxEl(owner, denom);
-    const boxRect = getRectPage(box);
-    const bankRect = getRectPage(bankSlotEl);
-
-    if (denom === "o") src.o = 0;
-    else src.t = 0;
-    renderCoins();
-
-    for (let i=0;i<count;i++){
-      const item = { denom, owner };
-      state.bankItems.push(item);
-
-      const start = { x: boxRect.x + 24, y: boxRect.y + 24 };
-      const end = { x: bankRect.x + 18 + ((bankCount()-1) % 10) * 42, y: bankRect.y + 18 };
-
-      /* faster bulk */
-      await createFlyingNode(start, end, denom, 190);
-
-      bankAddVisual(item);
-      await new Promise(res => setTimeout(res, 18));
-    }
-
-    state.isExchanging = false;
-    updateBankStatus();
-    updateExchangeBtn();
-    updateTopRightButtons();
-  }
-
-  async function returnAllBank(){
-    if (state.isExchanging || state.overlayOpen) return;
-    if (bankCount() === 0) return;
-
-    const denomAllowed = state.stage === "ones" ? "o" : "t";
-    const items = state.bankItems.filter(it => it.denom === denomAllowed);
-    if (items.length === 0) return;
-
-    state.isExchanging = true;
-    updateExchangeBtn();
-    updateTopRightButtons();
-
-    const bankRect = getRectPage(bankSlotEl);
-
-    state.bankItems = state.bankItems.filter(it => it.denom !== denomAllowed);
-
-    bankSlotEl.innerHTML = "";
-    for (const it of state.bankItems) bankAddVisual(it);
-
-    for (let i=0;i<items.length;i++){
-      const it = items[i];
-
-      addOneTo(it.owner, it.denom);
-      renderCoins();
-
-      const targetBox = boxEl(it.owner, it.denom);
-      const targetRect = getRectPage(targetBox);
-
-      const start = { x: bankRect.x + 24, y: bankRect.y + 24 };
-      const end = { x: targetRect.x + 22, y: targetRect.y + 22 };
-
-      await createFlyingNode(start, end, it.denom, 120);
-      await new Promise(res => setTimeout(res, 12));
-    }
-
-    state.isExchanging = false;
-    renderCoins();
-    updateBankStatus();
-    updateExchangeBtn();
-    updateTopRightButtons();
-  }
-
-  function exchangeTargetDenom(){
-    return state.stage === "ones" ? "t" : "h";
-  }
-
-  function exchangeIntoTal1(){
-    if (state.stage === "ones"){
-      state.coinsA.t += 1;
-      state.carryMarks.t = 1;
-    } else {
-      state.coinsA.h += 1;
-      state.carryMarks.h = 1;
-    }
-  }
-
-  async function exchange(){
-    if (exchangeBtn.disabled) return;
-    if (state.isExchanging || state.overlayOpen) return;
-    if (bankCount() < 10) return;
-    if (!bankContainsOnlyCorrectDenom()) return;
-
-    state.isExchanging = true;
-    updateExchangeBtn();
-    updateTopRightButtons();
-
-    state.bankItems.splice(0, 10);
-
-    for (let i=0;i<10;i++){
-      const first = bankSlotEl.firstElementChild;
-      if (first) first.remove();
-    }
-
-    const toDenom = exchangeTargetDenom();
-    const from = (state.stage === "ones") ? "1" : "10";
-    const to = (toDenom === "t") ? "10" : "100";
-    bankStatusEl.textContent = t("bank.status.exchanging", { from, to });
-
-    const newNode = makeCoinNode(toDenom);
-    newNode.classList.add("disabled");
-    bankSlotEl.appendChild(newNode);
-
-    await new Promise(res => setTimeout(res, 2000));
-
-    const start = getRectPage(newNode);
-    const targetBox = (toDenom === "t") ? aBoxTEl : aBoxHEl;
-    const targetRect = getRectPage(targetBox);
-    const end = { x: targetRect.x + 26, y: targetRect.y + 24 };
-
-    newNode.remove();
-    await createFlyingNode(start, end, toDenom, 280);
-
-    exchangeIntoTal1();
-
-    if (state.stage === "ones") state.stage = "tens";
-
-    bankSlotEl.innerHTML = "";
-    for (const it of state.bankItems) bankAddVisual(it);
-
-    updateBankHint();
-    renderNumbers();
-    renderCoins();
-
-    state.isExchanging = false;
-    updateBankStatus();
-    updateExchangeBtn();
-    updateTopRightButtons();
-  }
-
-  // Answer / overlay (streak + stars per student + per level)
-  function parseGivenAnswer(){
-    const h = ansHEl.value === "" ? 0 : Number(ansHEl.value);
-    const t2 = ansTEl.value === "" ? 0 : Number(ansTEl.value);
-    const o = ansOEl.value === "" ? 0 : Number(ansOEl.value);
-    return h*100 + t2*10 + o;
-  }
-
-  function praiseLine(name){
-    const idx = randInt(0, 4);
-    return `${t(`praise.${idx}`)}, ${name}!`;
-  }
-
-  function showOverlay(ok, correct){
-    const name = state.studentName || "Student";
-    if (ok){
-      modalTitleEl.innerHTML = `<span class="good">${praiseLine(name)}</span>`;
-      modalTextEl.textContent = t("overlay.eq", { a: state.a, b: state.b, correct });
-      modalSubEl.textContent = t("overlay.ok.sub");
-    } else {
-      modalTitleEl.innerHTML = `<span class="bad">${t("overlay.bad.title", { name })}</span>`;
-      modalTextEl.textContent = t("overlay.correct", { correct });
-      modalSubEl.textContent = t("overlay.bad.sub");
-    }
-    state.overlayOpen = true;
-    overlayEl.classList.add("show");
-    overlayEl.setAttribute("aria-hidden","false");
-    queueMicrotask(() => modalBtn.focus());
-  }
-
-  function hideOverlay(){
-    overlayEl.classList.remove("show");
-    overlayEl.setAttribute("aria-hidden","true");
-    state.overlayOpen = false;
-  }
-
-  function grade(){
-    if (state.overlayOpen) return;
-
-    const given = parseGivenAnswer();
-    const correct = state.answer;
-    const ok = given === correct;
-
-    const prog = getProg();
-    if (ok){
-      prog.streak += 1;
-      if (prog.streak % 5 === 0 && prog.stars < 5) prog.stars += 1;
-    } else {
-      prog.streak = 0;
-    }
-
-    saveUsers(state.users);
-    updateHeader();
-    showOverlay(ok, correct);
-  }
-
-  function makeProblem(){
-    document.querySelectorAll(".flying").forEach(el => el.remove());
-
-    state.problemCount += 1;
-
-    const {a,b} = makeProblemOperands();
-    state.a = a;
-    state.b = b;
-    state.answer = a + b;
-
-    state.coinsA = setCoinsFromNumber(a);
-    state.coinsB = setCoinsFromNumber(b);
-
-    state.isExchanging = false;
-    state.carryMarks = { t:0, h:0 };
-
-    ansHEl.value = "";
-    ansTEl.value = "";
-    ansOEl.value = "";
-
-    resetBank();
-    renderNumbers();
-
-    state.stage = onesCarryNeeded() ? "ones" : "tens";
-    updateBankHint();
-
-    renderCoins();
-    updateHeader();
-
-    queueMicrotask(() => ansOEl.focus());
-  }
-
-  // Input behavior: rightmost -> move focus LEFT
-  ansOEl.addEventListener("input", () => {
-    if (state.overlayOpen) return;
-    clampDigitInput(ansOEl);
-    if (ansOEl.value.length === 1) ansTEl.focus();
-  });
-  ansTEl.addEventListener("input", () => {
-    if (state.overlayOpen) return;
-    clampDigitInput(ansTEl);
-    if (ansTEl.value.length === 1) ansHEl.focus();
-  });
-  ansHEl.addEventListener("input", () => {
-    if (state.overlayOpen) return;
-    clampDigitInput(ansHEl);
-  });
-
-  // Enter to submit (when overlay closed)
-  function trySubmitWithEnter(e){
-    if (state.overlayOpen) return;
-    if (e.key !== "Enter") return;
-    e.preventDefault();
-    grade();
-  }
-  ansHEl.addEventListener("keydown", trySubmitWithEnter);
-  ansTEl.addEventListener("keydown", trySubmitWithEnter);
-  ansOEl.addEventListener("keydown", trySubmitWithEnter);
-
-  // Overlay Enter routing
-  document.addEventListener("keydown", (e) => {
-    if (!state.overlayOpen) return;
-    if (e.key === "Enter") {
-      e.preventDefault();
-      modalBtn.click();
-    }
-  }, true);
-
-  modalBtn.addEventListener("click", () => {
-    hideOverlay();
-    makeProblem();
-  });
-
-  exchangeBtn.addEventListener("click", exchange);
-  answerBtn.addEventListener("click", grade);
-
-  // Bulk buttons
-  btnA1.addEventListener("click", () => addAllFromBox("A","o"));
-  btnB1.addEventListener("click", () => addAllFromBox("B","o"));
-  btnA10.addEventListener("click", () => addAllFromBox("A","t"));
-  btnB10.addEventListener("click", () => addAllFromBox("B","t"));
-
-  returnAllBtn.addEventListener("click", returnAllBank);
-
-  // In-game level switching
-  applyLevelBtn.addEventListener("click", () => {
-    if (state.overlayOpen) return;
-    const newLevel = Number(levelInGameEl.value);
-    if (newLevel === state.level) return;
-
-    state.level = newLevel;
-    saveUsers(state.users);
-    updateHeader();
-    makeProblem();
-  });
-  levelInGameEl.addEventListener("change", () => applyLevelBtn.click());
-
-  /* Setup "found" hint: show when name exists */
-  function normalizeName(s){ return (s || "").trim(); }
-
-  function renderFoundHint(){
-    const name = normalizeName(studentNameEl.value);
-    if (!name) { foundHintEl.classList.remove("show"); foundHintEl.textContent = ""; return; }
-
-    const exists = !!state.users[name];
-    if (!exists){
-      foundHintEl.classList.remove("show");
-      foundHintEl.textContent = "";
-      return;
-    }
-
-    const p = state.users[name].progress;
-    const msg = t("found.exists", {
-      name,
-      s1: p[1].streak, st1: p[1].stars,
-      s2: p[2].streak, st2: p[2].stars,
-      s3: p[3].streak, st3: p[3].stars
-    });
-
-    foundHintEl.textContent = msg;
-    foundHintEl.classList.add("show");
-  }
-
-  studentNameEl.addEventListener("input", renderFoundHint);
-  studentNameEl.addEventListener("blur", renderFoundHint);
-
-  // Start/reset
-  function startApp(){
-    const name = normalizeName(studentNameEl.value) || (window.SZ_I18N?.getLang() === "da" ? "Elev" : "Student");
-    state.studentName = name;
-    state.level = Number(levelEl.value);
-
-    if (!state.users[name]){
-      state.users[name] = { progress: freshProgress() };
+    if (!state.users[key]){
+      state.users[key] = { displayName: nm, progress: freshProgress(), migrated: true };
       saveUsers(state.users);
     }
-    state.userData = state.users[name];
-
-    setup.classList.add("hidden");
-    app.classList.remove("hidden");
-
-    updateHeader();
-    makeProblem();
+    if (!state.users[key].progress) state.users[key].progress = freshProgress();
+    return state.users[key];
   }
 
-  startBtn.addEventListener("click", startApp);
-  studentNameEl.addEventListener("keydown", (e) => {
-    if (e.key === "Enter") startApp();
-  });
+  function prog(){
+    const u = ensureUser();
+    if (!u) return { streak: 0, bestStars: 0 };
+    return u.progress[state.op][state.level];
+  }
 
-  newStudentBtn.addEventListener("click", () => {
+  function starsFromStreak(streak){ return Math.min(5, Math.floor(streak / 5)); }
+
+  function renderStars({ animate } = { animate:true }){
+    const filledCount = prog().bestStars || 0;
+    const stars = [...el.stars.querySelectorAll(".star")];
+
+    const last = Number(el.stars.dataset.lastFilled || "0");
+    stars.forEach((s, idx) => {
+      const i = idx + 1;
+      const shouldFill = i <= filledCount;
+
+      s.classList.toggle("filled", shouldFill);
+      s.textContent = shouldFill ? "★" : "☆";
+
+      if(shouldFill) s.classList.add("glow");
+      else s.classList.remove("glow");
+
+      s.classList.remove("pop","dance");
+    });
+
+    if(animate && filledCount > last){
+      for(let i = last + 1; i <= filledCount; i++){
+        const s = el.stars.querySelector(`.star[data-i="${i}"]`);
+        if(!s) continue;
+        s.classList.add("pop");
+        setTimeout(() => s.classList.add("dance"), 140);
+        setTimeout(() => s.classList.remove("pop","dance"), 900);
+      }
+    }
+
+    el.stars.dataset.lastFilled = String(filledCount);
+    el.starsHelp.textContent = t("pm.stars.best");
+  }
+
+  function renderStreakEverywhere({ animateStars } = { animateStars:true }){
+    const p = prog();
+    el.streakHeader.textContent = String(p.streak || 0);
+    el.streakGame.textContent = String(p.streak || 0);
+    el.startStreakText.textContent = t("pm.streak.preview", { streak: p.streak || 0 });
+
+    renderStars({ animate: animateStars });
+  }
+
+  function setStreak(newStreak){
+    const u = ensureUser();
+    if (!u) return;
+
+    u.progress[state.op][state.level].streak = newStreak;
+
+    const curStars = starsFromStreak(newStreak);
+    const best = u.progress[state.op][state.level].bestStars || 0;
+    if (curStars > best) u.progress[state.op][state.level].bestStars = curStars;
+
     saveUsers(state.users);
+    renderStreakEverywhere({ animateStars:true });
+  }
 
-    state.studentName = "";
-    state.userData = null;
+  function renderFoundHint(){
+    const nm = normalizeName(el.studentName.value);
+    if (!nm){
+      el.foundHint.classList.remove("show");
+      el.foundHint.textContent = "";
+      return;
+    }
+    const key = nameKey(nm);
+    const u = state.users[key];
+    if (!u){
+      el.foundHint.classList.remove("show");
+      el.foundHint.textContent = "";
+      return;
+    }
+    const p = u.progress || freshProgress();
+    el.foundHint.textContent = t("pm.found", {
+      name: u.displayName || nm,
 
-    app.classList.add("hidden");
-    setup.classList.remove("hidden");
+      p1s: p.plus?.[1]?.streak ?? 0,  p1st: p.plus?.[1]?.bestStars ?? 0,
+      p2s: p.plus?.[2]?.streak ?? 0,  p2st: p.plus?.[2]?.bestStars ?? 0,
+      p3s: p.plus?.[3]?.streak ?? 0,  p3st: p.plus?.[3]?.bestStars ?? 0,
 
-    studentNameEl.value = "";
-    foundHintEl.classList.remove("show");
-    foundHintEl.textContent = "";
-    studentNameEl.focus();
+      m1s: p.minus?.[1]?.streak ?? 0, m1st: p.minus?.[1]?.bestStars ?? 0,
+      m2s: p.minus?.[2]?.streak ?? 0, m2st: p.minus?.[2]?.bestStars ?? 0,
+      m3s: p.minus?.[3]?.streak ?? 0, m3st: p.minus?.[3]?.bestStars ?? 0,
+    });
+    el.foundHint.classList.add("show");
+  }
+
+  /* -------------------- Tallinje + slider alignment -------------------- */
+  function clearActiveTick(){
+    el.line.querySelectorAll(".tick.active").forEach(t => t.classList.remove("active"));
+  }
+  function setActiveTick(value){
+    clearActiveTick();
+    const tck = el.line.querySelector(`.tick[data-val="${value}"]`);
+    if(tck) tck.classList.add("active");
+  }
+  function matchSliderToTallinje(){
+    const r = el.line.getBoundingClientRect();
+    el.sliderTrack.style.width = r.width + "px";
+  }
+  function bindTallinjeClicksIfLevel1(){
+    const clickable = (state.level === 1);
+    el.line.querySelectorAll(".tick").forEach(tk => {
+      tk.classList.toggle("clickable", clickable);
+      tk.onclick = null;
+      if(clickable){
+        tk.onclick = () => {
+          el.answerInput.value = tk.dataset.val || "";
+          el.answerInput.focus();
+        };
+      }
+    });
+  }
+  function renderTallinje(){
+    el.line.innerHTML = "";
+    el.sliderRow.classList.add("hidden");
+
+    if(state.level === 1){
+      el.lineTitle.textContent = t("pm.line.0_9");
+      for(let n=0; n<=9; n++){
+        const tk = document.createElement("div");
+        tk.className = "tick";
+        tk.textContent = String(n);
+        tk.dataset.val = String(n);
+        el.line.appendChild(tk);
+      }
+      bindTallinjeClicksIfLevel1();
+      return;
+    }
+
+    if(state.level === 2){
+      el.lineTitle.textContent = t("pm.line.0_20");
+      for(let n=0; n<=20; n++){
+        const tk = document.createElement("div");
+        tk.className = "tick";
+        tk.textContent = String(n);
+        tk.dataset.val = String(n);
+        el.line.appendChild(tk);
+      }
+      bindTallinjeClicksIfLevel1();
+      return;
+    }
+
+    el.lineTitle.textContent = t("pm.line.0_30");
+    for(let n=0; n<=30; n++){
+      const tk = document.createElement("div");
+      tk.className = "tick";
+      tk.textContent = String(n);
+      tk.dataset.val = String(n);
+      el.line.appendChild(tk);
+    }
+
+    el.sliderRow.classList.remove("hidden");
+    el.lineSlider.min = "0";
+    el.lineSlider.max = "30";
+
+    bindTallinjeClicksIfLevel1();
+    requestAnimationFrame(matchSliderToTallinje);
+  }
+
+  el.lineSlider.addEventListener("input", ()=>{
+    const v = Number(el.lineSlider.value);
+    el.sliderPill.textContent = t("pm.slider", { v });
+    setActiveTick(v);
+
+    if(state.level === 3){
+      el.answerInput.value = String(v);
+    }
   });
 
-  // Re-apply i18n to ensure the bank empty text is correct on load
-  bankStatusEl.textContent = t("bank.empty");
-  updateBankHint();
-  renderStars();
+  window.addEventListener("resize", () => {
+    if(!el.sliderRow.classList.contains("hidden")) matchSliderToTallinje();
+    if(el.monster.classList.contains("show")) positionMonsterOver(el.zone2);
+  });
+
+  /* -------------------- Cubes -------------------- */
+  function randomCubeColor(){ return cubeColors[randInt(0, cubeColors.length - 1)]; }
+  function makeCube({ mode, color }){
+    const c = document.createElement("div");
+    c.className = "cube";
+    c.style.background = color || randomCubeColor();
+
+    if(mode === "drag"){
+      c.addEventListener("pointerdown", onCubePointerDown);
+    } else if(mode === "tapCross"){
+      c.style.cursor = "pointer";
+      c.addEventListener("click", () => {
+        c.classList.toggle("crossed");
+        clearZoneMarks();
+        syncMinusRemovedBox();
+      });
+    } else if(mode === "static"){
+      c.classList.add("static");
+      c.style.cursor = "default";
+      c.style.touchAction = "auto";
+    } else {
+      c.style.cursor = "default";
+      c.style.opacity = "0.45";
+      c.style.boxShadow = "0 4px 10px rgba(15,23,42,0.10)";
+    }
+    return c;
+  }
+  function clearZoneMarks(){
+    el.zone1.classList.remove("correct","wrong");
+    el.zone2.classList.remove("correct","wrong");
+  }
+
+  /* -------------------- Drag (Level 2 PLUS only) -------------------- */
+  let drag = { src:null, ghost:null, offsetX:0, offsetY:0, startParent:null };
+
+  function onCubePointerDown(e){
+    if(state.level !== 2) return;
+    if(state.op !== "plus") return;
+
+    const src = e.currentTarget;
+    drag.src = src;
+    drag.startParent = src.parentElement;
+
+    const rect = src.getBoundingClientRect();
+    drag.offsetX = e.clientX - rect.left;
+    drag.offsetY = e.clientY - rect.top;
+
+    const ghost = src.cloneNode(true);
+    ghost.classList.add("ghost");
+    ghost.style.width = rect.width + "px";
+    ghost.style.height = rect.height + "px";
+    ghost.style.left = rect.left + "px";
+    ghost.style.top = rect.top + "px";
+    document.body.appendChild(ghost);
+    drag.ghost = ghost;
+
+    src.style.opacity = "0.15";
+
+    src.setPointerCapture(e.pointerId);
+    src.addEventListener("pointermove", onCubePointerMove);
+    src.addEventListener("pointerup", onCubePointerUp, { once:true });
+  }
+  function onCubePointerMove(e){
+    if(!drag.ghost) return;
+    drag.ghost.style.left = (e.clientX - drag.offsetX) + "px";
+    drag.ghost.style.top  = (e.clientY - drag.offsetY) + "px";
+  }
+  function getDropTarget(x, y){
+    const targets = [el.zone1, el.zone2, el.pileArea];
+    for(const tg of targets){
+      if(tg.closest(".hidden")) continue;
+      const r = tg.getBoundingClientRect();
+      if(x >= r.left && x <= r.right && y >= r.top && y <= r.bottom) return tg;
+    }
+    return null;
+  }
+  function onCubePointerUp(e){
+    const src = drag.src;
+    const ghost = drag.ghost;
+    if(!src) return;
+
+    src.removeEventListener("pointermove", onCubePointerMove);
+
+    const target = getDropTarget(e.clientX, e.clientY);
+
+    src.style.opacity = "";
+    if(target) target.appendChild(src);
+    else drag.startParent.appendChild(src);
+
+    if(ghost) ghost.remove();
+    drag = { src:null, ghost:null, offsetX:0, offsetY:0, startParent:null };
+    clearZoneMarks();
+  }
+
+  /* -------------------- Numbers / rounds (NO repeat) -------------------- */
+  function problemKey(op, level, a, b){
+    if(op === "plus"){
+      const lo = Math.min(a,b);
+      const hi = Math.max(a,b);
+      return `${op}|lvl${level}|${lo}|${hi}`;
+    }
+    return `${op}|lvl${level}|${a}|${b}`;
+  }
+  function generateOnePair(){
+    let a = 0, b = 0;
+
+    if(state.level === 1){
+      if(state.op === "plus"){
+        a = randInt(1, 8);
+        b = randInt(1, 9 - a);
+      } else {
+        a = randInt(2, 6);
+        b = randInt(1, a);
+      }
+    }
+
+    if(state.level === 2){
+      if(state.op === "plus"){
+        a = randInt(4, 8);
+        b = randInt(1, 9 - a);
+      } else {
+        a = randInt(1, 20);
+        b = randInt(1, a);
+      }
+    }
+
+    if(state.level === 3){
+      if(state.op === "plus"){
+        a = randInt(0, 30);
+        b = randInt(0, 30 - a);
+      } else {
+        a = randInt(0, 30);
+        b = randInt(0, a);
+      }
+    }
+
+    return { a, b };
+  }
+  function pickNumbers(){
+    let tries = 0;
+    while(true){
+      tries++;
+      const { a, b } = generateOnePair();
+      const key = problemKey(state.op, state.level, a, b);
+      if(key !== state.lastProblemKey || tries >= 60){
+        state.n1 = a;
+        state.n2 = b;
+        state.lastProblemKey = key;
+        state.round++;
+        break;
+      }
+    }
+
+    el.n1.textContent = String(state.n1);
+    el.n2.textContent = String(state.n2);
+
+    const sign = (state.op === "plus") ? "+" : "−";
+    el.opSign.textContent = sign;
+    el.opSignMobile.textContent = sign;
+  }
+
+  function showQuestionStage({ replacePile } = { replacePile:true }){
+    const opSymbol = (state.op === "plus") ? "+" : "−";
+    el.qText.textContent = t("pm.q", { a: state.n1, op: opSymbol, b: state.n2 });
+    el.questionCard.classList.remove("hidden");
+    el.answerInput.focus();
+
+    if(replacePile && state.op === "plus" && state.level === 2){
+      el.pileWrap.classList.add("hidden");
+    }
+  }
+  function correctAnswerValue(){
+    return (state.op === "plus") ? (state.n1 + state.n2) : (state.n1 - state.n2);
+  }
+
+  function resetUIForNewRound(){
+    setMessage(el.cubeMsg, "", null);
+    setMessage(el.answerMsg, "", null);
+    el.streakAck.textContent = "";
+    clearZoneMarks();
+
+    el.klarBtn.disabled = false;
+    el.questionCard.classList.add("hidden");
+    el.answerInput.value = "";
+    state.pendingMinusReward = false;
+
+    el.pileWrap.classList.remove("hidden");
+    el.zone1.innerHTML = "";
+    el.zone2.innerHTML = "";
+    el.pileArea.innerHTML = "";
+
+    el.klarBtn.classList.remove("hidden");
+    el.n1.classList.remove("primaryPick");
+
+    if(state.level === 3){
+      el.hint1.textContent = t("pm.level3Hint");
+      el.hint2.textContent = t("pm.level3Hint");
+      el.pileWrap.classList.add("hidden");
+      el.klarBtn.disabled = true;
+      el.klarBtn.classList.add("hidden");
+
+      el.n1.classList.add("primaryPick");
+      el.lineSlider.value = String(state.n1);
+      el.sliderPill.textContent = t("pm.slider", { v: state.n1 });
+      setActiveTick(state.n1);
+
+      showQuestionStage({ replacePile:false });
+      el.answerInput.value = String(state.n1);
+
+      requestAnimationFrame(matchSliderToTallinje);
+      return;
+    }
+
+    if(state.level === 1){
+      el.klarBtn.classList.add("hidden");
+
+      if(state.op === "plus"){
+        el.hint1.textContent = t("pm.plusCount");
+        el.hint2.textContent = t("pm.plusCount");
+        el.pileWrap.classList.add("hidden");
+
+        for(let i=0;i<state.n1;i++) el.zone1.appendChild(makeCube({ mode:"static" }));
+        for(let i=0;i<state.n2;i++) el.zone2.appendChild(makeCube({ mode:"static" }));
+
+        setMessage(el.cubeMsg, t("pm.cubes.countLine"), "warn");
+        showQuestionStage({ replacePile:false });
+        return;
+      }
+
+      el.hint1.textContent = t("pm.minusFirst");
+      el.hint2.textContent = t("pm.minusBox");
+      el.pileWrap.classList.add("hidden");
+
+      for(let i=0;i<state.n1;i++){
+        el.zone1.appendChild(makeCube({ mode:"tapCross" }));
+      }
+      syncMinusRemovedBox();
+
+      setMessage(el.cubeMsg, t("pm.crossHint"), "warn");
+      showQuestionStage({ replacePile:false });
+      return;
+    }
+
+    if(state.level === 2){
+      if(state.op === "plus"){
+        el.hint1.textContent = t("pm.hint.dragDown");
+        el.hint2.textContent = t("pm.hint.dragDown");
+        el.pileTitle.textContent = t("pm.pile.title");
+        el.pileHint.textContent = t("pm.pile.hint");
+
+        const cubeCount = 20;
+        for(let i=0;i<cubeCount;i++){
+          el.pileArea.appendChild(makeCube({ mode:"drag" }));
+        }
+      } else {
+        el.hint1.textContent = t("pm.minusFirst");
+        el.hint2.textContent = t("pm.minusBox");
+        el.pileWrap.classList.add("hidden");
+
+        for(let i=0;i<state.n1;i++){
+          el.zone1.appendChild(makeCube({ mode:"tapCross" }));
+        }
+        syncMinusRemovedBox();
+      }
+    }
+  }
+
+  function startRound(){
+    pickNumbers();
+    renderTallinje();
+    requestAnimationFrame(() => {
+      if(!el.sliderRow.classList.contains("hidden")) matchSliderToTallinje();
+    });
+    resetUIForNewRound();
+  }
+
+  function syncMinusRemovedBox(){
+    if(state.op !== "minus") return;
+    if(!(state.level === 1 || state.level === 2)) return;
+
+    const crossed = [...el.zone1.querySelectorAll(".cube.crossed")];
+    el.zone2.innerHTML = "";
+    crossed.forEach(src => {
+      el.zone2.appendChild(makeCube({ mode:"static", color: src.style.background }));
+    });
+
+    if(state.level === 2){
+      setMessage(el.cubeMsg, t("pm.minusProgress", { have: crossed.length, need: state.n2 }), "warn");
+    }
+  }
+
+  function clearMonsterClasses(){
+    el.monster.classList.remove("run-in","run-chomp","run-turn","run-out","show");
+  }
+  function positionMonsterOver(targetEl){
+    const r = targetEl.getBoundingClientRect();
+    const mW = 160, mH = 120;
+
+    let left = r.left + (r.width / 2) - (mW / 2);
+    let top  = r.top  + (r.height / 2) - (mH / 2);
+
+    left = Math.max(10, Math.min(left, window.innerWidth  - mW - 10));
+    top  = Math.max(10, Math.min(top,  window.innerHeight - mH - 10));
+
+    el.monster.style.left = left + "px";
+    el.monster.style.top  = top + "px";
+  }
+  function playMonsterPhase(className, ms){
+    return new Promise((resolve) => {
+      clearMonsterClasses();
+      el.monster.classList.add("show", className);
+      setTimeout(resolve, ms);
+    });
+  }
+  async function monsterEatRemovedCubes(){
+    positionMonsterOver(el.zone2);
+    await playMonsterPhase("run-in", 420);
+
+    const removedCubes = [...el.zone2.querySelectorAll(".cube")];
+    const crossedCubes = [...el.zone1.querySelectorAll(".cube.crossed")];
+
+    const chompPromise = playMonsterPhase("run-chomp", 520);
+
+    removedCubes.forEach((c, i) => {
+      setTimeout(() => {
+        c.style.transition = "transform 180ms ease, opacity 180ms ease";
+        c.style.transform = "scale(0.15)";
+        c.style.opacity = "0";
+        setTimeout(() => c.remove(), 220);
+      }, 80 + i * 30);
+    });
+
+    crossedCubes.forEach((c, i) => {
+      setTimeout(() => {
+        c.style.transition = "transform 180ms ease, opacity 180ms ease";
+        c.style.transform = "scale(0.15)";
+        c.style.opacity = "0";
+        setTimeout(() => c.remove(), 220);
+      }, 80 + i * 24);
+    });
+
+    await chompPromise;
+    await playMonsterPhase("run-turn", 260);
+    await playMonsterPhase("run-out", 420);
+    clearMonsterClasses();
+  }
+
+  function validateCubes(){
+    if(state.level !== 2) return;
+
+    if(state.op === "plus"){
+      const c1 = el.zone1.querySelectorAll(".cube").length;
+      const c2 = el.zone2.querySelectorAll(".cube").length;
+
+      const ok1 = (c1 === state.n1);
+      const ok2 = (c2 === state.n2);
+
+      el.zone1.classList.toggle("correct", ok1);
+      el.zone1.classList.toggle("wrong", !ok1);
+      el.zone2.classList.toggle("correct", ok2);
+      el.zone2.classList.toggle("wrong", !ok2);
+
+      if(ok1 && ok2){
+        setMessage(el.cubeMsg, t("pm.cubesMatch", { praise: randomPraise() }), "good");
+        el.klarBtn.disabled = true;
+        playSuccessSound();
+        showQuestionStage({ replacePile:true });
+      } else {
+        setMessage(el.cubeMsg, t("pm.tryAgain"), "warn");
+      }
+      return;
+    }
+
+    const crossed = el.zone1.querySelectorAll(".cube.crossed").length;
+    const ok = (crossed === state.n2);
+
+    el.zone1.classList.toggle("correct", ok);
+    el.zone1.classList.toggle("wrong", !ok);
+    el.zone2.classList.toggle("correct", ok);
+    el.zone2.classList.toggle("wrong", !ok);
+
+    if(ok){
+      setMessage(el.cubeMsg, t("pm.minusOk", { praise: randomPraise() }), "good");
+      el.klarBtn.disabled = true;
+      playSuccessSound();
+      state.pendingMinusReward = true;
+      showQuestionStage({ replacePile:false });
+    } else {
+      setMessage(el.cubeMsg, t("pm.minusProgress", { have: crossed, need: state.n2 }), "warn");
+    }
+  }
+
+  function submitAnswer(){
+    if(state.level === 1 && state.op === "minus"){
+      const crossed = el.zone1.querySelectorAll(".cube.crossed").length;
+      if(crossed !== state.n2){
+        setMessage(el.answerMsg, t("pm.minus.needCross", { need: state.n2, have: crossed }), "warn");
+        return;
+      }
+    }
+
+    const v = Number(el.answerInput.value);
+    const correct = correctAnswerValue();
+
+    if(!Number.isFinite(v)){
+      setMessage(el.answerMsg, t("pm.needNumber"), "warn");
+      el.answerInput.focus();
+      return;
+    }
+
+    const isCorrect = (v === correct);
+
+    if(isCorrect){
+      const newStreak = (prog().streak || 0) + 1;
+      setStreak(newStreak);
+
+      setMessage(el.answerMsg, t("pm.correctYes", { praise: randomPraise() }), "good");
+      el.streakAck.textContent = t("pm.streakAck", { streak: newStreak });
+      playSuccessSound();
+
+      if(state.op === "minus" && (state.level === 1 || state.level === 2)){
+        monsterEatRemovedCubes().catch(() => {});
+      }
+    } else {
+      setStreak(0);
+      setMessage(el.answerMsg, t("pm.correct", { correct }), "bad");
+      el.streakAck.textContent = t("pm.reset");
+    }
+
+    setTimeout(() => {
+      startRound();
+      updateModeText();
+    }, 1400);
+  }
+
+  function goToStartScreen(){
+    el.gameScreen.classList.add("hidden");
+    el.startScreen.classList.remove("hidden");
+
+    renderFoundHint();
+    renderStreakEverywhere({ animateStars:false });
+    updateHello();
+    el.studentName.focus();
+  }
+
+  function goToGameScreen(){
+    el.startScreen.classList.add("hidden");
+    el.gameScreen.classList.remove("hidden");
+
+    renderStreakEverywhere({ animateStars:false });
+    updateModeText();
+    startRound();
+  }
+
+  function updateHello(){
+    const nm = normalizeName(state.name);
+    el.helloText.textContent = nm ? t("pm.hello", { name: nm }) : "";
+  }
+
+  function updateModeText(){
+    const opText = (state.op === "plus") ? t("pm.opText.plus") : t("pm.opText.minus");
+    el.modeText.textContent = t("pm.mode", { op: opText, level: state.level });
+  }
+
+  function updateStartStreakPreview(){
+    ensureUser();
+    renderStreakEverywhere({ animateStars:false });
+  }
+
+  function setOp(op){
+    state.op = op;
+    setPill(el.opPlus, op === "plus");
+    setPill(el.opMinus, op === "minus");
+    updateStartStreakPreview();
+  }
+
+  function setLevel(level){
+    state.level = level;
+    setPill(el.lvl1, level === 1);
+    setPill(el.lvl2, level === 2);
+    setPill(el.lvl3, level === 3);
+    updateStartStreakPreview();
+  }
+
+  /* -------------------- events -------------------- */
+  el.studentName.addEventListener("input", () => {
+    state.name = normalizeName(el.studentName.value);
+    ensureUser();
+    updateHello();
+    renderFoundHint();
+    updateStartStreakPreview();
+  });
+
+  el.studentName.addEventListener("blur", renderFoundHint);
+
+  el.opPlus.addEventListener("click", () => setOp("plus"));
+  el.opMinus.addEventListener("click", () => setOp("minus"));
+
+  el.lvl1.addEventListener("click", () => setLevel(1));
+  el.lvl2.addEventListener("click", () => setLevel(2));
+  el.lvl3.addEventListener("click", () => setLevel(3));
+
+  el.goBtn.addEventListener("click", () => {
+    state.name = normalizeName(el.studentName.value);
+    ensureUser();
+    updateHello();
+    renderFoundHint();
+    goToGameScreen();
+  });
+
+  el.studentName.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") el.goBtn.click();
+  });
+
+  el.backBtn.addEventListener("click", () => goToStartScreen());
+
+  el.klarBtn.addEventListener("click", validateCubes);
+
+  el.svarBtn.addEventListener("click", submitAnswer);
+  el.answerInput.addEventListener("keydown", (e) => {
+    if(e.key === "Enter") submitAnswer();
+  });
+
+  /* -------------------- init -------------------- */
+  setOp("plus");
+  setLevel(1);
+  state.name = "";
+  ensureUser();
+  renderFoundHint();
+  renderStreakEverywhere({ animateStars:false });
+  updateHello();
 })();
 </script>
 </body>
