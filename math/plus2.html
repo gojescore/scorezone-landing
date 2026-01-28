@@ -75,6 +75,16 @@
       background:#fafafa;
     }
 
+    /* --- Make Name/Streak/Stars pills same size as the Level pill --- */
+    .badge.badgeName,
+    .badge.badgeStreak,
+    .badge.badgeStars{
+      min-height: 40px;       /* match the level pill's height (select + button) */
+      padding: 6px 12px;      /* slightly wider, same visual weight */
+      align-items: center;
+    }
+    /* --------------------------------------------------------------- */
+
     .stars{display:inline-flex;gap:2px;font-size:16px;line-height:1;}
     .stars .off{opacity:.22}
 
@@ -515,7 +525,8 @@
         <h1 data-i18n="plus2.title">Plus Hjælper – Bank & Veksling</h1>
 
         <div class="meta">
-          <span class="badge"><strong id="who">—</strong></span>
+          <!-- CHANGED: added badgeName -->
+          <span class="badge badgeName"><strong id="who">—</strong></span>
 
           <span class="badge">
             <span data-i18n="label.level">Niveau</span>:
@@ -527,8 +538,10 @@
             <button id="applyLevelBtn" class="miniBtn" type="button" data-i18n="btn.switch">Skift</button>
           </span>
 
-          <span class="badge"><span data-i18n="label.streak">Streak</span>: <strong id="streak">0</strong></span>
-          <span class="badge"><span data-i18n="label.stars">Stjerner</span>: <span class="stars" id="stars"></span></span>
+          <!-- CHANGED: added badgeStreak -->
+          <span class="badge badgeStreak"><span data-i18n="label.streak">Streak</span>: <strong id="streak">0</strong></span>
+          <!-- CHANGED: added badgeStars -->
+          <span class="badge badgeStars"><span data-i18n="label.stars">Stjerner</span>: <span class="stars" id="stars"></span></span>
 
           <button class="secondary" id="newStudentBtn" type="button" data-i18n="btn.newStudent">Ny elev</button>
         </div>
@@ -1390,9 +1403,6 @@
   }
 
   async function onTapFromBox(owner, denom, node){
-    /* FIX: prevent tapping while exchanging or overlay is open */
-    if (state.isExchanging || state.overlayOpen) return;
-
     if (!canTapDenom(denom)) return;
     if (!removeOneFrom(owner, denom)) return;
 
