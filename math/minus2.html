@@ -270,6 +270,21 @@
       will-change: transform;
     }
 
+    /* Bank wrapper + meta (Streak/Stars above bank, left-aligned) */
+    .bankWrap{
+      display:grid;
+      gap:10px;
+      position: sticky;
+      top: 14px;
+    }
+    .bankMeta{
+      display:flex;
+      gap:10px;
+      align-items:center;
+      justify-content:flex-start; /* left aligned with bank */
+      flex-wrap:wrap;
+    }
+
     /* Bank */
     .bankPanel{
       border:1px solid var(--line);
@@ -279,8 +294,7 @@
       padding:14px;
       display:grid;
       gap:10px;
-      position: sticky;
-      top: 14px;
+      /* NOTE: sticky moved to .bankWrap */
     }
     .bankPanel h2{margin:0;font-size:16px;}
     .bankBox{
@@ -374,7 +388,7 @@
       min-width: 110px;
     }
 
-    /* ---------- SIZE TUNING (requested) ---------- */
+    /* ---------- SIZE TUNING (kept) ---------- */
     /* smaller badge for Level + Language */
     .badge.badgeSmall{
       padding:2px 6px;
@@ -398,38 +412,29 @@
       height:28px;
     }
 
-/* bigger badge for Streak + Stars (force override) */
-.topbar .meta .badge.badgeBig{
-  padding:14px 18px !important;
-  gap:12px !important;
-  font-size:18px !important;
-  font-weight:800 !important;
-}
-.topbar .meta .badge.badgeBig strong{
-  font-size:22px !important;
-  font-weight:1000 !important;
-  color:#111827 !important;
-}
-.topbar .meta .badge.badgeBig .stars{
-  font-size:26px !important;
-  gap:4px !important;
-  transform: translateY(1px) !important;
-}
+    /* bigger badge for Streak + Stars (force override) */
+    .badge.badgeBig{
+      padding:14px 18px !important;
+      gap:12px !important;
+      font-size:18px !important;
+      font-weight:800 !important;
+    }
+    .badge.badgeBig strong{
+      font-size:22px !important;
+      font-weight:1000 !important;
+      color:#111827 !important;
+    }
+    .badge.badgeBig .stars{
+      font-size:26px !important;
+      gap:4px !important;
+      transform: translateY(1px) !important;
+    }
     /* ------------------------------------------- */
 
     @media (max-width: 980px){
       .layout{grid-template-columns: 1fr;}
-      .bankPanel{position: static;}
+      .bankWrap{position: static;}
     }
-
-    /* DEBUG: make it obvious if this file is active */
-.topbar .meta .badge.badgeBig{
-  outline: 4px solid red !important;
-  padding: 14px 18px !important;
-  gap: 12px !important;
-  font-size: 18px !important;
-}
-
   </style>
 </head>
 
@@ -493,11 +498,6 @@
               <option value="es">Español</option>
             </select>
           </span>
-
-          <span class="badge badgeBig"><span id="lblStreak">Streak:</span> <strong id="streak">0</strong></span>
-          <span class="badge badgeBig"><span id="lblStars">Stjerner:</span> <span class="stars" id="stars"></span></span>
-
-          <button class="secondary" id="newStudentBtn" type="button">Ny elev</button>
         </div>
       </div>
 
@@ -569,24 +569,32 @@
         </div>
 
         <!-- RIGHT -->
-        <div class="bankPanel">
-          <h2 id="bankTitle">Bank</h2>
+        <div class="bankWrap">
+          <div class="bankMeta">
+            <span class="badge badgeBig"><span id="lblStreak">Streak:</span> <strong id="streak">0</strong></span>
+            <span class="badge badgeBig"><span id="lblStars">Stjerner:</span> <span class="stars" id="stars"></span></span>
+          </div>
 
-          <div class="bankBox" id="bankDrop">
-            <div class="bankHint" id="bankStep1"><strong>Trin 1:</strong> Træk én 10'er herind (den bliver i banken).</div>
+          <div class="bankPanel">
+            <h2 id="bankTitle">Bank</h2>
 
-            <div class="bankSlot" id="bankSlot" aria-label="Bank slot"></div>
+            <div class="bankBox" id="bankDrop">
+              <div class="bankHint" id="bankStep1"><strong>Trin 1:</strong> Træk én 10'er herind (den bliver i banken).</div>
 
-            <div class="bankRow">
-              <button id="exchangeBtn" type="button" disabled>Veksel</button>
-              <div class="bankStatus" id="bankStatus">Ingen veksling endnu.</div>
-            </div>
+              <div class="bankSlot" id="bankSlot" aria-label="Bank slot"></div>
 
-            <div class="tinyNote" id="bankRules">
-              Veksling kan kun ske én gang pr. opgave og kun hvis der er behov for lån (enere).
+              <div class="bankRow">
+                <button id="exchangeBtn" type="button" disabled>Veksel</button>
+                <div class="bankStatus" id="bankStatus">Ingen veksling endnu.</div>
+              </div>
+
+              <div class="tinyNote" id="bankRules">
+                Veksling kan kun ske én gang pr. opgave og kun hvis der er behov for lån (enere).
+              </div>
             </div>
           </div>
         </div>
+
       </div>
     </div>
 
@@ -650,7 +658,6 @@
       lblLang: "Sprog:",
       lblStreak: "Streak:",
       lblStars: "Stjerner:",
-      newStudentBtn: "Ny elev",
 
       tipEnter: "Tip: Enter virker også som “Svar”.",
       answerBtn: "Svar",
@@ -665,7 +672,6 @@
       bankStep1: "<strong>Trin 1:</strong> Træk én 10'er herind (den bliver i banken).",
       exchangeBtn: "Veksel",
       bankStatusNone: "Ingen veksling endnu.",
-      bankRulesBase: "Veksling kan kun ske én gang pr. opgave og kun hvis der er behov for lån (enere).",
       bankRulesLvl1: "Niveau 1: Ingen lån. Bank er slået fra i denne opgave.",
       bankRulesNoNeed: "Der er ikke behov for lån i denne opgave.",
       bankRulesNeed: "Der er behov for lån (enere). Træk en 10'er i banken og tryk Veksel.",
@@ -702,7 +708,6 @@
       lblLang: "Language:",
       lblStreak: "Streak:",
       lblStars: "Stars:",
-      newStudentBtn: "New student",
 
       tipEnter: "Tip: Enter also works as “Answer”.",
       answerBtn: "Answer",
@@ -717,7 +722,6 @@
       bankStep1: "<strong>Step 1:</strong> Drag one “10” coin here (it stays in the bank).",
       exchangeBtn: "Exchange",
       bankStatusNone: "No exchange yet.",
-      bankRulesBase: "You can exchange only once per problem and only when borrowing is needed (ones).",
       bankRulesLvl1: "Level 1: No borrowing. The bank is disabled for this problem.",
       bankRulesNoNeed: "No borrowing is needed for this problem.",
       bankRulesNeed: "Borrowing is needed (ones). Drag a “10” coin into the bank and press Exchange.",
@@ -754,7 +758,6 @@
       lblLang: "Sprache:",
       lblStreak: "Serie:",
       lblStars: "Sterne:",
-      newStudentBtn: "Neuer Schüler",
 
       tipEnter: "Tipp: Enter funktioniert auch als „Antwort“.",
       answerBtn: "Antwort",
@@ -769,7 +772,6 @@
       bankStep1: "<strong>Schritt 1:</strong> Eine „10“-Münze hierher ziehen (sie bleibt in der Bank).",
       exchangeBtn: "Wechseln",
       bankStatusNone: "Noch kein Wechsel.",
-      bankRulesBase: "Wechseln nur einmal pro Aufgabe und nur wenn Ausleihen nötig ist (Einer).",
       bankRulesLvl1: "Stufe 1: Kein Ausleihen. Bank ist deaktiviert.",
       bankRulesNoNeed: "Kein Ausleihen nötig.",
       bankRulesNeed: "Ausleihen nötig (Einer). Eine „10“-Münze in die Bank ziehen und Wechseln drücken.",
@@ -806,7 +808,6 @@
       lblLang: "Idioma:",
       lblStreak: "Racha:",
       lblStars: "Estrellas:",
-      newStudentBtn: "Nuevo alumno",
 
       tipEnter: "Consejo: Enter también funciona como “Responder”.",
       answerBtn: "Responder",
@@ -821,7 +822,6 @@
       bankStep1: "<strong>Paso 1:</strong> Arrastra una moneda “10” aquí (se queda en el banco).",
       exchangeBtn: "Cambiar",
       bankStatusNone: "Aún no hay cambio.",
-      bankRulesBase: "Solo puedes cambiar una vez por ejercicio y solo si hace falta préstamo (unidades).",
       bankRulesLvl1: "Nivel 1: Sin préstamo. El banco está desactivado.",
       bankRulesNoNeed: "No se necesita préstamo en este ejercicio.",
       bankRulesNeed: "Se necesita préstamo (unidades). Arrastra una “10” al banco y pulsa Cambiar.",
@@ -865,7 +865,6 @@
   const whoEl = $("who");
   const streakEl = $("streak");
   const starsEl = $("stars");
-  const newStudentBtn = $("newStudentBtn");
 
   const levelInGameEl = $("levelInGame");
   const applyLevelBtn = $("applyLevelBtn");
@@ -994,7 +993,6 @@
     setText("lblLang", t("lblLang"));
     setText("lblStreak", t("lblStreak"));
     setText("lblStars", t("lblStars"));
-    newStudentBtn.textContent = t("newStudentBtn");
 
     setText("tipEnter", t("tipEnter"));
     answerBtn.textContent = t("answerBtn");
@@ -1471,11 +1469,6 @@
     if (newLevel === state.level) return;
 
     state.level = newLevel;
-
-    // Reset borrow-history window when switching levels (keeps rule consistent per level)
-    // (streak/stars are already per level in progress)
-    // Keep last 4 rolling state per level; do not touch here.
-
     updateHeader();
     makeProblem();
   });
@@ -1496,14 +1489,6 @@
   startBtn.addEventListener("click", startApp);
   studentNameEl.addEventListener("keydown", (e) => {
     if (e.key === "Enter") startApp();
-  });
-
-  newStudentBtn.addEventListener("click", () => {
-    app.classList.add("hidden");
-    setup.classList.remove("hidden");
-    ansTensEl.value = "";
-    ansOnesEl.value = "";
-    studentNameEl.focus();
   });
 
   // Boot
