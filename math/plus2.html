@@ -75,6 +75,30 @@
       background:#fafafa;
     }
 
+    /* Make these pills match exactly (including Level pill) */
+.badge.pill{
+  height: 40px;              /* force consistent pill height */
+  padding: 0 12px;           /* horizontal padding */
+  font-size: 16px;           /* match “level” visual weight */
+  color: var(--muted);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Make controls inside the level pill match the same height */
+.pillCtrl{
+  height: 28px;
+  padding: 0 10px;
+  border-radius: 10px;
+  display: inline-flex;
+  align-items: center;
+}
+
+/* Keep your existing styles, but ensure select/button don't stretch weirdly */
+.lvlSel.pillCtrl{ min-width: 64px; }
+.miniBtn.pillCtrl{ font-size: 14px; font-weight: 900; }
+
     /* --- Make Name/Streak/Stars pills same size as the Level pill --- */
     .badge.badgeName,
     .badge.badgeStreak,
@@ -525,23 +549,21 @@
         <h1 data-i18n="plus2.title">Plus Hjælper – Bank & Veksling</h1>
 
         <div class="meta">
-          <!-- CHANGED: added badgeName -->
-          <span class="badge badgeName"><strong id="who">—</strong></span>
+         <span class="badge pill"><strong id="who">—</strong></span>
 
-          <span class="badge">
-            <span data-i18n="label.level">Niveau</span>:
-            <select id="levelInGame" class="lvlSel" data-i18n-aria-label="aria.changeLevel" aria-label="Skift niveau">
-              <option value="1">1</option>
-              <option value="2">2</option>
-              <option value="3">3</option>
-            </select>
-            <button id="applyLevelBtn" class="miniBtn" type="button" data-i18n="btn.switch">Skift</button>
-          </span>
+<span class="badge pill">
+  <span data-i18n="label.level">Niveau</span>:
+  <select id="levelInGame" class="lvlSel pillCtrl" data-i18n-aria-label="aria.changeLevel" aria-label="Skift niveau">
+    <option value="1">1</option>
+    <option value="2">2</option>
+    <option value="3">3</option>
+  </select>
+  <button id="applyLevelBtn" class="miniBtn pillCtrl" type="button" data-i18n="btn.switch">Skift</button>
+</span>
 
-          <!-- CHANGED: added badgeStreak -->
-          <span class="badge badgeStreak"><span data-i18n="label.streak">Streak</span>: <strong id="streak">0</strong></span>
-          <!-- CHANGED: added badgeStars -->
-          <span class="badge badgeStars"><span data-i18n="label.stars">Stjerner</span>: <span class="stars" id="stars"></span></span>
+<span class="badge pill"><span data-i18n="label.streak">Streak</span>: <strong id="streak">0</strong></span>
+<span class="badge pill"><span data-i18n="label.stars">Stjerner</span>: <span class="stars" id="stars"></span></span>
+
 
           <button class="secondary" id="newStudentBtn" type="button" data-i18n="btn.newStudent">Ny elev</button>
         </div>
