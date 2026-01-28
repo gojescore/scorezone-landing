@@ -44,7 +44,6 @@
     }
     h1{font-size:20px;margin:0}
     .meta{display:flex;gap:10px;flex-wrap:wrap;align-items:center;color:var(--muted);font-size:14px;}
-
     .badge{
       display:inline-flex;
       gap:8px;
@@ -54,48 +53,6 @@
       border-radius:999px;
       background:#fafafa;
     }
-
-    /* ---------- SIZE TUNING (requested) ---------- */
-    /* smaller badge for Level + Language */
-    .badge.badgeSmall{
-      padding:4px 8px;
-      gap:6px;
-      font-size:12.5px;
-    }
-    .badge.badgeSmall strong{font-size:12.5px;}
-    .badge.badgeSmall .lvlSel,
-    .badge.badgeSmall .langSel{
-      padding:4px 6px;
-      font-size:12.5px;
-      border-radius:9px;
-      min-width:52px;
-    }
-    .badge.badgeSmall .langSel{ min-width: 96px; }
-    .badge.badgeSmall .miniBtn{
-      padding:4px 8px;
-      font-size:12.5px;
-      border-radius:9px;
-    }
-
-    /* bigger badge for Streak + Stars */
-    .badge.badgeBig{
-      padding:10px 14px;
-      gap:10px;
-      font-size:16px;
-      font-weight:750;
-    }
-    .badge.badgeBig strong{
-      font-size:18px;
-      font-weight:950;
-      color: #111827;
-    }
-    .badge.badgeBig .stars{
-      font-size:20px;
-      gap:3px;
-      transform: translateY(1px);
-    }
-    /* ------------------------------------------- */
-
     .stars{display:inline-flex;gap:2px;font-size:16px;line-height:1;}
     .stars .off{opacity:.22}
 
@@ -417,12 +374,52 @@
       min-width: 110px;
     }
 
+    /* ---------- SIZE TUNING (requested) ---------- */
+    /* smaller badge for Level + Language */
+    .badge.badgeSmall{
+      padding:2px 6px;
+      gap:6px;
+      font-size:11px;
+    }
+    .badge.badgeSmall strong{font-size:11px;}
+    .badge.badgeSmall .lvlSel,
+    .badge.badgeSmall .langSel{
+      padding:2px 6px;
+      font-size:11px;
+      border-radius:8px;
+      min-width:44px;
+      height:28px;
+    }
+    .badge.badgeSmall .langSel{ min-width: 92px; }
+    .badge.badgeSmall .miniBtn{
+      padding:2px 8px;
+      font-size:11px;
+      border-radius:8px;
+      height:28px;
+    }
+
+    /* bigger badge for Streak + Stars */
+    .badge.badgeBig{
+      padding:14px 18px;
+      gap:12px;
+      font-size:18px;
+      font-weight:800;
+    }
+    .badge.badgeBig strong{
+      font-size:22px;
+      font-weight:1000;
+      color:#111827;
+    }
+    .badge.badgeBig .stars{
+      font-size:26px;
+      gap:4px;
+      transform: translateY(1px);
+    }
+    /* ------------------------------------------- */
+
     @media (max-width: 980px){
       .layout{grid-template-columns: 1fr;}
       .bankPanel{position: static;}
-      /* keep big badges from becoming too tall on small screens */
-      .badge.badgeBig{ padding:8px 12px; font-size:15px; }
-      .badge.badgeBig strong{ font-size:17px; }
     }
   </style>
 </head>
@@ -905,6 +902,12 @@
       3: { streak: 0, stars: 0 },
     },
 
+    // Borrow-frequency tracking (rolling 5; we keep last 4 and validate next)
+    borrowHistory: {
+      2: [],
+      3: []
+    },
+
     a: 0,
     b: 0,
     answer: 0,
@@ -922,6 +925,40 @@
     gradingLocked: false,
     overlayOpen: false
   };
+
+  function minBorrowIn5(level){
+    if (level === 2) return 2;
+    if (level === 3) return 3;
+    return 0;
+  }
+
+  function okBorrowWindow(level, candidateBorrow){
+    if (level === 1) return true;
+
+    const minB = minBorrowIn5(level);
+    const hist = state.borrowHistory[level] || [];
+    const k = hist.length;
+
+    // Keep ourselves able to reach the minimum within the 5-window
+    if (k < 4){
+      const have = hist.reduce((s,v)=>s+(v?1:0),0);
+      const remainingAfterThis = 5 - (k + 1);
+      const maxPossible = have + (candidateBorrow ? 1 : 0) + remainingAfterThis;
+      return maxPossible >= minB;
+    }
+
+    // If this completes a 5-window, enforce it directly
+    const window = hist.concat(!!candidateBorrow); // length 5
+    const count = window.reduce((s,v)=>s+(v?1:0),0);
+    return count >= minB;
+  }
+
+  function pushBorrow(level, borrow){
+    if (level === 1) return;
+    const arr = state.borrowHistory[level];
+    arr.push(!!borrow);
+    if (arr.length > 4) arr.shift(); // keep last 4 (next pick completes window)
+  }
 
   function applyLanguage(lang){
     currentLang = SUPPORTED.includes(lang) ? lang : "da";
@@ -1036,9 +1073,14 @@
 
     let a, b, key;
     let attempts = 0;
+
     while (true){
       attempts++;
-      if (attempts > 5000){ a = 50; b = 23; break; }
+      if (attempts > 20000){
+        // fallback safe
+        a = 50; b = 23;
+        break;
+      }
 
       a = randInt(23, 99);
 
@@ -1050,12 +1092,19 @@
         if (b === 0) continue;
         key = `${a}-${b}`;
         if (key === state.lastKey) continue;
+
+        // level 1 ignore borrow-window rules
         break;
       }
 
       b = randInt(23, a);
       key = `${a}-${b}`;
       if (key === state.lastKey) continue;
+
+      // Borrow-frequency rule for level 2/3
+      const borrow = needsBorrow(a, b);
+      if (!okBorrowWindow(state.level, borrow)) continue;
+
       break;
     }
 
@@ -1069,6 +1118,8 @@
     state.onesCoins = da.ones;
 
     state.borrowNeeded = needsBorrow(a, b);
+    pushBorrow(state.level, state.borrowNeeded);
+
     state.borrowDone = false;
     state.bankHasTen = false;
     state.bankExchanged = false;
@@ -1409,7 +1460,13 @@
     if (state.overlayOpen) return;
     const newLevel = Number(levelInGameEl.value);
     if (newLevel === state.level) return;
+
     state.level = newLevel;
+
+    // Reset borrow-history window when switching levels (keeps rule consistent per level)
+    // (streak/stars are already per level in progress)
+    // Keep last 4 rolling state per level; do not touch here.
+
     updateHeader();
     makeProblem();
   });
