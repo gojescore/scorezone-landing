@@ -398,23 +398,23 @@
       height:28px;
     }
 
-    /* bigger badge for Streak + Stars */
-    .badge.badgeBig{
-      padding:14px 18px;
-      gap:12px;
-      font-size:18px;
-      font-weight:800;
-    }
-    .badge.badgeBig strong{
-      font-size:22px;
-      font-weight:1000;
-      color:#111827;
-    }
-    .badge.badgeBig .stars{
-      font-size:26px;
-      gap:4px;
-      transform: translateY(1px);
-    }
+/* bigger badge for Streak + Stars (force override) */
+.topbar .meta .badge.badgeBig{
+  padding:14px 18px !important;
+  gap:12px !important;
+  font-size:18px !important;
+  font-weight:800 !important;
+}
+.topbar .meta .badge.badgeBig strong{
+  font-size:22px !important;
+  font-weight:1000 !important;
+  color:#111827 !important;
+}
+.topbar .meta .badge.badgeBig .stars{
+  font-size:26px !important;
+  gap:4px !important;
+  transform: translateY(1px) !important;
+}
     /* ------------------------------------------- */
 
     @media (max-width: 980px){
