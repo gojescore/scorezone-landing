@@ -235,11 +235,12 @@
     text-shadow: 0 2px 5px rgba(225,29,72,.15);
   }
 
+  /* ✅ Arrow centering tweak (sub-pixel rounding fix) */
   .highlight-window {
     position: absolute;
     left: 50%;
     top: -10px;
-    transform: translateX(-50%);
+    transform: translate3d(-50%, 0, 0);
     width: 72px;
     height: 48px;
     border: 3px solid var(--accent);
@@ -251,7 +252,10 @@
   }
   .highlight-window:after{
     content:"";
-    position:absolute; left:50%; bottom:-8px; transform:translateX(-50%);
+    position:absolute;
+    left:50%;
+    bottom:-8px;
+    transform: translate3d(-50%, 0, 0);
     width: 0; height:0;
     border-left:8px solid transparent;
     border-right:8px solid transparent;
@@ -755,6 +759,11 @@
     requestAnimationFrame(step);
   }
 
+  /* ✅ Safest carry fix: detect reduced motion and skip waiting for animationend */
+  function prefersReducedMotion(){
+    return window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  }
+
   /* Carry logic */
   let carryInProgress = false;
 
@@ -777,6 +786,13 @@
         alignTensTrayToOnes();
         carryInProgress = false;
       };
+
+      /* ✅ SAFEST: if reduced motion is on, animationend will never fire -> carry immediately */
+      if(prefersReducedMotion()){
+        onesTray.innerHTML = '';
+        doCarry();
+        return;
+      }
 
       if(trayCubes.length === 0){
         doCarry();
