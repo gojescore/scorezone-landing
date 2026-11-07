@@ -1,47 +1,40 @@
-/* ScoreZone shared seasonal background.
-   Existing season selection and snowflake behavior stay unchanged.
-   Opt out: body[data-season="off"] (the JS opt-out remains in effect).
-*/
+/* ScoreZone shared seasonal background; no changes to page layouts. */
 :root { --sz-season-bg: #081633; }
-
 body {
   background: var(--sz-season-bg) !important;
   background-attachment: fixed !important;
 }
-
-/* Deep-blue seasonal gradients to complement ScoreZone's dark cards. */
 body[data-season="spring"] {
   --sz-season-bg:
-    radial-gradient(ellipse 850px 640px at 6% 10%, rgba(29, 185, 134, .28), transparent 72%),
-    radial-gradient(ellipse 850px 680px at 94% 75%, rgba(24, 160, 200, .22), transparent 74%),
+    radial-gradient(ellipse 850px 640px at 6% 10%, rgba(29,185,134,.28), transparent 72%),
+    radial-gradient(ellipse 850px 680px at 94% 75%, rgba(24,160,200,.22), transparent 74%),
     linear-gradient(145deg, #081936, #102b48 54%, #081631);
 }
 body[data-season="summer"] {
   --sz-season-bg:
-    radial-gradient(ellipse 950px 700px at 9% 4%, rgba(243, 172, 61, .23), transparent 71%),
-    radial-gradient(ellipse 850px 650px at 96% 75%, rgba(31, 167, 213, .26), transparent 74%),
+    radial-gradient(ellipse 950px 700px at 9% 4%, rgba(243,172,61,.23), transparent 71%),
+    radial-gradient(ellipse 850px 650px at 96% 75%, rgba(31,167,213,.26), transparent 74%),
     linear-gradient(145deg, #091934, #12345b 54%, #081a36);
 }
 body[data-season="autumn"] {
   --sz-season-bg:
-    radial-gradient(ellipse 900px 650px at 8% 7%, rgba(232, 120, 34, .24), transparent 74%),
-    radial-gradient(ellipse 900px 700px at 94% 76%, rgba(161, 66, 78, .18), transparent 74%),
+    radial-gradient(ellipse 900px 650px at 8% 7%, rgba(232,120,34,.24), transparent 74%),
+    radial-gradient(ellipse 900px 700px at 94% 76%, rgba(161,66,78,.18), transparent 74%),
     linear-gradient(145deg, #0b1732, #172847 55%, #0a1833);
 }
 body[data-season="winter"] {
   --sz-season-bg:
-    radial-gradient(ellipse 900px 680px at 8% 5%, rgba(103, 179, 245, .24), transparent 74%),
-    radial-gradient(ellipse 850px 680px at 95% 75%, rgba(79, 116, 197, .23), transparent 74%),
-    linear-gradient(145deg, #07152f, #13294e 54%, #081730);
+    radial-gradient(ellipse 1050px 800px at 15% 6%, rgba(105,181,246,.33), transparent 73%),
+    radial-gradient(ellipse 900px 760px at 91% 84%, rgba(77,119,210,.23), transparent 72%),
+    linear-gradient(145deg, #07152f, #17345a 55%, #0b1c3c);
 }
 body[data-season="xmas"] {
   --sz-season-bg:
-    radial-gradient(ellipse 850px 650px at 7% 5%, rgba(185, 50, 65, .21), transparent 73%),
-    radial-gradient(ellipse 840px 660px at 94% 76%, rgba(68, 151, 180, .23), transparent 74%),
-    linear-gradient(145deg, #091731, #182745 54%, #08162f);
+    radial-gradient(ellipse 900px 690px at 7% 6%, rgba(180,63,80,.21), transparent 73%),
+    radial-gradient(ellipse 900px 740px at 93% 76%, rgba(77,159,203,.3), transparent 74%),
+    linear-gradient(145deg, #091731, #183254 54%, #08162f);
 }
-
-/* Original snow layer and animation rules preserved. */
+/* Snow stays behind actual content, and never catches mouse events. */
 #sz-snow {
   position: fixed;
   inset: 0;
@@ -64,11 +57,11 @@ body.sz-has-snow #setup {
   height: var(--sz, 6px);
   border-radius: 999px;
   background: rgba(255,255,255,.98);
-  box-shadow: 0 0 0 1px rgba(255,255,255,.55), 0 2px 6px rgba(0,0,0,.10);
+  box-shadow: 0 0 7px 1px rgba(209,234,255,.55);
   opacity: var(--op, .9);
   transform: translate3d(var(--x, 0px), -20px, 0);
-  animation: sz-fall var(--dur, 10s) linear infinite,
-             sz-drift var(--driftDur, 4s) ease-in-out infinite alternate;
+  animation: sz-fall var(--dur, 15s) linear infinite,
+             sz-drift var(--driftDur, 6s) ease-in-out infinite alternate;
 }
 @keyframes sz-fall {
   to { transform: translate3d(var(--x, 0px), calc(100vh + 30px), 0); }
@@ -78,5 +71,5 @@ body.sz-has-snow #setup {
   to { margin-left: var(--dx, 25px); }
 }
 @media (prefers-reduced-motion: reduce) {
-  #sz-snow { display:none !important; }
+  #sz-snow { display: none !important; }
 }
