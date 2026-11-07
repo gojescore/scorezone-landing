@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Sport | ScoreZone</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- Seasonal background system -->
+  <link rel="stylesheet" href="https://scorezone.dk/assets/scorezone-season.css">
+  <script src="https://scorezone.dk/assets/scorezone-season.js" defer></script>
+
+  <!-- Favicons -->
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16.png">
+  <link rel="icon" type="image/png" sizes="64x64" href="/favicon-64.png">
+
+  <style>
+    :root{
+      /* Color scheme */
+      --bg:#050E3C;
+      --panel:rgba(0,36,85,.92);     /* #002455 */
+      --ink:#ffffff;
+      --muted:rgba(255,255,255,.78);
+      --line:rgba(255,255,255,.14);
+
+      --accent:#DC0000;
+      --accentSoft:#FF3838;
+
+      --shadowSoft:0 12px 28px rgba(0,0,0,.22);
+      --shadow:0 18px 46px rgba(0,0,0,.28);
+    }
+
+    *{box-sizing:border-box}
+
+    body{
+      margin:0;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      background:var(--bg);
+      color:var(--ink);
+    }
+
+    .wrap{
+      max-width:980px;
+      margin:0 auto;
+      padding:32px 18px 48px;
+    }
+
+    /* ---------- HERO ---------- */
+    .hero{
+      padding:28px 24px;
+      border-radius:22px;
+      background: linear-gradient(180deg,
+        rgba(0,36,85,.96),
+        rgba(0,36,85,.86)
+      );
+      border:1px solid var(--line);
+      box-shadow:var(--shadow);
+      text-align:center;
+    }
+
+    .hero h1{
+      margin:0;
+      font-size:38px;
+      font-weight:950;
+      letter-spacing:.3px;
+    }
+
+    .heroLead{
+      margin:10px auto 0;
+      max-width:560px;
+      font-size:16px;
+      font-weight:650;
+      color:var(--muted);
+      line-height:1.45;
+    }
+
+    /* ---------- LANGUAGE BAR ---------- */
+    .langBar{
+      margin-top:12px;
+      padding:10px 12px;
+      border-radius:18px;
+      border:1px solid var(--line);
+      background:var(--panel);
+      box-shadow:var(--shadowSoft);
+    }
+
+    .langRowWrap{
+      display:flex;
+      align-items:center;
+      gap:10px;
+    }
+
+    .langLabel{
+      font-weight:950;
+      letter-spacing:.15px;
+      font-size:14px;
+      color:var(--ink);
+      white-space:nowrap;
+      margin-right:2px;
+    }
+
+    .arrowBtn{
+      width:34px;
+      height:34px;
+      border-radius:12px;
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.06);
+      box-shadow:0 6px 16px rgba(0,0,0,.18);
+      cursor:pointer;
+      font-weight:950;
+      color:var(--ink);
+      flex:0 0 auto;
+      transition:transform .12s ease, box-shadow .12s ease, border-color .12s ease;
+    }
+
+    .arrowBtn:hover{
+      transform:translateY(-1px);
+      box-shadow:0 12px 28px rgba(0,0,0,.24);
+      border-color:rgba(255,56,56,.55);
+    }
+
+    .arrowBtn:active{ transform:translateY(0px); }
+
+    .arrowBtn:focus-visible{
+      outline:3px solid rgba(255,56,56,.55);
+      outline-offset:2px;
+    }
+
+    .langRow{
+      display:flex;
+      gap:10px;
+      overflow-x:auto;
+      scroll-behavior:smooth;
+      padding:2px 2px 4px;
+      flex:1 1 auto;
+      scrollbar-width:thin;
+    }
+
+    .langRow::-webkit-scrollbar{ height:10px; }
+    .langRow::-webkit-scrollbar-thumb{
+      background:rgba(255,255,255,.22);
+      border-radius:999px;
+    }
+    .langRow::-webkit-scrollbar-track{
+      background:rgba(255,255,255,.08);
+      border-radius:999px;
+    }
+
+    .langChip{
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.06);
+      box-shadow:0 10px 22px rgba(0,0,0,.18);
+      border-radius:999px;
+      padding:8px 12px;
+      display:flex;
+      align-items:center;
+      gap:8px;
+      cursor:pointer;
+      white-space:nowrap;
+      font-weight:850;
+      color:var(--ink);
+      transition:transform .12s ease, box-shadow .12s ease, border-color .12s ease, background .12s ease;
+      user-select:none;
+    }
+
+    .langChip:hover{
+      transform:translateY(-1px);
+      box-shadow:0 18px 34px rgba(0,0,0,.24);
+      border-color:rgba(255,56,56,.55);
+    }
+
+    .langChip[aria-selected="true"]{
+      background:rgba(220,0,0,.22);
+      border-color:rgba(255,56,56,.70);
+      box-shadow:0 18px 40px rgba(220,0,0,.18);
+    }
+
+    .langChip:focus-visible{
+      outline:3px solid rgba(255,56,56,.55);
+      outline-offset:2px;
+    }
+
+    /* ---------- TILES ---------- */
+    .tiles{
+      margin-top:18px;
+      display:grid;
+      grid-template-columns:repeat(3, minmax(220px,1fr));
+      gap:14px;
+    }
+
+    .tile{
+      display:flex;
+      gap:12px;
+      align-items:center;
+      text-decoration:none;
+      padding:14px;
+      border-radius:16px;
+      border:1px solid var(--line);
+      background:var(--panel);
+      box-shadow:var(--shadowSoft);
+      color:inherit;
+      min-height:74px;
+      transition:
+        transform .12s ease,
+        box-shadow .12s ease,
+        border-color .12s ease;
+    }
+
+    .tile:hover{
+      transform:translateY(-2px);
+      box-shadow:var(--shadow);
+      border-color:rgba(255,56,56,.55);
+    }
+
+    .tile:focus-visible{
+      outline:3px solid rgba(255,56,56,.55);
+      outline-offset:2px;
+    }
+
+    .icon{
+      width:46px;
+      height:46px;
+      border-radius:14px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-size:22px;
+      background:rgba(255,255,255,.08);
+      border:1px solid rgba(255,255,255,.10);
+      flex:0 0 auto;
+    }
+
+    .text{
+      display:flex;
+      flex-direction:column;
+      gap:2px;
+      min-width:0;
+    }
+
+    .title{
+      font-weight:950;
+      letter-spacing:.15px;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+      color:var(--ink);
+    }
+
+    .sub{
+      font-size:13px;
+      color:var(--muted);
+      font-weight:650;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+
+    /* ---------- RESPONSIVE ---------- */
+    @media (max-width:900px){
+      .tiles{grid-template-columns:1fr;}
+      .hero h1{font-size:32px;}
+      .wrap{padding-top:26px;}
+      .arrowBtn{display:none;} /* mobile: swipe */
+      .langLabel{display:none;} /* optional: saves space on mobile */
+    }
+  </style>
+</head>
+
+<body>
+  <div class="wrap">
+
+    <!-- HERO CARD -->
+    <section class="hero">
+      <h1 data-i18n="hero.title">Sport</h1>
+      <p class="heroLead" data-i18n="hero.lead">
+        Free sports tools for schools, clubs, and tournaments.
+      </p>
+    </section>
+
+    <!-- LANGUAGE SELECTOR -->
+    <section class="langBar" aria-label="Language selector">
+      <div class="langRowWrap">
+        <div class="langLabel" data-i18n="lang.label">Language</div>
+
+        <button class="arrowBtn" id="langPrev" type="button" aria-label="Scroll languages left">‹</button>
+
+        <div class="langRow" id="langRow" role="listbox" aria-label="Languages" tabindex="0">
+          <!-- buttons generated by JS -->
+        </div>
+
+        <button class="arrowBtn" id="langNext" type="button" aria-label="Scroll languages right">›</button>
+      </div>
+    </section>
+
+    <!-- SPORT TOOLS -->
+    <main class="tiles" aria-label="Sports tools">
+      <a class="tile" href="/sport/tournament-planner/">
+        <div class="icon">🏆</div>
+        <div class="text">
+          <div class="title" data-i18n="tile.planner.title">Tournament Planner</div>
+          <div class="sub" data-i18n="tile.planner.sub">Create schedules, fixtures and standings</div>
+        </div>
+      </a>
+      <a class="tile" href="/">
+        <div class="icon">🏠</div>
+        <div class="text">
+          <div class="title" data-i18n="tile.home.title">ScoreZone</div>
+          <div class="sub" data-i18n="tile.home.sub">Back to the homepage</div>
+        </div>
+      </a>
+    </main>
+
+  </div>
+
+  <script>
+    // --- Sport: language carousel + i18n + same-origin language links ---
+    const LANG_KEY = "scorezone_lang";
+
+    const languages = [
+      { code: "da", label: "Dansk",   flag: "🇩🇰" },
+      { code: "en", label: "English", flag: "🇬🇧" },
+      { code: "de", label: "Deutsch", flag: "🇩🇪" },
+      { code: "es", label: "Español", flag: "🇪🇸" }
+    ];
+
+    const I18N = {
+      da: {
+        "lang.label": "Sprog",
+        "hero.title": "Sport",
+        "hero.lead": "Gratis sportsværktøjer til skoler, klubber og turneringer.",
+        "tile.planner.title": "Turneringsplanlægger",
+        "tile.planner.sub": "Lav kampprogrammer, kampplaner og stillinger",
+        "tile.home.title": "ScoreZone",
+        "tile.home.sub": "Tilbage til forsiden"
+      },
+
+      en: {
+        "lang.label": "Language",
+        "hero.title": "Sport",
+        "hero.lead": "Free sports tools for schools, clubs, and tournaments.",
+        "tile.planner.title": "Tournament Planner",
+        "tile.planner.sub": "Create schedules, fixtures and standings",
+        "tile.home.title": "ScoreZone",
+        "tile.home.sub": "Back to the homepage"
+      },
+
+      de: {
+        "lang.label": "Sprache",
+        "hero.title": "Sport",
+        "hero.lead": "Kostenlose Sporttools für Schulen, Vereine und Turniere.",
+        "tile.planner.title": "Turnierplaner",
+        "tile.planner.sub": "Spielpläne, Begegnungen und Tabellen erstellen",
+        "tile.home.title": "ScoreZone",
+        "tile.home.sub": "Zurück zur Startseite"
+      },
+
+      es: {
+        "lang.label": "Idioma",
+        "hero.title": "Deporte",
+        "hero.lead": "Herramientas deportivas gratuitas para escuelas, clubes y torneos.",
+        "tile.planner.title": "Planificador de torneos",
+        "tile.planner.sub": "Crea calendarios, partidos y clasificaciones",
+        "tile.home.title": "ScoreZone",
+        "tile.home.sub": "Volver al inicio"
+      }
+    };
+
+    const row = document.getElementById("langRow");
+    const prevBtn = document.getElementById("langPrev");
+    const nextBtn = document.getElementById("langNext");
+
+    function isSupported(code){
+      return languages.some(l => l.code === code);
+    }
+
+    function readLangFromUrl(){
+      const url = new URL(window.location.href);
+      const lang = url.searchParams.get("lang");
+      return (lang && isSupported(lang)) ? lang : null;
+    }
+
+    function getSavedLang(){
+      const saved = localStorage.getItem(LANG_KEY);
+      return (saved && isSupported(saved)) ? saved : null;
+    }
+
+    function setSavedLang(code){
+      if (isSupported(code)) localStorage.setItem(LANG_KEY, code);
+    }
+
+    function browserLang(){
+      const raw = (navigator.language || "da").toLowerCase();
+      const base = raw.split("-")[0];
+      return isSupported(base) ? base : "da";
+    }
+
+    function currentLang(){
+      // Priority: URL ?lang= > saved > browser
+      const urlLang = readLangFromUrl();
+      if (urlLang) { setSavedLang(urlLang); return urlLang; }
+
+      const saved = getSavedLang();
+      if (saved) return saved;
+
+      const b = browserLang();
+      setSavedLang(b);
+      return b;
+    }
+
+    function setLangInUrl(lang){
+      const url = new URL(window.location.href);
+      url.searchParams.set("lang", lang);
+      history.replaceState({}, "", url.toString());
+    }
+
+    function applyLanguage(lang){
+      const dict = I18N[lang] || I18N.da;
+
+      document.querySelectorAll("[data-i18n]").forEach(el => {
+        const key = el.getAttribute("data-i18n");
+        const value = dict[key];
+        if (typeof value === "string") el.textContent = value;
+      });
+
+      document.documentElement.lang = lang;
+    }
+
+    function renderLanguages(){
+      row.innerHTML = "";
+      const selected = currentLang();
+
+      for (const lang of languages){
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "langChip";
+        btn.setAttribute("role", "option");
+        btn.dataset.lang = lang.code;
+
+        const isSelected = (lang.code === selected);
+        btn.setAttribute("aria-selected", isSelected ? "true" : "false");
+
+        btn.innerHTML = `
+          <span aria-hidden="true">${lang.flag}</span>
+          <span>${lang.label}</span>
+        `;
+
+        btn.addEventListener("click", () => {
+          setSavedLang(lang.code);
+          setLangInUrl(lang.code);        // LOCK: URL becomes source-of-truth
+          updateSelectedUI(lang.code);
+          applyLanguage(lang.code);
+        });
+
+        row.appendChild(btn);
+      }
+    }
+
+    function updateSelectedUI(code){
+      const chips = row.querySelectorAll(".langChip");
+      chips.forEach(chip => {
+        const isSelected = (chip.dataset.lang === code);
+        chip.setAttribute("aria-selected", isSelected ? "true" : "false");
+        if (isSelected) chip.scrollIntoView({ behavior: "smooth", inline: "center", block: "nearest" });
+      });
+    }
+
+    function scrollRow(dir){
+      const amount = Math.max(220, Math.floor(row.clientWidth * 0.8));
+      row.scrollBy({ left: dir * amount, behavior: "smooth" });
+    }
+
+    prevBtn.addEventListener("click", () => scrollRow(-1));
+    nextBtn.addEventListener("click", () => scrollRow(1));
+
+    row.addEventListener("keydown", (e) => {
+      if (e.key === "ArrowLeft") scrollRow(-1);
+      if (e.key === "ArrowRight") scrollRow(1);
+    });
+
+    function withLangParam(href, lang){
+      const url = new URL(href, window.location.href);
+      url.searchParams.set("lang", lang);
+      return url.toString();
+    }
+
+    // Auto-pass lang ONLY on same-origin links (e.g. /math/)
+    document.addEventListener("click", (e) => {
+      const a = e.target.closest("a");
+      if (!a) return;
+
+      // allow normal new-tab / modified clicks
+      if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return;
+
+      const href = a.getAttribute("href");
+      if (!href || href.startsWith("#") || href.startsWith("mailto:") || href.startsWith("tel:")) return;
+
+      const url = new URL(href, window.location.href);
+
+      // only rewrite same-origin links
+      if (url.origin !== window.location.origin) return;
+
+      // If link already has lang=, don't override it
+      if (url.searchParams.get("lang")) return;
+
+      e.preventDefault();
+      window.location.href = withLangParam(url.toString(), currentLang());
+    }, true);
+
+    // Init (LOCK: ensure landing itself always has a lang param)
+    const lang = currentLang();
+    setLangInUrl(lang);
+    renderLanguages();
+    applyLanguage(lang);
+    updateSelectedUI(lang);
+  </script>
+</body>
+</html>
