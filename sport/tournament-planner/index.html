@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Tournament Planner | ScoreZone</title>
+<meta name="description" content="Free tournament scheduling and standings tool by ScoreZone.">
+<style>
+  :root { --bg:#0f172a; --panel:#1e293b; --ink:#e2e8f0; --muted:#94a3b8; --accent:#3b82f6; --danger:#ef4444; --ok:#22c55e; --warn:#facc15; }
+
+  /* Layout */
+  body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    display: grid;
+    grid-template-columns: minmax(320px, 30%) 1fr; /* ~30% / 70% */
+    gap: 16px;
+    min-height: 100vh;
+  }
+  aside{
+    background: var(--panel);
+    padding: 16px;
+    overflow: auto;
+    border-right: 1px solid #334155;
+    position: relative;
+    z-index: 1;
+  }
+  main{
+    padding: 12px 16px;
+    overflow: auto;
+    background: #0b1426; /* dark, not black */
+    border-left: 1px solid #334155;
+  }
+
+  h1 { margin: 0 0 12px; }
+  label { display:block; margin-top:12px; font-size:14px; }
+  input, select, button {
+    width: 100%; padding: 8px; margin-top: 4px;
+    border-radius: 6px; border: 1px solid #334155;
+    background: #0b1327; color: var(--ink);
+  }
+  input[type="color"] { padding: 0; height: 36px; }
+  button { background: var(--accent); color: #fff; font-weight: 700; cursor: pointer; }
+  button:hover { filter: brightness(1.05); }
+
+  .inline { display:inline-flex; align-items:center; gap:8px; }
+  .team-editor { margin-top: 12px; }
+  .toolbar { display:flex; gap: 8px; margin-bottom: 12px; }
+  .tabs { display:flex; gap:8px; }
+  .tab { padding:8px; background: var(--panel); border: 1px solid #334155; border-radius:6px; cursor:pointer; }
+  .tab.active { background: var(--accent); color:#fff; border-color: transparent; }
+
+  .export-bar, .action-bar { display:grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap:8px; margin-bottom:12px; }
+  .export-bar { grid-template-columns: repeat(2, minmax(0,1fr)); }
+  /* Hide settings without hiding the button that brings them back. */
+body.settings-hidden {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+body.settings-hidden aside {
+  display: none;
+}
+
+#toggleSettings {
+  width: auto;
+  min-width: 140px;
+  margin-top: 0;
+}
+
+  .tag { display:inline-block; margin-left:6px; padding:2px 6px; font-size:12px; border-radius:999px; color:#cbd5e1; background:#0b1327; border:1px solid #334155; }
+  #endTimeHint { margin-top:6px; color: var(--warn); font-weight: 600; }
+
+  .err { display:none; background: var(--danger); color:#fff; padding:8px; border-radius:6px; margin-bottom:10px; }
+
+  table { width:100%; border-collapse: collapse; background:#0b1327; border:1px solid #334155; }
+  th, td { padding:6px; border-bottom:1px solid #243244; text-align:left; }
+  th { background:#111a34; }
+  .slot { margin-bottom: 16px; }
+
+  /* Break row style */
+  .break-row {
+    background: #fff7ed;
+    color: #7c2d12;
+    border: 1px solid #fdba74;
+    padding: 8px 10px;
+    border-radius: 6px;
+    margin: 6px 0 12px 0;
+    font-weight: 600;
+  }
+
+  /* White background area exported to PDF */
+  #pdfWrap {
+    background: #ffffff; color: #000; padding: 16px; border-radius: 8px;
+  }
+  #pdfWrap table { background: #fff; color: #000; border-color: #ddd; }
+  #pdfWrap th, #pdfWrap td { border-bottom: 1px solid #ddd; }
+
+  /* Team row layout */
+  .team-item { display: flex; gap: 8px; margin-top: 6px; }
+  .team-item input { width: auto; }
+  .team-item .team-name { flex: 1 1 auto; min-width: 0; }
+  .team-item .team-color { border:2px solid #334155; flex: 0 0 48px; width: 48px; padding: 0; height: 36px; align-self: center; }
+
+  /* Breaks editor */
+  .breaks-wrap { margin-top: 10px; display: grid; gap: 6px; }
+  .break-item { display: grid; grid-template-columns: 1fr 1fr auto; gap: 8px; align-items: center; }
+  .break-item button { width: auto; padding: 8px 10px; background: #ef4444; }
+  #addBreakBtn { margin-top: 6px; background: #22c55e; }
+
+  /* Visible KO selects */
+  .ko-select { width: 180px; }
+
+  @media (max-width: 900px){
+    body { grid-template-columns: 1fr; }
+    aside { border-right: none; border-bottom: 1px solid #334155; }
+  }
+</style>
+</head>
+<body>
+  <aside>
+    <h1>⚽ Tournament Planner</h1>
+    <div id="err" class="err"></div>
+
+    <label>Tournament name</label>
+    <input id="phName" type="text" placeholder="Spring Cup" />
+    <label>Date</label>
+    <input id="phDate" type="date" />
+    <label>Venue</label>
+    <input id="phVenue" type="text" placeholder="Main Arena" />
+
+    <label>Number of teams</label>
+    <input id="teamCount" type="number" min="2" max="64" value="8" />
+    <button id="buildTeams" type="button">Build team list</button>
+    <div id="teams" class="team-editor"></div>
+
+    <label>Number of groups</label>
+    <input id="groupCount" type="number" min="1" max="16" value="2" />
+
+    <label>Courts</label>
+    <input id="courts" type="number" min="1" max="16" value="2" />
+
+    <label>Points per win</label>
+    <input id="pointsWin" type="number" min="0" max="10" value="3" />
+
+    <label>Points per draw</label>
+    <input id="pointsDraw" type="number" min="0" max="10" value="1" />
+
+    <label>Start time</label>
+    <input id="startTime" type="time" value="10:00" />
+
+    <label>Match duration (min)</label>
+    <input id="matchMin" type="number" min="5" max="180" value="20" />
+
+    <label>Break between matches (min)</label>
+    <input id="breakMin" type="number" min="0" max="60" value="5" />
+
+    <label>
+      <span>Total time window (min)</span>
+      <span id="slotLenHint" class="tag">slot: -- min</span>
+    </label>
+    <input id="totalMin" type="number" min="10" max="1440" value="240" />
+
+    <label class="inline" style="margin-top:8px;font-size:13px;">
+      <input id="autoTotal" type="checkbox" checked style="width:auto;" />
+      <span>Auto-calculate total window</span>
+    </label>
+    <div id="autoHint" style="margin-top:6px;color:#94a3b8;font-size:12px;">Auto total: -- min (matches --, slots --)</div>
+    <div id="endTimeHint">Tournament end time: --:--</div>
+
+    <div class="section-subtle" style="margin-top:12px;color:#94a3b8">Knockout options</div>
+    <label>Post-group stage</label>
+    <select id="koMode">
+      <option value="none" selected>—</option>
+      <option value="final">Final only</option>
+      <option value="semis">Semi-finals</option>
+      <option value="quarters">Quarter-finals</option>
+      <option value="placement">Placement matches (1v2, 3v4, ...)</option>
+    </select>
+    <label class="inline" id="koThirdWrap" style="display:none">
+      <input id="koThird" type="checkbox" />
+      <span>Include 3rd-place match</span>
+    </label>
+
+    <div style="margin-top:12px;color:#94a3b8">Meal/Rest breaks</div>
+    <div id="breaksWrap" class="breaks-wrap"></div>
+    <button id="addBreakBtn" type="button">+ Add break</button>
+
+    <div class="action-bar" style="margin-top:12px">
+      <button id="generate" type="button">Generate schedule</button>
+      <button id="downloadPdf" type="button" title="Create and download a PDF of the schedule">Download PDF</button>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px">
+      <button id="saveSetup" type="button" style="background:var(--ok)">Save setup</button>
+      <button id="loadSetup" type="button">Load setup</button>
+    </div>
+    <button id="resetSetup" type="button" style="margin-top:8px;background:var(--danger)">Reset</button>
+  </aside>
+
+  <main>
+<div class="toolbar">
+  <div class="tabs">
+    <button class="tab active" type="button" data-tab="schedule">Schedule</button>
+    <button class="tab" type="button" data-tab="tables">Standings</button>
+  </div>
+  <button id="toggleSettings" type="button">Hide settings</button>
+</div>
+
+    <div class="export-bar">
+      <button id="exportSchedule" type="button">Export Schedule (CSV)</button>
+      <button id="exportStandings" type="button">Export Standings (CSV)</button>
+      <button id="saveJson" type="button" title="Save schedule & setup to a JSON file">Save as JSON</button>
+<button id="loadJson" type="button" title="Load schedule & setup from a JSON file">Load JSON</button>
+<input id="loadJsonInput" type="file" accept="application/json" style="display:none">
+
+    </div>
+
+    <!-- White background area exported to PDF -->
+    <div id="pdfWrap">
+      <section id="schedule"></section>
+      <section id="tables" style="display:none"></section>
+    </div>
+    <footer style="font-size:12px;color:#94a3b8;padding:12px 0">© 2026 ScoreZone · All rights reserved.</footer>
+  </main>
+
+<!-- PDF libs -->
+<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+
+<script src="./planner.js"></script>
+</body>
+</html>
